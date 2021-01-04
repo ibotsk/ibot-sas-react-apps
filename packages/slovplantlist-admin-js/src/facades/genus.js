@@ -1,4 +1,4 @@
-import { getRequest, putRequest, patchRequest } from 'services/backend';
+import { getRequest, putRequest, patchRequest } from '@ibot/client';
 
 import config from 'config/config';
 import { sorterUtils } from 'utils';

@@ -1,4 +1,4 @@
-import { getRequest } from 'services/backend';
+import { getRequest } from '@ibot/client';
 
 async function getAll(
   uri, offset, whereString = '{}', orderString = '["id ASC"]', limit, accessToken,
