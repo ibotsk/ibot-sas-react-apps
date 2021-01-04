@@ -3,7 +3,7 @@ import intersectionWith from 'lodash.intersectionwith';
 
 import {
   getRequest, deleteRequest, putRequest, patchRequest,
-} from 'services/backend';
+} from '@ibot/client';
 
 const synonymComparator = (value, other) => (
   value.idParent === other.idParent

@@ -1,0 +1,20 @@
+{
+  "name": "@ibot/client",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Matus Kempa <matus.kempa@gmail.com>",
+  "homepage": "https://github.com/ibotsk/ibot-sas-react-apps#readme",
+  "license": "ISC",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ibotsk/ibot-sas-react-apps.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "mustache": "^4.1.0"
+  }
+}
