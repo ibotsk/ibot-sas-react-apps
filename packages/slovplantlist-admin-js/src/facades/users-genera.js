@@ -2,7 +2,7 @@ import {
   getRequest,
   putRequest,
   deleteRequest,
-} from 'services/backend';
+} from '@ibot/client';
 
 import config from 'config/config';
 

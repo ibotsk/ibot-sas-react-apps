@@ -1,4 +1,4 @@
-import { getRequest, postRequest } from 'services/backend';
+import { getRequest, postRequest } from '@ibot/client';
 
 import config from 'config/config';
 
