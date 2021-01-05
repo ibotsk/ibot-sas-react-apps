@@ -106,6 +106,13 @@ const AllUsers = ({ accessToken }) => {
           </Button>
         </Panel.Body>
       </Panel>
+      <div id="info">
+        <ul>
+          <li>ADMIN - has all rights</li>
+          <li>EDITOR - can create and edit species, genera, families</li>
+          <li>AUTHOR - can edit species from genus assigned to him</li>
+        </ul>
+      </div>
       <BootstrapTable
         hover
         striped

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  Button, Modal, Col,
+  Button, Modal, Col, Row,
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
 
@@ -52,8 +52,7 @@ class UsersModal extends Component {
 
   async componentDidMount() {
     const { accessToken } = this.props;
-    const format = (r) => ({ id: r.id, name: r.name });
-    const rolesOptions = await rolesFacade.getAllRoles(accessToken, format);
+    const rolesOptions = await rolesFacade.getAllRoles(accessToken);
     this.setState({
       rolesOptions,
     });
@@ -214,6 +213,19 @@ class UsersModal extends Component {
                 </FormGroup>
               )
             }
+            <Row id="role-info">
+              <Col smOffset={titleColWidth} sm={mainColWidth}>
+                <p>
+                  <small>
+                    {userRole.name.toUpperCase()}
+                    {' '}
+                    -
+                    {' '}
+                    {userRole.description}
+                  </small>
+                </p>
+              </Col>
+            </Row>
             <FormGroup
               controlId="roles"
               bsSize="sm"
