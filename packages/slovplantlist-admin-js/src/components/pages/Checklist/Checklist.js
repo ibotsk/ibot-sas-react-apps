@@ -121,8 +121,6 @@ const Checklist = ({ user, accessToken }) => {
     sizePerPage, order, showModal,
   );
 
-  console.log(data);
-
   const rowEvents = {
     onDoubleClick: (e, row) => {
       if (user.role === mappings.userRole.author.name

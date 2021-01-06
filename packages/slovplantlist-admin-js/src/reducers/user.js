@@ -15,6 +15,7 @@ const user = (state = initialState, action) => {
           id: action.id,
           role: action.role,
           userGenera: action.userGenera,
+          username: action.username,
         },
       };
     case UNSET_USER:
