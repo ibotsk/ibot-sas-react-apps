@@ -46,6 +46,16 @@ const columns = [
     editable: false,
   },
   {
+    dataField: 'checkedTimestamp',
+    text: 'Checked',
+    formatter: (cell) => cell ? (
+      <Glyphicon glyph="ok" className="green" />
+    ) : (
+        <Glyphicon glyph="remove" className="red" />
+      ),
+    align: 'center',
+  },
+  {
     dataField: 'ntype',
     text: 'Type',
     filter: multiSelectFilter({
@@ -131,6 +141,7 @@ const formatResult = (records, userRole, handleShowModal) => (
     familyApg: g['family-apg'],
     family: g.family,
     acceptedName: g.accepted,
+    checkedTimestamp: g.checkedTimestamp,
   }))
 );
 

@@ -55,6 +55,16 @@ const columns = (isAuthor) => [
     text: 'Action',
   },
   {
+    dataField: 'checkedTimestamp',
+    text: 'Checked',
+    formatter: (cell) => cell ? (
+      <Glyphicon glyph="ok" className="green" />
+    ) : (
+      <Glyphicon glyph="remove" className="red" />
+    ),
+    align: 'center',
+  },
+  {
     dataField: ownershipColumn,
     text: 'Ownership',
     filter: selectFilter({
@@ -110,6 +120,8 @@ const Checklist = ({ user, accessToken }) => {
     getCountUri, getAllUri, accessToken, where, page,
     sizePerPage, order, showModal,
   );
+
+  console.log(data);
 
   const rowEvents = {
     onDoubleClick: (e, row) => {
@@ -188,6 +200,7 @@ const Checklist = ({ user, accessToken }) => {
       </a>
     ),
     idGenus: d.idGenus,
+    checkedTimestamp: d.checkedTimestamp,
   }));
 
   const onTableChange = (type, {
