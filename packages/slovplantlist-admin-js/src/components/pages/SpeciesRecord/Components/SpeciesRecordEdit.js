@@ -14,8 +14,9 @@ import PropTypes from 'prop-types';
 
 import { NotificationContainer } from 'react-notifications';
 
+import { LosName } from '@ibot/components';
+
 import AddableList from 'components/segments/AddableList';
-import LosName from 'components/segments/Checklist/LosName';
 import PlainListOfSpeciesNames from
   'components/segments/Checklist/PlainListOfSpeciesNames';
 

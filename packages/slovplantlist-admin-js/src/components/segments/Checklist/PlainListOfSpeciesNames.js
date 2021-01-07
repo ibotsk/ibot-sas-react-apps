@@ -7,7 +7,7 @@ import {
 import PropTypes from 'prop-types';
 import SpecesType from 'components/propTypes/species';
 
-import LosName from './LosName';
+import { LosName } from '@ibot/components';
 
 const PlainListOfSpeciesNames = ({ list }) => {
   if (!list || list.length === 0) {

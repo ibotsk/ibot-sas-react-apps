@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
 import SynonymListItem from 'components/segments/SynonymListItem';
-import LosName from 'components/segments/Checklist/LosName';
+import { LosName } from '@ibot/components'; 
 
 import config from 'config/config';
 
