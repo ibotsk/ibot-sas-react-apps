@@ -1,11 +1,10 @@
-import { formatted, plain } from './common';
+import { italic, plain, makeFormat } from './common';
 import config from '../config';
 
 const {
   species: {
     name: configName,
   },
-  format,
 } = config;
 
 const makeSl = (string) => {
@@ -34,15 +33,25 @@ const infraTaxa = (nomenclature) => {
     if (infraValue) {
       const infraLabel = configInfraTaxa[infra];
       infs.push(plain(infraLabel));
-      infs.push(formatted(infraValue));
-      // infs = infs.concat([plain(infraLabel), formatted(infraValue)]);
+      infs.push(italic(infraValue));
     }
   }
 
   return infs;
 };
 
-const listOfSpeciesFormat = (nomenclature, options = {}) => {
+const invalidDesignation = (name, syntype) => {
+  if (syntype === '1') {
+    let newname = [];
+    newname.push(Plain('"'));
+    newname = newname.concat(name);
+    newname.push(Plain('"'));
+    return newname;
+  }
+  return name;
+};
+
+function listOfSpeciesFormat(nomenclature, options = {}) {
   const opts = {
     isPublication: false,
     isTribus: false,
@@ -60,8 +69,8 @@ const listOfSpeciesFormat = (nomenclature, options = {}) => {
   let name = [];
   const slResult = makeSl(species);
 
-  name.push(formatted(genus));
-  name.push(formatted(slResult.s));
+  name.push(italic(genus));
+  name.push(italic(slResult.s));
 
   if (slResult.hasSl) {
     name.push(plain(configName.sl));
@@ -108,30 +117,14 @@ const listOfSpeciesFormat = (nomenclature, options = {}) => {
     name.push(plain(tribus));
   }
   return name;
-};
-
-// --------- PUBLIC --------- //
-
-function listOfSpeciesForComponent(name, formatString) {
-  const nameArr = listOfSpeciesFormat(name);
-
-  const formattedNameArr = nameArr.map((t) => {
-    if (t.format === ff) {
-      return formatter.format(t.string, formatString);
-    }
-    return t.string;
-  });
-
-  return formattedNameArr
-    .reduce((acc, el) => acc.concat(el, ' '), [])
-    .slice(0, -1);
 }
 
 function listOfSpeciesString(name) {
-  return listOfSpeciesForComponent(name, format.plain).join('');
+  const nameArr = listOfSpeciesFormat(name);
+  return nameArr.reduce((acc, { string }) => acc.push(string), []).join(' ');
 }
 
 export default {
-  listOfSpeciesForComponent,
+  listOfSpeciesFormat,
   listOfSpeciesString,
 };

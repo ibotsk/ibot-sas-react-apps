@@ -17,7 +17,7 @@ export default {
     }
   },
   format: {
-    formatted: 'formatted',
+    italic: 'italic',
     plain: 'plain',
   },
 };

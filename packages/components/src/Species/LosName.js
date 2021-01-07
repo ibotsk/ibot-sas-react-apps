@@ -1,10 +1,15 @@
-import { species as speciesUtils } from '@ibot/utils';
+import React from 'react';
+import helper from './helpers';
 
 const LosName = ({ data, format = 'plain' }) => {
   if (!data) {
-    return '';
+    return null;
   }
-  return speciesUtils.listOfSpeciesForComponent(data, format);
+  return (
+    <span>
+      {helper.listOfSpeciesForComponent(data, format)}
+    </span>
+  );
 };
 
 export default LosName;

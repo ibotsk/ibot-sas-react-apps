@@ -2,7 +2,7 @@ import config from '../../config';
 
 const {
   format: {
-    formatted: ff,
+    italic: itf,
     plain: plf,
   },
 } = config;
@@ -15,5 +15,8 @@ const o = (string, format) => {
   return { string: s, format };
 };
 
-export const formatted = (string) => o(string, ff);
+// -------------- //
+
+export const italic = (string) => o(string, itf);
 export const plain = (string) => o(string, plf);
+
