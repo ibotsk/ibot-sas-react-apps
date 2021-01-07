@@ -6,7 +6,7 @@ function timestampISO() {
   return new Date().toISOString();
 }
 
-module.exports = {
+export default {
   timestampMysql,
   timestampISO,
-};
+}
