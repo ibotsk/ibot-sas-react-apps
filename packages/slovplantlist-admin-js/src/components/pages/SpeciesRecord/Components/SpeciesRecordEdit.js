@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 
 import { NotificationContainer } from 'react-notifications';
 
-import { LosName } from '@ibot/components';
+import { LosName, TimestampCheck } from '@ibot/components';
 
 import AddableList from 'components/segments/AddableList';
 import PlainListOfSpeciesNames from
@@ -22,6 +22,7 @@ import PlainListOfSpeciesNames from
 
 import { speciesFacade, genusFacade } from 'facades';
 
+import { format } from '@ibot/utils';
 import { notifications, helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
 
@@ -82,6 +83,8 @@ const recordInitialValues = {
   var: '',
   varH: '',
   vernacular: '',
+  checkedTimestamp: undefined,
+  checkedBy: undefined,
 };
 
 const createNewSynonymToList = async (
@@ -328,6 +331,17 @@ class SpeciesRecord extends Component {
     })
   )
 
+  handleCheck = () => {
+    const { user: { username } } = this.props;
+    this.setState(({ record }) => ({
+      record: {
+        ...record,
+        checkedTimestamp: format.timestampISO(),
+        checkedBy: username,
+      },
+    }));
+  }
+
   submitForm = async (e) => {
     e.preventDefault();
     const { accessToken } = this.props;
@@ -490,6 +504,7 @@ class SpeciesRecord extends Component {
   }
 
   render() {
+    console.log(this.state);
     const {
       isLoading,
       familyApg, family, genera, record,
@@ -501,6 +516,7 @@ class SpeciesRecord extends Component {
         id, ntype, genus, species, subsp, var: variety,
         subvar, forma, nothosubsp, nothoforma, proles, unranked, authors,
         hybrid, publication, vernacular, tribus,
+        checkedTimestamp, checkedBy,
       } = {},
     } = this.state;
     return (
@@ -1053,6 +1069,20 @@ class SpeciesRecord extends Component {
                 </FormGroup>
               </Well>
             </div>
+            <div>
+              <Well>
+                <Row>
+                  <Col smOffset={LABEL_COL_WIDTH} sm={CONTENT_COL_WIDTH}>
+                    <TimestampCheck
+                      isChecked={!!checkedTimestamp}
+                      checkedTimestamp={checkedTimestamp}
+                      checkedBy={checkedBy}
+                      onCheck={this.handleCheck}
+                    />
+                  </Col>
+                </Row>
+              </Well>
+            </div>
             <div id="controls">
               <Row>
                 <Col sm={5} smOffset={2}>
@@ -1075,6 +1105,7 @@ class SpeciesRecord extends Component {
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
+  user: state.user,
 });
 
 export default connect(mapStateToProps)(SpeciesRecord);

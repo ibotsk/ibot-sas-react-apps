@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import {
-  Col,
+  Col, Row,
   Button, Modal,
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
@@ -11,9 +11,13 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import PropTypes from 'prop-types';
 
+import { TimestampCheck } from '@ibot/components';
+
 import AddableList from 'components/segments/AddableList';
 
 import { helperUtils, notifications, sorterUtils } from 'utils';
+import { format } from '@ibot/utils';
+
 import config from 'config/config';
 
 import { genusFacade, familiesFacade } from 'facades';
@@ -92,7 +96,7 @@ const synonymsChanged = (list) => {
 };
 
 const GeneraModal = ({
-  editId, show, onHide, accessToken,
+  editId, show, onHide,
 }) => {
   const [genus, setGenus] = useState(initialValues);
   const [acceptedOptions, setAcceptedOptions] = useState([]);
@@ -103,6 +107,9 @@ const GeneraModal = ({
   const [selectedFamily, setSelectedFamily] = useState([]);
   const [selectedFamilyApg, setSelectedFamilyApg] = useState([]);
   const [synonyms, setSynonyms] = useState([]);
+
+  const accessToken = useSelector((state) => state.authentication.accessToken);
+  const user = useSelector((state) => state.user);
 
   const onEnter = async () => {
     if (editId) {
@@ -225,8 +232,17 @@ const GeneraModal = ({
     setSynonyms(sorted);
   };
 
+  const handleCheck = () => {
+    const { username } = user;
+    setGenus({
+      ...genus,
+      checkedTimestamp: format.timestampISO(),
+      checkedBy: username,
+    });
+  }
+
   const {
-    ntype, name, authors, vernacular,
+    ntype, name, authors, vernacular, checkedTimestamp, checkedBy,
   } = genus;
 
   return (
@@ -409,6 +425,17 @@ const GeneraModal = ({
               />
             </Col>
           </FormGroup>
+          <hr />
+          <Row>
+            <Col smOffset={titleColWidth} sm={mainColWidth}>
+              <TimestampCheck
+                isChecked={!!checkedTimestamp}
+                checkedTimestamp={checkedTimestamp}
+                checkedBy={checkedBy}
+                onCheck={handleCheck}
+              />
+            </Col>
+          </Row>
         </Form>
       </Modal.Body>
       <Modal.Footer>
@@ -421,16 +448,11 @@ const GeneraModal = ({
   );
 };
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-});
-
-export default connect(mapStateToProps)(GeneraModal);
+export default GeneraModal;
 
 GeneraModal.propTypes = {
   show: PropTypes.bool.isRequired,
   editId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  accessToken: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
 };
 

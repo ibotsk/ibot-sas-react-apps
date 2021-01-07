@@ -8,6 +8,8 @@ import {
 
 import PropTypes from 'prop-types';
 
+import { TimestampCheck } from '@ibot/components';
+
 import { notifications } from 'utils';
 import { format } from '@ibot/utils';
 
@@ -141,29 +143,12 @@ class FamiliesModal extends Component {
             <hr />
             <Row>
               <Col smOffset={titleColWidth} sm={mainColWidth}>
-                {
-                  checkedTimestamp && (
-                    <>
-                      <div>
-                        Checked by:
-                        {' '}
-                        {checkedBy}
-                      </div>
-                      <div>
-                        Checked at:
-                        {' '}
-                        {new Date(Date.parse(checkedTimestamp)).toUTCString()}
-                      </div>
-                    </>
-                  )
-                }
-                <Button
-                  bsStyle={checkedTimestamp ? 'success' : 'danger'}
-                  bsSize='small'
-                  onClick={this.handleCheck}
-                >
-                  {checkedTimestamp ? 'Re-check' : 'Check'}
-            </Button>
+                <TimestampCheck
+                  isChecked={!!checkedTimestamp}
+                  checkedTimestamp={checkedTimestamp}
+                  checkedBy={checkedBy}
+                  onCheck={this.handleCheck}
+                />
               </Col>
             </Row>
           </Form>
