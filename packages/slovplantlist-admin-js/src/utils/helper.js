@@ -1,130 +1,4 @@
-import config from 'config/config';
-
-import formatter from './formatter';
-
-const { name: configName } = config.nomenclature;
-const { format: { formatted: ff, plain: plf } } = config;
-
-const o = (string, format) => {
-  let s = '';
-  if (string) {
-    s = string.trim();
-  }
-  return { string: s, format };
-};
-
-const Formatted = (string) => o(string, ff);
-const Plain = (string) => o(string, plf);
-
-const makeSl = (string) => {
-  const { sl } = configName;
-  if (string && string.includes(sl)) {
-    const modString = string.replace(sl, '');
-    return { s: modString, hasSl: true };
-  }
-  return { s: string, hasSl: false };
-};
-
-/*
-    For every property in config.nomenclature.name.infra
-
-    Names of the infra taxa must match the ones of the listOfSpecies table columns.
-    Notho- are not used.
-*/
-const infraTaxa = (nomenclature) => {
-  let infs = [];
-
-  const configInfraTaxa = configName.infra;
-
-  for (const infra of Object.keys(configInfraTaxa)) {
-    const infraValue = nomenclature[infra];
-
-    if (infraValue) {
-      const infraLabel = configInfraTaxa[infra];
-      infs = infs.concat([Plain(infraLabel), Formatted(infraValue)]);
-    }
-  }
-
-  return infs;
-};
-
-const invalidDesignation = (name, syntype) => {
-  if (syntype === '1') {
-    let newname = [];
-    newname.push(Plain('"'));
-    newname = newname.concat(name);
-    newname.push(Plain('"'));
-    return newname;
-  }
-  return name;
-};
-
-// ------------------------------------------------------- //
-
-const listOfSpeciesFormat = (nomenclature, options = {}) => {
-  const opts = {
-    isPublication: false,
-    isTribus: false,
-    ...options,
-  };
-
-  let isAuthorLast = true;
-
-  let name = [];
-  const slResult = makeSl(nomenclature.species);
-
-  name.push(Formatted(nomenclature.genus));
-  name.push(Formatted(slResult.s));
-
-  if (slResult.hasSl) {
-    name.push(Plain(configName.sl));
-  }
-
-  const infras = infraTaxa(nomenclature);
-
-  if (nomenclature.species === nomenclature.subsp
-    || nomenclature.species === nomenclature.var
-    || nomenclature.species === nomenclature.forma
-  ) {
-    if (nomenclature.authors) {
-      name.push(Plain(nomenclature.authors));
-    }
-    isAuthorLast = false;
-  }
-
-  name = name.concat(infras);
-
-  if (isAuthorLast) {
-    name.push(Plain(nomenclature.authors));
-  }
-
-  if (nomenclature.hybrid) {
-    const h = {
-      genus: nomenclature.genusH,
-      species: nomenclature.speciesH,
-      subsp: nomenclature.subspH,
-      var: nomenclature.varH,
-      subvar: nomenclature.subvarH,
-      forma: nomenclature.formaH,
-      nothosubsp: nomenclature.nothosubspH,
-      nothoforma: nomenclature.nothoformaH,
-      authors: nomenclature.authorsH,
-    };
-    name.push(Plain(configName.hybrid));
-    name = name.concat(listOfSpeciesFormat(h));
-  }
-
-  name = invalidDesignation(name, options.syntype);
-
-  if (opts.isPublication) {
-    name.push(Plain(nomenclature.publication));
-  }
-  if (opts.isTribus) {
-    name.push(Plain(nomenclature.tribus));
-  }
-
-  return name;
-};
+import { species as speciesUtils } from '@ibot/utils';
 
 /**
  * For resolving filter comparator. Supports LIKE and EQ.
@@ -196,32 +70,13 @@ const filterToWhereItem = (filter, key) => {
   return resolveByComparator(filter.comparator, key, filter.filterVal);
 };
 
-function listOfSpeciesForComponent(name, formatString) {
-  const nameArr = listOfSpeciesFormat(name);
-
-  const formattedNameArr = nameArr.map((t) => {
-    if (t.format === ff) {
-      return formatter.format(t.string, formatString);
-    }
-    return t.string;
-  });
-
-  return formattedNameArr
-    .reduce((acc, el) => acc.concat(el, ' '), [])
-    .slice(0, -1);
-}
-
-function listOfSpeciesString(name) {
-  return listOfSpeciesForComponent(name, 'plain').join('');
-}
-
 function losToTypeaheadSelected(data) {
   if (!data) {
     return undefined;
   }
   return [{
     id: data.id,
-    label: listOfSpeciesString(data),
+    label: speciesUtils.listOfSpeciesString(data),
   }];
 }
 
@@ -303,8 +158,6 @@ function buildFilterOptionsFromKeys(keys) {
 // }
 
 export default {
-  listOfSpeciesForComponent,
-  listOfSpeciesString,
   losToTypeaheadSelected,
   genusString,
   makeWhere,

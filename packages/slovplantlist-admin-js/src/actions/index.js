@@ -15,11 +15,12 @@ export const unsetAuthenticated = () => ({
   type: UNSET_AUTHENTICATED,
 });
 
-export const setUser = (id, role, userGenera) => ({
+export const setUser = (id, role, userGenera, username) => ({
   type: SET_USER,
   role,
   userGenera,
   id,
+  username,
 });
 
 export const unsetUser = () => ({

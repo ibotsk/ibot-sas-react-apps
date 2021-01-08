@@ -33,6 +33,16 @@ const columns = [
     text: 'Actions',
   },
   {
+    dataField: 'checkedTimestamp',
+    text: 'Checked',
+    formatter: (cell) => (cell ? (
+      <Glyphicon glyph="ok" className="green" />
+    ) : (
+      <Glyphicon glyph="remove" className="red" />
+    )),
+    align: 'center',
+  },
+  {
     dataField: 'name',
     text: 'Name',
     filter: textFilter(),
@@ -86,6 +96,7 @@ const Families = ({ user, accessToken }) => {
     ),
     name: d.name,
     vernacular: d.vernacular,
+    checkedTimestamp: d.checkedTimestamp,
   }));
 
   const onTableChange = (type, {

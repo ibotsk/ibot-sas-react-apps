@@ -52,6 +52,12 @@
 .gray-text {
     color: #bdbdbd;
 }
+.green {
+    color: #63b521;
+}
+.red {
+    color: #c21920;
+}
 
 .white-badge {
     background-color: #fff;

@@ -14,7 +14,8 @@ import filterFactory, {
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
 
-import LosName from 'components/segments/Checklist/LosName';
+import { LosName } from '@ibot/components';
+
 import Can from 'components/segments/auth/Can';
 import Ownership from 'components/segments/auth/Ownership';
 import RemotePagination from 'components/segments/RemotePagination';
@@ -53,6 +54,16 @@ const columns = (isAuthor) => [
   {
     dataField: 'action',
     text: 'Action',
+  },
+  {
+    dataField: 'checkedTimestamp',
+    text: 'Checked',
+    formatter: (cell) => (cell ? (
+      <Glyphicon glyph="ok" className="green" />
+    ) : (
+      <Glyphicon glyph="remove" className="red" />
+    )),
+    align: 'center',
   },
   {
     dataField: ownershipColumn,
@@ -188,6 +199,7 @@ const Checklist = ({ user, accessToken }) => {
       </a>
     ),
     idGenus: d.idGenus,
+    checkedTimestamp: d.checkedTimestamp,
   }));
 
   const onTableChange = (type, {

@@ -75,7 +75,7 @@ class Login extends Component {
       : config.mappings.userRole.author.name;
 
     setAuthenticated(accessToken);
-    setUser(userId, userRole, userGeneraIds);
+    setUser(userId, userRole, userGeneraIds, username);
     this.setState({ redirectToReferrer: true });
   }
 

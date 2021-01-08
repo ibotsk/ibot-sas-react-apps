@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  Button, Modal, Col,
+  Button, Modal, Col, Row,
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
 
 import PropTypes from 'prop-types';
 
+import { TimestampCheck } from '@ibot/components';
+
 import { notifications } from 'utils';
+import { format } from '@ibot/utils';
 
 import { familiesFacade } from 'facades';
 
@@ -22,6 +25,8 @@ const initialValues = {
   id: undefined,
   name: '',
   vernacular: '',
+  checkedTimestamp: '',
+  checkedBy: '',
 };
 
 class FamiliesModal extends Component {
@@ -63,6 +68,14 @@ class FamiliesModal extends Component {
     onHide();
   }
 
+  handleCheck = () => {
+    const { user: { username } } = this.props;
+    this.setState({
+      checkedTimestamp: format.timestampISO(),
+      checkedBy: username,
+    });
+  }
+
   handleSave = async () => {
     if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
       const data = this.state;
@@ -82,7 +95,9 @@ class FamiliesModal extends Component {
 
   render() {
     const { show, id } = this.props;
-    const { name, vernacular } = this.state;
+    const {
+      name, vernacular, checkedTimestamp, checkedBy,
+    } = this.state;
     return (
       <Modal show={show} onHide={this.handleHide} onEnter={this.onEnter}>
         <Modal.Header closeButton>
@@ -127,6 +142,17 @@ class FamiliesModal extends Component {
                 <FormControl.Feedback />
               </Col>
             </FormGroup>
+            <hr />
+            <Row>
+              <Col smOffset={titleColWidth} sm={mainColWidth}>
+                <TimestampCheck
+                  isChecked={!!checkedTimestamp}
+                  checkedTimestamp={checkedTimestamp}
+                  checkedBy={checkedBy}
+                  onCheck={this.handleCheck}
+                />
+              </Col>
+            </Row>
           </Form>
         </Modal.Body>
         <Modal.Footer>
@@ -142,6 +168,7 @@ class FamiliesModal extends Component {
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
+  user: state.user,
 });
 
 export default connect(mapStateToProps)(FamiliesModal);
@@ -150,6 +177,9 @@ FamiliesModal.propTypes = {
   show: PropTypes.bool.isRequired,
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   accessToken: PropTypes.string.isRequired,
+  user: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+  }).isRequired,
   onHide: PropTypes.func.isRequired,
 };
 

@@ -1,11 +1,14 @@
 import { getRequest } from '@ibot/client';
 
 async function getAll(
-  uri, offset, whereString = '{}', orderString = '["id ASC"]', limit, accessToken,
+  uri, offset, whereString = '{}', orderString = '["id ASC"]',
+  limit, accessToken,
 ) {
+  const where = (typeof whereString === 'string')
+    ? whereString : JSON.stringify(whereString);
   const params = {
     offset,
-    where: whereString,
+    where,
     order: orderString,
     limit,
   };
