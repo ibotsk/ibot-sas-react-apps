@@ -171,6 +171,8 @@ class SpeciesRecordView extends React.Component {
                 <dd>{type.text || ''}</dd>
                 <dt>Species</dt>
                 <dd><LosName data={record} /></dd>
+                <dt>Aggregate</dt>
+                <dd>{record.aggregate || ''}</dd>
               </dl>
             </Well>
             <Well>
