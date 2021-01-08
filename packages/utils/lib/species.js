@@ -121,7 +121,7 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
 
 function listOfSpeciesString(name) {
   const nameArr = listOfSpeciesFormat(name);
-  return nameArr.reduce((acc, { string }) => acc.push(string), []).join(' ');
+  return nameArr.map(({ string }) => string).join(' ');
 }
 
 export default {
