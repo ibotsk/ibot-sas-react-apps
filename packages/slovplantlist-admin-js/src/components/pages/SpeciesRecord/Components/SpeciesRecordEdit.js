@@ -515,6 +515,7 @@ class SpeciesRecord extends Component {
         id, ntype, genus, species, subsp, var: variety,
         subvar, forma, nothosubsp, nothoforma, proles, unranked, authors,
         hybrid, publication, vernacular, tribus,
+        aggregate,
         checkedTimestamp, checkedBy,
       } = {},
       idGenusSelected, idAcceptedNameSelected, idBasionymSelected,
@@ -578,6 +579,19 @@ class SpeciesRecord extends Component {
                       )}
                       placeholder="Start by typing a genus present
                         in the database (case sensitive)"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="aggregate" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Aggregate
+                  </Col>
+                  <Col sm={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={aggregate || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Aggregate"
                     />
                   </Col>
                 </FormGroup>
