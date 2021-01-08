@@ -117,15 +117,15 @@ class SpeciesRecord extends Component {
         ...recordInitialValues,
       },
       listOfSpecies: [],
-      genera: [],
+      generaOptions: [],
       familyApg: '',
       family: '',
       isLoading: false,
-      [`${ID_ACCEPTED_NAME_PROP}Selected`]: undefined,
-      [`${ID_BASIONYM_NAME_PROP}Selected`]: undefined,
-      [`${ID_REPLACED_NAME_PROP}Selected`]: undefined,
-      [`${ID_NOMEN_NOVUM_NAME_PROP}Selected`]: undefined,
-      [`${ID_GENUS_NAME_PROP}Selected`]: undefined,
+      idAcceptedNameSelected: [],
+      idBasionymSelected: [],
+      idReplacedSelected: [],
+      idNomenNovumSelected: [],
+      idGenusSelected: [],
 
       nomenclatoricSynonyms: [], // contains objects of synonym
       taxonomicSynonyms: [],
@@ -156,11 +156,11 @@ class SpeciesRecord extends Component {
 
       this.setState({
         record: speciesRecord,
-        [`${ID_ACCEPTED_NAME_PROP}Selected`]: accepted,
-        [`${ID_BASIONYM_NAME_PROP}Selected`]: basionym,
-        [`${ID_REPLACED_NAME_PROP}Selected`]: replaced,
-        [`${ID_NOMEN_NOVUM_NAME_PROP}Selected`]: nomenNovum,
-        [`${ID_GENUS_NAME_PROP}Selected`]: genus,
+        idAcceptedNameSelected: accepted,
+        idBasionymSelected: basionym,
+        idReplacedSelected: replaced,
+        idNomenNovumSelected: nomenNovum,
+        idGenusSelected: genus,
         familyApg,
         family,
         nomenclatoricSynonyms,
@@ -231,7 +231,7 @@ class SpeciesRecord extends Component {
   handleSearchGeneraAsyncTypeahead = async (query) => {
     this.setState({ isLoading: true });
     const { accessToken } = this.props;
-    const genera = await genusFacade.getAllGeneraBySearchTerm(
+    const generaOptions = await genusFacade.getAllGeneraBySearchTerm(
       query, accessToken, (g) => ({
         id: g.id,
         label: g.name,
@@ -240,7 +240,7 @@ class SpeciesRecord extends Component {
 
     this.setState({
       isLoading: false,
-      genera,
+      generaOptions,
     });
   }
 
@@ -506,7 +506,7 @@ class SpeciesRecord extends Component {
   render() {
     const {
       isLoading,
-      familyApg, family, genera, record,
+      familyApg, family, generaOptions, record,
       listOfSpecies,
       nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
       misidentifications,
@@ -517,6 +517,8 @@ class SpeciesRecord extends Component {
         hybrid, publication, vernacular, tribus,
         checkedTimestamp, checkedBy,
       } = {},
+      idGenusSelected, idAcceptedNameSelected, idBasionymSelected,
+      idNomenNovumSelected, idReplacedSelected,
     } = this.state;
     return (
       <div id="species-detail">
@@ -566,11 +568,11 @@ class SpeciesRecord extends Component {
                   </Col>
                   <Col sm={CONTENT_COL_WIDTH}>
                     <AsyncTypeahead
-                      id={`${ID_GENUS_NAME_PROP}-autocomplete`}
+                      id="id-genus-autocomplete"
                       isLoading={isLoading}
-                      options={genera}
+                      options={generaOptions}
                       onSearch={this.handleSearchGeneraAsyncTypeahead}
-                      selected={this.getSelectedTypeahead(ID_GENUS_NAME_PROP)}
+                      selected={idGenusSelected}
                       onChange={(selected) => this.handleChangeGenusTypeahead(
                         selected, ID_GENUS_NAME_PROP,
                       )}
@@ -815,13 +817,11 @@ class SpeciesRecord extends Component {
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
                     <AsyncTypeahead
-                      id={`${ID_ACCEPTED_NAME_PROP}-autocomplete`}
+                      id="id-accepted-name-autocomplete"
                       isLoading={isLoading}
                       options={listOfSpecies}
                       onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                      selected={this.getSelectedTypeahead(
-                        ID_ACCEPTED_NAME_PROP,
-                      )}
+                      selected={idAcceptedNameSelected}
                       onChange={(selected) => this.handleChangeTypeaheadSingle(
                         selected, ID_ACCEPTED_NAME_PROP,
                       )}
@@ -836,13 +836,11 @@ class SpeciesRecord extends Component {
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
                     <AsyncTypeahead
-                      id={`${ID_BASIONYM_NAME_PROP}-autocomplete`}
+                      id="id-basionym-autocomplete"
                       isLoading={isLoading}
                       options={listOfSpecies}
                       onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                      selected={this.getSelectedTypeahead(
-                        ID_BASIONYM_NAME_PROP,
-                      )}
+                      selected={idBasionymSelected}
                       onChange={(selected) => this.handleChangeTypeaheadSingle(
                         selected, ID_BASIONYM_NAME_PROP,
                       )}
@@ -857,13 +855,11 @@ class SpeciesRecord extends Component {
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
                     <AsyncTypeahead
-                      id={`${ID_REPLACED_NAME_PROP}-autocomplete`}
+                      id="id-replaced-autocomplete"
                       isLoading={isLoading}
                       options={listOfSpecies}
                       onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                      selected={this.getSelectedTypeahead(
-                        ID_REPLACED_NAME_PROP,
-                      )}
+                      selected={idReplacedSelected}
                       onChange={(selected) => this.handleChangeTypeaheadSingle(
                         selected, ID_REPLACED_NAME_PROP,
                       )}
@@ -878,13 +874,11 @@ class SpeciesRecord extends Component {
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
                     <AsyncTypeahead
-                      id={`${ID_NOMEN_NOVUM_NAME_PROP}-autocomplete`}
+                      id="id-nomen-novum-autocomplet"
                       isLoading={isLoading}
                       options={listOfSpecies}
                       onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                      selected={this.getSelectedTypeahead(
-                        ID_NOMEN_NOVUM_NAME_PROP,
-                      )}
+                      selected={idNomenNovumSelected}
                       onChange={(selected) => this.handleChangeTypeaheadSingle(
                         selected, ID_NOMEN_NOVUM_NAME_PROP,
                       )}
