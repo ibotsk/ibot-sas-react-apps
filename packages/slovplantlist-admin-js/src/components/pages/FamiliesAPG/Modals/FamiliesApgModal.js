@@ -97,7 +97,9 @@ class FamiliesApgModal extends Component {
 
   render() {
     const { show, id } = this.props;
-    const { name, vernacular, checkedTimestamp, checkedBy } = this.state;
+    const {
+      name, vernacular, checkedTimestamp, checkedBy,
+    } = this.state;
     return (
       <Modal show={show} onHide={this.handleHide} onEnter={this.onEnter}>
         <Modal.Header closeButton>
@@ -177,6 +179,9 @@ FamiliesApgModal.propTypes = {
   show: PropTypes.bool.isRequired,
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   accessToken: PropTypes.string.isRequired,
+  user: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+  }).isRequired,
   onHide: PropTypes.func.isRequired,
 };
 

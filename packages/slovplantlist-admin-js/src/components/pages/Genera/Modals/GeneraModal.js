@@ -239,7 +239,7 @@ const GeneraModal = ({
       checkedTimestamp: format.timestampISO(),
       checkedBy: username,
     });
-  }
+  };
 
   const {
     ntype, name, authors, vernacular, checkedTimestamp, checkedBy,

@@ -504,7 +504,6 @@ class SpeciesRecord extends Component {
   }
 
   render() {
-    console.log(this.state);
     const {
       isLoading,
       familyApg, family, genera, record,
@@ -1112,6 +1111,9 @@ export default connect(mapStateToProps)(SpeciesRecord);
 
 SpeciesRecord.propTypes = {
   accessToken: PropTypes.string.isRequired,
+  user: PropTypes.shape({
+    username: PropTypes.string.isRequired,
+  }).isRequired,
   recordId: PropTypes.string,
 };
 

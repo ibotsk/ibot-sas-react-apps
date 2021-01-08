@@ -58,11 +58,11 @@ const columns = (isAuthor) => [
   {
     dataField: 'checkedTimestamp',
     text: 'Checked',
-    formatter: (cell) => cell ? (
+    formatter: (cell) => (cell ? (
       <Glyphicon glyph="ok" className="green" />
     ) : (
       <Glyphicon glyph="remove" className="red" />
-    ),
+    )),
     align: 'center',
   },
   {
