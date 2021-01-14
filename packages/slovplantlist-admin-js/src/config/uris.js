@@ -5,6 +5,7 @@ export default {
   nomenclaturesUri: {
     baseUri: `${backendBase}/api/nomenclatures?access_token=<%accessToken%>`,
     getAllWOrderUri: `${backendBase}/api/nomenclatures?access_token=<%accessToken%>&filter={"order":["genus","species","subsp","var","subvar","forma","authors","id"]}`,
+    getAllWFilterUri: `${backendBase}/api/nomenclatures?filter={"where":<%&where%>}&access_token=<%accessToken%>`,
     getAllBySearchTermUri: `${backendBase}/api/nomenclatures?access_token=<%accessToken%>&filter={"where":{
     "or":[
       {"genus":{"like":"%25<%term%>%25"}},

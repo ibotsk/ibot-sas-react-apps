@@ -1,5 +1,6 @@
 import { getRequest, putRequest } from '@ibot/client';
 
+import { where as whereUtils } from '@ibot/utils';
 import { helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
 
@@ -71,6 +72,22 @@ async function getAllSpeciesBySearchTerm(
     return listOfSpeciess;
   }
   return listOfSpeciess.map(format);
+}
+
+async function getSpeciesByAll(data, accessToken, formatFound = undefined) {
+  const where = JSON.stringify(whereUtils.whereDataAll(data));
+  const species = await getRequest(
+    nomenclaturesUri.getAllWFilterUri, { where }, accessToken,
+  );
+
+  let found = species;
+  if (formatFound) {
+    found = formatFound(found);
+  }
+  return {
+    term: data,
+    found,
+  };
 }
 
 async function getSynonyms(id, accessToken) {
@@ -160,6 +177,7 @@ export default {
   getSpeciesById,
   getAllSpecies,
   getAllSpeciesBySearchTerm,
+  getSpeciesByAll,
   getSynonyms,
   getBasionymsFor,
   saveSpeciesAndSynonyms,
