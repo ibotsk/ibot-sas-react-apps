@@ -20,4 +20,7 @@ export default {
     italic: 'italic',
     plain: 'plain',
   },
+  import: {
+    delimiter: ';',
+  },
 };
