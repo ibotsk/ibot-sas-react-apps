@@ -10,7 +10,6 @@ import Genera from 'components/pages/Genera/Genera';
 import FamiliesAPG from 'components/pages/FamiliesAPG/FamiliesAPG';
 import Families from 'components/pages/Families/Families';
 
-
 import PrivateRoute from 'components/wrappers/PrivateRoute';
 
 import Footer from './Footer';

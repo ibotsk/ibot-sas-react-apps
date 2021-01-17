@@ -22,8 +22,8 @@ import PlainListOfSpeciesNames from
 
 import { speciesFacade, genusFacade } from 'facades';
 
-import { format } from '@ibot/utils';
-import { notifications, helperUtils, sorterUtils } from 'utils';
+import { format, species as speciesUtils } from '@ibot/utils';
+import { notifications, sorterUtils } from 'utils';
 import config from 'config/config';
 
 import 'styles/custom.css';
@@ -249,7 +249,7 @@ class SpeciesRecord extends Component {
     return speciesFacade.getAllSpeciesBySearchTerm(
       query, accessToken, (l) => ({
         id: l.id,
-        label: helperUtils.listOfSpeciesString(l),
+        label: speciesUtils.listOfSpeciesString(l),
       }),
     );
   };

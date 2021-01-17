@@ -4,6 +4,9 @@ import {
   Panel,
 } from 'react-bootstrap';
 
+import PropTypes from 'prop-types';
+import SpeciesType from 'components/propTypes/species';
+
 const ErrorsReport = ({ data }) => {
   const errorsArray = data.filter(({ errors }) => (
     errors && errors.length > 0
@@ -22,7 +25,7 @@ const ErrorsReport = ({ data }) => {
               <b>{rowId}</b>
               :
               <ul>
-              {errors.map(({ reason }, i) => <li key={i}>{reason}</li>)}
+                {errors.map(({ reason }, i) => <li key={i}>{reason}</li>)}
               </ul>
             </li>
           ))}
@@ -33,7 +36,6 @@ const ErrorsReport = ({ data }) => {
 };
 
 const ImportReport = ({ data }) => {
-  console.log(data);
   const newRecords = data.filter(({ operation }) => (
     operation === 'create'
   )).length;
@@ -80,3 +82,19 @@ const ImportReport = ({ data }) => {
 };
 
 export default ImportReport;
+
+ImportReport.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    operation: PropTypes.string.isRequired,
+    species: SpeciesType.type.isRequired,
+  })).isRequired,
+};
+
+ErrorsReport.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    rowId: PropTypes.number.isRequired,
+    errors: PropTypes.arrayOf(PropTypes.shape({
+      reason: PropTypes.string.isRequired,
+    })),
+  })).isRequired,
+};

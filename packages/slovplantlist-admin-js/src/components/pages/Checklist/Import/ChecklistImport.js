@@ -8,10 +8,10 @@ import { notifications } from 'utils';
 
 import { CSVReader } from 'react-papaparse';
 
-import ImportReport from './ImportReport';
-
 import { importFacade } from 'facades';
 import importConfig from 'config/import';
+
+import ImportReport from './ImportReport';
 
 const { columns } = importConfig;
 
@@ -24,10 +24,6 @@ const ChecklistImport = () => {
   const accessToken = useSelector((state) => state.authentication.accessToken);
 
   const increase = (i, total) => {
-    // let newValue = Math.floor((i * 100) / total);
-    // if (newValue > 100) {
-    //   newValue = 100;
-    // }
     if (!dataToSaveTotal) {
       setDataToSaveTotal(total);
     }
@@ -41,7 +37,7 @@ const ChecklistImport = () => {
     );
     setDataToSave(preparedData);
     setIsLoadingUpload(false);
-  }
+  };
 
   const handleImportRecords = async () => {
     try {
@@ -54,15 +50,19 @@ const ChecklistImport = () => {
   };
 
   const dataToSavePercent = () => {
-    let percent = Math.floor((dataToSaveCounter * 100) / dataToSaveTotal);
+    const percent = Math.floor((dataToSaveCounter * 100) / dataToSaveTotal);
     if (percent > 100) {
       return 100;
     }
     return percent;
-  }
+  };
 
   return (
     <Grid>
+      <h2>Import checklist</h2>
+      <p className="text-warning">
+        Please use with caution!
+      </p>
       <CSVReader
         onFileLoad={handleFileLoad}
         config={{
@@ -84,7 +84,6 @@ const ChecklistImport = () => {
                 </h4>
                 <ProgressBar
                   now={dataToSavePercent()}
-                  // label={`${dataToSaveCounter}%`}
                   label={`${dataToSaveCounter} / ${dataToSaveTotal}`}
                 />
               </Panel.Body>
@@ -92,7 +91,11 @@ const ChecklistImport = () => {
             { dataToSave.length > 0 && (
               <Panel>
                 <Panel.Body>
-                  <h4>{dataToSaveTotal} records ready for import</h4>
+                  <h4>
+                    {dataToSaveTotal}
+                    {' '}
+                    records ready for import
+                  </h4>
                   <ImportReport data={dataToSave} />
                   <div>
                     <Button
@@ -100,7 +103,7 @@ const ChecklistImport = () => {
                       onClick={handleImportRecords}
                     >
                       Import
-                </Button>
+                    </Button>
                   </div>
                 </Panel.Body>
               </Panel>
@@ -109,7 +112,7 @@ const ChecklistImport = () => {
           </>
         )
       }
-    </ Grid >
+    </Grid>
   );
 };
 

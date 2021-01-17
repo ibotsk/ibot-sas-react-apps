@@ -49,6 +49,7 @@ const columns = (isAuthor) => [
   {
     dataField: 'id',
     text: 'ID',
+    filter: textFilter(),
     sort: true,
   },
   {
@@ -86,13 +87,13 @@ const columns = (isAuthor) => [
   {
     dataField: listOfSpeciesColumn,
     text: 'Name',
-    filter: textFilter({ caseSensitive: true }),
+    filter: textFilter(),
     sort: true,
   },
   {
     dataField: 'publication',
     text: 'Publication',
-    filter: textFilter({ caseSensitive: true }),
+    filter: textFilter(),
     sort: true,
   },
   {
