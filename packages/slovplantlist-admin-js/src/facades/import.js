@@ -2,23 +2,67 @@ import {
   misc,
 } from '@ibot/utils';
 
-import speciesFacade from './species';
-import genusFacade from './genus';
-
 import config from 'config/config';
 
+import common from './common/common';
+import genusFacade from './genus';
+import speciesFacade from './species';
+import synonymsFacade from './synonyms';
+
 const {
-  mappings: { losType },
+  mappings: { losType, synonym: synonymTypes },
+  uris: { nomenclaturesUri, synonymsUri },
 } = config;
 
+/**
+ * Pushes a synonym entity to the synonymsOfParent and deletes all existing synonyms
+ * of the species, because it itself has become a synonym.
+ * @param {{ id:number, ntype:string, idAcceptedName:number, syntype:string }} species
+ * @param {array} synonymsOfParent
+ * @param {string} accessToken
+ */
+const processSynonym = async (species, synonymsOfParent, accessToken) => {
+  const { id, idAcceptedName, syntype } = species;
+
+  // collect synonyms of the same accepted name
+  const syntypeCurated = syntype === 'R'
+    ? synonymTypes.parent.numType : syntype;
+
+  synonymsOfParent.push(
+    common.createSynonym(idAcceptedName, id, syntypeCurated),
+  );
+  // delete all possibly existing synonyms of this synonym
+  await synonymsFacade.deleteSynonymsByIdParent(id, accessToken);
+
+  return synonymsOfParent;
+};
+
+/**
+ * Saves synonyms in the synonymsByParent. All synonyms are expected to have
+ * same idParent.
+ * Returns empty array.
+ * @param {object} synonymsByParent map of idAcceptedName to array of its synonyms
+ * @param {string} accessToken
+ */
+const processSynonymsOfParents = async (synonymsByParent, accessToken) => {
+  const promises = Object.keys(synonymsByParent).map((idParent) => (
+    common.submitSynonyms(idParent, synonymsByParent[idParent], {
+      getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
+      deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
+      updateSynonymsUri: synonymsUri.baseUri,
+    }, accessToken)
+  ));
+  return Promise.all(promises);
+};
+
 async function importChecklistPrepare(
-  data, accessToken, onIncreaseCounter = (i, total) => {},
+  data, accessToken, onIncreaseCounter = () => { },
 ) {
   // report gathers info
   const dataToImport = [];
 
   let currentAccNameRowId; // holds rowId for its synonym to use (rows with synonyms follow immediately after their accepted name)
-  let rowId = 0;
+  let rowId = 2;
   for (const row of data) {
     const { syntype, ntype, ...nomen } = row;
     // check for exact match on all provided fields in row, except ntype and syntype
@@ -64,12 +108,12 @@ async function importChecklistPrepare(
       if (!currentAccNameRowId) {
         errors.push({
           reason: 'No accepted name for synonym',
-        })
+        });
       }
     }
 
     dataToImport.push({
-      rowId: rowId + 2, // in excel/csv 0 does not exist, 1 is heading 
+      rowId, // in excel/csv 0 does not exist, 1 is heading
       species: speciesForImport,
       acceptedNameRowId,
       operation,
@@ -80,7 +124,7 @@ async function importChecklistPrepare(
       currentAccNameRowId = rowId;
     }
 
-    onIncreaseCounter(rowId + 1, data.length);
+    onIncreaseCounter(rowId - 1, data.length);
     rowId += 1;
   }
 
@@ -89,26 +133,40 @@ async function importChecklistPrepare(
 
 async function importChecklist(data, accessToken) {
   const acceptedNamesIds = {}; // key = accepted name rowId, value = accepted name id
+  const synonymsByParent = {}; // synonym entities by accepted name id
+
   for (const row of data) {
     const { species, rowId, acceptedNameRowId } = row;
 
     if (acceptedNameRowId) {
-      // only synonyms should have this prop not empty
+      // S: only synonyms should have this prop not empty
+      // idAcceptedName must be set before saving
       species.idAcceptedName = acceptedNamesIds[acceptedNameRowId];
     }
 
-    console.log(acceptedNamesIds);
-    console.log({ species });
-    const { data } = await speciesFacade.saveSpecies(species, accessToken);
-    const { id } = data;
+    const { data: savedData } = await speciesFacade.saveSpecies(
+      species, accessToken,
+    );
+    const { id, ntype, idAcceptedName } = savedData;
 
-    if (species.ntype === losType.A.key)  {
+    if (ntype === losType.A.key) {
       // store id of the accepted name
       acceptedNamesIds[rowId] = id;
+      // initialize synonyms for current accepted name
+      synonymsByParent[id] = [];
     }
 
-    // do synonyms
+    if (ntype === losType.S.key) {
+      synonymsByParent[idAcceptedName] = await processSynonym(
+        savedData, synonymsByParent[idAcceptedName], accessToken,
+      );
+    }
   }
+
+  // check if synonymsOfParent are not empty again, because a synonym can be the last row of import
+  await processSynonymsOfParents(
+    synonymsByParent, accessToken,
+  );
 }
 
 export default {

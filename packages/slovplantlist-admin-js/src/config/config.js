@@ -112,6 +112,10 @@ export default {
         numType: 4,
         prefix: '–',
       },
+      parent: {
+        numType: 9,
+        prefix: '',
+      },
     },
     userRole: {
       admin: {

@@ -97,7 +97,7 @@ async function submitSynonyms(
     getCurrentSynonymsUri,
     deleteSynonymsByIdUri,
     updateSynonymsUri,
-    patchSynonymRefUri,
+    patchSynonymRefUri = undefined, // must have value when isUpdateAcceptedNames is true
   },
   accessToken,
   isUpdateAcceptedNames = false,
@@ -126,7 +126,7 @@ async function submitSynonyms(
   ];
 
   if (isUpdateAcceptedNames) {
-    const patchPromises = await updateAcceptedNameOfSynonyms(
+    const patchPromises = updateAcceptedNameOfSynonyms(
       toBeUpserted, toBeDeleted, patchSynonymRefUri, accessToken,
     );
     promises.push(...patchPromises);

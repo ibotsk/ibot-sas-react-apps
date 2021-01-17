@@ -69,6 +69,7 @@ export default {
   synonymsUri: {
     baseUri: `${backendBase}/api/synonyms?access_token=<%accessToken%>`,
     synonymsByIdUri: `${backendBase}/api/synonyms/<%id%>?access_token=<%accessToken%>`,
+    deleteAllSynonymsWhereUri: `${backendBase}/api/synonyms?access_token=<%accessToken%>&where=<%&where%>`,
   },
   synonymsGeneraUri: {
     baseUri: `${backendBase}/api/synonyms-generas?access_token=<%accessToken%>`,
