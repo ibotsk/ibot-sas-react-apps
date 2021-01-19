@@ -74,10 +74,18 @@ async function getAllSpeciesBySearchTerm(
   return listOfSpeciess.map(format);
 }
 
-async function getSpeciesByAll(data, accessToken, formatFound = undefined) {
-  const where = JSON.stringify(whereUtils.whereDataAll(data));
+async function getSpeciesByAll(
+  data, accessToken, formatFound = undefined,
+  {
+    exclude = undefined,
+    include = undefined,
+  } = {},
+) {
+  const where = whereUtils.whereDataAll(data, exclude, include);
   const species = await getRequest(
-    nomenclaturesUri.getAllWFilterUri, { where }, accessToken,
+    nomenclaturesUri.getAllWFilterUri, {
+      where: JSON.stringify(where),
+    }, accessToken,
   );
 
   let found = species;

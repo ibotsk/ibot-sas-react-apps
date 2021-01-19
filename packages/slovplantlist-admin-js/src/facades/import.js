@@ -3,6 +3,7 @@ import {
 } from '@ibot/utils';
 
 import config from 'config/config';
+import importConfig from 'config/import';
 
 import common from './common/common';
 import genusFacade from './genus';
@@ -13,6 +14,16 @@ const {
   mappings: { losType, synonym: synonymTypes },
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
+const { columns } = importConfig;
+const columnsForGetSpecies = Object.keys(columns)
+  .filter((k) => columns[k].compare === true)
+  .map((k) => columns[k].name);
+
+const cureData = (data) => {
+  const etndata = misc.emptyToNull(data);
+  return misc.replaceNonBreakingSpaces(etndata);
+};
+
 
 /**
  * Pushes a synonym entity to the synonymsOfParent and deletes all existing synonyms
@@ -67,7 +78,9 @@ async function importChecklistPrepare(
     const { syntype, ntype, ...nomen } = row;
     // check for exact match on all provided fields in row, except ntype and syntype
     const { found } = await speciesFacade.getSpeciesByAll(
-      nomen, accessToken,
+      nomen, accessToken, undefined, {
+        include: columnsForGetSpecies,
+      }
     );
 
     let speciesForImport = {};
@@ -75,8 +88,7 @@ async function importChecklistPrepare(
     let operation;
 
     if (!found || found.length === 0) {
-      const etnRow = misc.emptyToNull(nomen);
-      speciesForImport = etnRow;
+      speciesForImport = cureData(nomen);
       operation = 'create';
     } else {
       speciesForImport = found[0];

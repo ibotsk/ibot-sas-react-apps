@@ -1,3 +1,6 @@
+import difference from 'lodash.difference';
+import intersection from 'lodash.intersection';
+
 import {
   WhereBuilder,
   eq, and,
@@ -6,9 +9,18 @@ import {
 /**
  * Creates where equal on every property in data
  * @param {object} data 
+ * @param {array<string>} exclude array of property names to be excluded from data
+ * @param {array<string>} includeOnly array of property names are intersected with keys of data. If empty, no intersection is made.
  */
-function whereDataAll(data) {
-  const andItems = Object.keys(data)
+function whereDataAll(data, exclude = [], includeOnly = []) {
+  const keysWithoutExcluded = difference(Object.keys(data), exclude);
+  let keys = keysWithoutExcluded;
+
+  if (includeOnly.length > 0) {
+    keys = intersection(keysWithoutExcluded, includeOnly);
+  }
+
+  const andItems = keys
     .filter((k) => !!data[k])
     .map((k) => eq(k, data[k]));
 

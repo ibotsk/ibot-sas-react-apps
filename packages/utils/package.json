@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/ibotsk/ibot-sas-react-apps/issues"
   },
-  "dependencies": {}
+  "dependencies": {
+    "lodash.difference": "^4.5.0",
+    "lodash.intersection": "^4.4.0"
+  }
 }

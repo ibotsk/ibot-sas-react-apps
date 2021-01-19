@@ -61,7 +61,6 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
     species, genus,
     subsp, var: varieta, forma,
     authors, publication, tribus,
-
   } = nomenclature;
 
   let isAuthorLast = true;
@@ -91,17 +90,24 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
     name.push(plain(authors));
   }
 
-  if (nomenclature.hybrid) {
+  const {
+    genusH, speciesH, subspH, varH, subvarH, formaH,
+    nothosubspH, nothoformaH, authorsH,
+  } = nomenclature;
+  if (
+    genusH || speciesH || subspH || varH || subvarH || formaH
+    || nothosubspH || nothoformaH || authorsH
+  ) {
     const h = {
-      genus: nomenclature.genusH,
-      species: nomenclature.speciesH,
-      subsp: nomenclature.subspH,
-      var: nomenclature.varH,
-      subvar: nomenclature.subvarH,
-      forma: nomenclature.formaH,
-      nothosubsp: nomenclature.nothosubspH,
-      nothoforma: nomenclature.nothoformaH,
-      authors: nomenclature.authorsH,
+      genus: genusH,
+      species: speciesH,
+      subsp: subspH,
+      var: varH,
+      subvar: subvarH,
+      forma: formaH,
+      nothosubsp: nothosubspH,
+      nothoforma: nothoformaH,
+      authors: authorsH,
     };
     name.push(plain(configName.hybrid));
     name = name.concat(listOfSpeciesFormat(h));
