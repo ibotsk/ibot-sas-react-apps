@@ -1,5 +1,5 @@
 import {
-  misc,
+  misc, species as speciesUtils,
 } from '@ibot/utils';
 
 import config from 'config/config';
@@ -24,6 +24,13 @@ const cureData = (data) => {
   return misc.replaceNonBreakingSpaces(etndata);
 };
 
+const checkForDuplicateRows = (species, referenceList = []) => {
+  const duplicates = referenceList.filter(({ species: s}) => (
+    speciesUtils.areEqualSpecies(species, s, columnsForGetSpecies)
+  )).map(({ rowId }) => rowId);
+
+  return duplicates;
+}
 
 /**
  * Pushes a synonym entity to the synonymsOfParent and deletes all existing synonyms
@@ -76,19 +83,23 @@ async function importChecklistPrepare(
   let rowId = 2;
   for (const row of data) {
     const { syntype, ntype, ...nomen } = row;
-    // check for exact match on all provided fields in row, except ntype and syntype
-    const { found } = await speciesFacade.getSpeciesByAll(
-      nomen, accessToken, undefined, {
-        include: columnsForGetSpecies,
-      }
-    );
+    const curedNomen = cureData(nomen);
 
     let speciesForImport = {};
     const errors = [];
     let operation;
 
+    const duplicates = checkForDuplicateRows(curedNomen, dataToImport);
+
+    // check for exact match on all provided fields in row, except ntype and syntype
+    const { found } = await speciesFacade.getSpeciesByAll(
+      curedNomen, accessToken, undefined, {
+        include: columnsForGetSpecies,
+      }
+    );
+
     if (!found || found.length === 0) {
-      speciesForImport = cureData(nomen);
+      speciesForImport = curedNomen;
       operation = 'create';
     } else {
       speciesForImport = found[0];
@@ -100,7 +111,7 @@ async function importChecklistPrepare(
     speciesForImport.ntype = newNtype;
 
     // get idGenus by name, if not found, add it to report
-    const { genus: genusName } = nomen;
+    const { genus: genusName } = curedNomen;
     const foundGeneraArray = await genusFacade.getAllGeneraBySearchTerm(
       genusName, accessToken,
     );
@@ -130,6 +141,7 @@ async function importChecklistPrepare(
       acceptedNameRowId,
       operation,
       errors,
+      duplicates,
     });
     // update accepted name row id
     if (newNtype === losType.A.key) {
@@ -148,7 +160,12 @@ async function importChecklist(data, accessToken) {
   const synonymsByParent = {}; // synonym entities by accepted name id
 
   for (const row of data) {
-    const { species, rowId, acceptedNameRowId } = row;
+    const { species, rowId, acceptedNameRowId, duplicates } = row;
+
+    if (duplicates && duplicates.length > 0) {
+      // skip duplicate row
+      continue;
+    }
 
     if (acceptedNameRowId) {
       // S: only synonyms should have this prop not empty
@@ -175,7 +192,6 @@ async function importChecklist(data, accessToken) {
     }
   }
 
-  // check if synonymsOfParent are not empty again, because a synonym can be the last row of import
   await processSynonymsOfParents(
     synonymsByParent, accessToken,
   );

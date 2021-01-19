@@ -14,7 +14,12 @@ export default {
         proles: "'prol'",
         unranked: '[unranked]',
       },
-    }
+    },
+    parts: [ // default basic parts of a species name
+      'genus', 'species', 'subsp', 'var', 'subvar', 'forma', 'authors',
+      'genusH', 'speciesH', 'subspH', 'subvarH', 'formaH', 'nothosubspH',
+      'nothoformaH', 'authorsH',
+    ],
   },
   format: {
     italic: 'italic',

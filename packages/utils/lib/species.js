@@ -1,9 +1,13 @@
-import { italic, plain, makeFormat } from './common';
+import isEqual from 'lodash.isequal';
+import pick from 'lodash.pick';
+
+import { italic, plain } from './common';
 import config from '../config';
 
 const {
   species: {
     name: configName,
+    parts: configNameParts,
   },
 } = config;
 
@@ -130,7 +134,22 @@ function listOfSpeciesString(name) {
   return nameArr.map(({ string }) => string).join(' ');
 }
 
+/**
+ * Creates equality 
+ * @param {object} a 
+ * @param {object} b 
+ * @param {array} properties overrides default properties
+ */
+function areEqualSpecies(a, b, properties = undefined) {
+  const keys = properties || configNameParts;
+  const aPicked = pick(a, keys);
+  const bPicked = pick(b, keys);
+  console.log('Comparing %o, %o', aPicked, bPicked);
+  return isEqual(aPicked, bPicked);
+};
+
 export default {
   listOfSpeciesFormat,
   listOfSpeciesString,
+  areEqualSpecies,
 };
