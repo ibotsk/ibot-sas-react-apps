@@ -84,6 +84,7 @@ const ChecklistImport = () => {
           transformHeader: (_, i) => (
             columns[i].name
           ),
+          skipEmptyLines: true,
         }}
       >
         <span>Click to upload</span>

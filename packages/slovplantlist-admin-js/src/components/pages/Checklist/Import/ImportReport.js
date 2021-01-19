@@ -1,11 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
-  Panel,
+  Button, Panel, Modal,
 } from 'react-bootstrap';
 
 import PropTypes from 'prop-types';
 import SpeciesType from 'components/propTypes/species';
+
+import { LosName } from '@ibot/components';
+
+const TITLE_NEW_RECORDS = 'New records';
+const TITLE_UPDATED_RECORDS = 'Records to update';
+
+const SpeciesDetailsReportModal = ({ title, data, show, onHide }) => (
+  <Modal show={show} onHide={onHide}>
+    <Modal.Header closeButton>
+      <Modal.Title>
+        {title}
+      </Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+      {data.map((species, i) => (
+        <p key={species.id ? `upd${species.id}` : `cre${i}`}>
+          <LosName data={species} />
+        </p>
+      ))}
+    </Modal.Body>
+  </Modal>
+);
 
 const ErrorsReport = ({ data }) => {
   const errorsArray = data.filter(({ errors }) => (
@@ -36,12 +58,23 @@ const ErrorsReport = ({ data }) => {
 };
 
 const ImportReport = ({ data }) => {
+  const [isDetailModalShowed, setIsDetailModalShowed] = useState(false);
+  const [detailModalTitle, setDetailModalTitle] = useState('');
+  const [detailModalData, setDetailModalData] = useState([]);
+
+  const handleShowDetailsModal = (title, data) => {
+    const speciesData = data.map(({ species }) => species);
+    setDetailModalData(speciesData);
+    setDetailModalTitle(title);
+    setIsDetailModalShowed(true);
+  };
+
   const newRecords = data.filter(({ operation }) => (
     operation === 'create'
-  )).length;
+  ));
   const updateRecords = data.filter(({ operation }) => (
     operation === 'update'
-  )).length;
+  ));
   const acceptedNames = data.filter(({ species }) => (
     species.ntype === 'A'
   )).length;
@@ -50,34 +83,62 @@ const ImportReport = ({ data }) => {
   )).length;
 
   return (
-    <Panel bsStyle="info">
-      <Panel.Heading>
-        <Panel.Title toggle>View details</Panel.Title>
-      </Panel.Heading>
-      <Panel.Body collapsible>
-        <p>
-          New records:
-          {' '}
-          {newRecords}
-        </p>
-        <p>
-          Records to update:
-          {' '}
-          {updateRecords}
-        </p>
-        <p>
-          Accepted names:
-          {' '}
-          {acceptedNames}
-        </p>
-        <p>
-          Synonyms:
-          {' '}
-          {synonyms}
-        </p>
-        <ErrorsReport data={data} />
-      </Panel.Body>
-    </Panel>
+    <>
+      <Panel bsStyle="info">
+        <Panel.Heading>
+          <Panel.Title toggle>View details</Panel.Title>
+        </Panel.Heading>
+        <Panel.Body collapsible>
+          <p>
+            New records:
+            {' '}
+            {newRecords.length}
+            {' '}
+            <Button
+              bsStyle="link"
+              bsSize="xsmall"
+              onClick={() => handleShowDetailsModal(
+                TITLE_NEW_RECORDS, newRecords,
+              )}
+            >
+              Details {'>>'}
+            </Button>
+          </p>
+          <p>
+            Records to update:
+            {' '}
+            {updateRecords.length}
+            {' '}
+            <Button
+              bsStyle="link"
+              bsSize="xsmall"
+              onClick={() => handleShowDetailsModal(
+                TITLE_UPDATED_RECORDS, updateRecords,
+              )}
+            >
+              Details {'>>'}
+            </Button>
+          </p>
+          <p>
+            Accepted names:
+            {' '}
+            {acceptedNames}
+          </p>
+          <p>
+            Synonyms:
+            {' '}
+            {synonyms}
+          </p>
+          <ErrorsReport data={data} />
+        </Panel.Body>
+      </Panel>
+      <SpeciesDetailsReportModal
+        show={isDetailModalShowed}
+        data={detailModalData}
+        title={detailModalTitle}
+        onHide={() => setIsDetailModalShowed(false)}
+      />
+    </>
   );
 };
 
