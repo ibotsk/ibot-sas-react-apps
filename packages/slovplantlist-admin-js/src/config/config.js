@@ -15,7 +15,7 @@ export default {
     insertedMethod: {
       form: 'FORM',
       import: 'IMPORT',
-    }
+    },
   },
   nomenclature: {
     name: {

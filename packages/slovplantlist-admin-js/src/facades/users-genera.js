@@ -1,11 +1,6 @@
-// import { getRequest, putRequest, deleteRequest } from '@ibot/client';
-import { misc as miscUtils } from '@ibot/utils';
-
 import config from 'config/config';
 
-import {
-  getRequest, putRequest, deleteRequest,
-} from './client';
+import { getRequest, putRequest, deleteRequest } from './client';
 
 const {
   uris: { userGeneraUri },

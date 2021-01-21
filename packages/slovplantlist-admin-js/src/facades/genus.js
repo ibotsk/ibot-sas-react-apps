@@ -1,13 +1,8 @@
-// import { getRequest, putRequest, patchRequest } from '@ibot/client';
-import { misc as miscUtils } from '@ibot/utils';
-
 import config from 'config/config';
 import { sorterUtils } from 'utils';
 
 import common from './common/common';
-import {
-  getRequest, putRequest, patchRequest,
-} from './client';
+import { getRequest, putRequest, patchRequest } from './client';
 
 const {
   uris: {

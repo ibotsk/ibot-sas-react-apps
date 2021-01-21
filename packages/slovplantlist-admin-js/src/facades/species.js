@@ -1,15 +1,8 @@
-// import { getRequest, putRequest } from '@ibot/client';
-
-import {
-  where as whereUtils,
-  misc as miscUtils,
-} from '@ibot/utils';
+import { where as whereUtils } from '@ibot/utils';
 import { helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
 
-import {
-  getRequest, putRequest,
-} from './client';
+import { getRequest, putRequest } from './client';
 import common from './common/common';
 
 const {
@@ -92,8 +85,8 @@ async function getSpeciesByAll(
   const where = whereUtils.whereDataAll(data, exclude, include, exact);
   const species = await getRequest(
     nomenclaturesUri.getAllWFilterUri, {
-    where: JSON.stringify(where),
-  }, accessToken,
+      where: JSON.stringify(where),
+    }, accessToken,
   );
 
   let found = species;
@@ -187,7 +180,7 @@ async function saveSpeciesAndSynonyms({
   ];
 
   const { data } = await saveSpecies(
-    species, accessToken, insertedBy, insertedMethod
+    species, accessToken, insertedBy, insertedMethod,
   );
 
   return common.submitSynonyms(data.id, allNewSynonyms, {

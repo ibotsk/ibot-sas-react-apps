@@ -1,10 +1,6 @@
 import differenceWith from 'lodash.differencewith';
 import intersectionWith from 'lodash.intersectionwith';
 
-// import {
-//   getRequest, deleteRequest, putRequest, patchRequest,
-// } from '@ibot/client';
-import { misc as miscUtils } from '@ibot/utils';
 import {
   getRequest, deleteRequest, putRequest, patchRequest,
 } from '../client';

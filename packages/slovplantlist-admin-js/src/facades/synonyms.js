@@ -1,10 +1,7 @@
-// import { deleteRequest } from '@ibot/client';
 import { WhereBuilder, eq } from '@ibot/utils';
 
 import config from 'config/config';
-import {
-  deleteRequest,
-} from './client';
+import { deleteRequest } from './client';
 
 const { uris: { synonymsUri } } = config;
 
