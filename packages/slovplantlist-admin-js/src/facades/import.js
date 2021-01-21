@@ -18,6 +18,7 @@ const {
 const {
   columns,
   constants: {
+    insertedMethod,
     operation: operationConfig,
   },
 } = importConfig;
@@ -176,7 +177,7 @@ async function importChecklistPrepare(
   return dataToImport;
 }
 
-async function importChecklist(data, accessToken) {
+async function importChecklist(data, accessToken, insertedBy = null) {
   const acceptedNamesIds = {}; // key = accepted name rowId, value = accepted name id
   const synonymsByParent = {}; // synonym entities by accepted name id
 
@@ -195,6 +196,9 @@ async function importChecklist(data, accessToken) {
       // idAcceptedName must be set before saving
       species.idAcceptedName = acceptedNamesIds[acceptedNameRowId];
     }
+    // set import as method
+    species.insertedMethod = insertedMethod;
+    species.insertedBy = insertedBy;
 
     const { data: savedData } = await speciesFacade.saveSpecies(
       species, accessToken,

@@ -24,6 +24,7 @@ const ChecklistImport = () => {
   const [isImportButtonClicked, setIsImportButtonClicked] = useState(false);
 
   const accessToken = useSelector((state) => state.authentication.accessToken);
+  const username = useSelector((state) => state.user.username);
 
   const increase = (i, total) => {
     if (!dataToSaveTotal) {
@@ -45,7 +46,7 @@ const ChecklistImport = () => {
     try {
       setIsLoadingImport(true);
       setIsImportButtonClicked(true);
-      await importFacade.importChecklist(dataToSave, accessToken);
+      await importFacade.importChecklist(dataToSave, accessToken, username);
       setIsLoadingImport(false);
       notifications.success('Data successfully imported');
     } catch (e) {

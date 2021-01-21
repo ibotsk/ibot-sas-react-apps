@@ -48,7 +48,7 @@ const columns = [
   {
     dataField: 'species',
     text: 'Name',
-    formatter: (cell) => <LosName data={cell} />,
+    formatter: (cell) => <LosName data={cell} format="italic" />,
   },
   {
     dataField: 'operation',
