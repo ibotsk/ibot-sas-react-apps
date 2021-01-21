@@ -1,4 +1,5 @@
 import { getRequest, putRequest } from '@ibot/client';
+import { misc as miscUtils } from '@ibot/utils';
 
 import config from 'config/config';
 
@@ -31,7 +32,10 @@ async function saveRoleForUser(userId, roleId, accessToken) {
     roleId,
   };
 
-  return putRequest(roleMappingsUri.baseUri, data, undefined, accessToken);
+  return putRequest(
+    roleMappingsUri.baseUri, miscUtils.emptyToNull(data),
+    undefined, accessToken,
+  );
 }
 
 export default {

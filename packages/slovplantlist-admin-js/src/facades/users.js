@@ -1,4 +1,5 @@
 import { getRequest, postRequest } from '@ibot/client';
+import { misc as miscUtils } from '@ibot/utils';
 
 import config from 'config/config';
 
@@ -46,16 +47,20 @@ async function saveUser(data, accessToken) {
       delete user.password;
     }
     await postRequest(
-      usersUri.updateByIdUri, user, { id: user.id }, accessToken,
+      usersUri.updateByIdUri, miscUtils.emptyToNull(user),
+      { id: user.id }, accessToken,
     );
     return user.id;
   }
-  return postRequest(usersUri.baseUri, data, undefined, accessToken);
+  return postRequest(
+    usersUri.baseUri, miscUtils.emptyToNull(data), undefined, accessToken,
+  );
 }
 
 async function login(username, password) {
+  const data = { username, password };
   const response = await postRequest(
-    usersUri.loginUri, { username, password }, undefined, undefined,
+    usersUri.loginUri, miscUtils.emptyToNull(data), undefined, undefined,
   );
   return response.data;
 }

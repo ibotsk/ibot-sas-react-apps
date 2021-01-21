@@ -1,6 +1,9 @@
 import { getRequest, putRequest } from '@ibot/client';
 
-import { where as whereUtils } from '@ibot/utils';
+import {
+  where as whereUtils,
+  misc as miscUtils,
+} from '@ibot/utils';
 import { helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
 
@@ -158,7 +161,8 @@ async function saveSpecies(
     };
   }
   return putRequest(
-    nomenclaturesUri.baseUri, dataToSave, undefined, accessToken,
+    nomenclaturesUri.baseUri, miscUtils.emptyToNull(dataToSave),
+    undefined, accessToken,
   );
 }
 

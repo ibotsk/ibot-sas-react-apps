@@ -1,5 +1,5 @@
 import { getRequest, putRequest } from '@ibot/client';
-import { miscUtils } from 'utils';
+import { misc as miscUtils } from '@ibot/utils';
 
 import config from 'config/config';
 
@@ -22,8 +22,7 @@ async function getAllBySearchTerm(
 // ----------------------------------- //
 
 async function getFamilyByIdCurated(id, accessToken) {
-  const data = await getRequest(familiesUri.getByIdUri, { id }, accessToken);
-  return miscUtils.nullToEmpty(data);
+  return getRequest(familiesUri.getByIdUri, { id }, accessToken);
 }
 
 async function getAllFamilies(accessToken, format = undefined) {
@@ -66,11 +65,15 @@ async function getAllFamiliesApgBySearchTerm(
 }
 
 async function saveFamily(data, accessToken) {
-  return putRequest(familiesUri.baseUri, data, undefined, accessToken);
+  return putRequest(
+    familiesUri.baseUri, miscUtils.emptyToNull(data), undefined, accessToken,
+  );
 }
 
 async function saveFamilyApg(data, accessToken) {
-  return putRequest(familiesApgUri.baseUri, data, undefined, accessToken);
+  return putRequest(
+    familiesApgUri.baseUri, miscUtils.emptyToNull(data), undefined, accessToken,
+  );
 }
 
 export default {
