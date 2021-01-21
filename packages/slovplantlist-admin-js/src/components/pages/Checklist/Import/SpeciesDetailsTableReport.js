@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 import React from 'react';
 
 import { Label } from 'react-bootstrap';
@@ -91,7 +92,7 @@ const expandRow = {
           <>
             <p>Errors:</p>
             <ul>
-              {errors.map((e) => <li>{e.reason}</li>)}
+              {errors.map((e, i) => <li key={i}>{e.reason}</li>)}
             </ul>
           </>
         )}
