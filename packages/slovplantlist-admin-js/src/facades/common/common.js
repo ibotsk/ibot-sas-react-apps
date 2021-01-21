@@ -3,8 +3,7 @@ import intersectionWith from 'lodash.intersectionwith';
 
 import {
   getRequest, deleteRequest, putRequest, patchRequest,
-} from '@ibot/client';
-import { misc as miscUtils } from '@ibot/utils';
+} from '../client';
 
 const synonymComparator = (value, other) => (
   value.idParent === other.idParent
@@ -65,14 +64,14 @@ const updateAcceptedNameOfSynonyms = async (
   const updatePromises = synonymsForUpdate.map(({ idParent, idSynonym }) => {
     const data = { [idPropName]: idParent };
     return patchRequest(
-      patchUri, miscUtils.emptyToNull(data), { id: idSynonym }, accessToken,
+      patchUri, data, { id: idSynonym }, accessToken,
     );
   });
   // set [idPropName] to undefined
   const deletePromises = synonymsForDelete.map(({ idSynonym }) => {
     const data = { [idPropName]: null };
     return patchRequest(
-      patchUri, miscUtils.emptyToNull(data), { id: idSynonym }, accessToken,
+      patchUri, data, { id: idSynonym }, accessToken,
     );
   });
 
@@ -123,7 +122,7 @@ async function submitSynonyms(
   ));
   const upsertPromises = toBeUpserted.map((synonym) => (
     putRequest(
-      updateSynonymsUri, miscUtils.emptyToNull(synonym), {}, accessToken,
+      updateSynonymsUri, synonym, {}, accessToken,
     )
   ));
 
@@ -172,7 +171,7 @@ async function manageAcceptedNameRelations(
     }
     return synonymsToSave.map((s) => (
       putRequest(
-        upsertSynonymsUri, miscUtils.emptyToNull(s), {}, accessToken,
+        upsertSynonymsUri, s, {}, accessToken,
       )
     ));
   }

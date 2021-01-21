@@ -9,6 +9,9 @@ const nonRegularWhitespacesRegexObj = new RegExp(
 );
 
 function emptyToNull(obj) {
+  if (!obj) {
+    return obj;
+  }
   return Object.keys(obj).reduce(
     (prev, curr) => ({
       ...prev,

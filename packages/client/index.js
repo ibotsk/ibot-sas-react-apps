@@ -1,8 +1,1 @@
-export {
-  getRequest,
-  postRequest,
-  putRequest,
-  patchRequest,
-  deleteRequest,
-} from './lib';
-
+export { default } from './lib';

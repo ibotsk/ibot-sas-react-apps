@@ -619,7 +619,12 @@ class SpeciesRecord extends Component {
                     >
                       {
                         Object.keys(ntypesConfig).map((t) => (
-                          <option value={t} key={t}>{ntypesConfig[t].text}</option>
+                          <option
+                            value={t}
+                            key={t}
+                          >
+                            {ntypesConfig[t].text}
+                          </option>
                         ))
                       }
                     </FormControl>

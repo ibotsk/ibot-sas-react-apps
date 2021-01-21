@@ -1,7 +1,6 @@
-import { getRequest, putRequest, deleteRequest } from '@ibot/client';
-import { misc as miscUtils } from '@ibot/utils';
-
 import config from 'config/config';
+
+import { getRequest, putRequest, deleteRequest } from './client';
 
 const {
   uris: { userGeneraUri },
@@ -49,7 +48,7 @@ async function saveUserGenera({
         idGenus: genusId,
       };
       return putRequest(
-        userGeneraUri.baseUri, miscUtils.emptyToNull(data),
+        userGeneraUri.baseUri, data,
         undefined, accessToken,
       );
     });

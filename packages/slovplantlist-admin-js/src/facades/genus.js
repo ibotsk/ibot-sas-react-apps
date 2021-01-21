@@ -1,10 +1,8 @@
-import { getRequest, putRequest, patchRequest } from '@ibot/client';
-import { misc as miscUtils } from '@ibot/utils';
-
 import config from 'config/config';
 import { sorterUtils } from 'utils';
 
 import common from './common/common';
+import { getRequest, putRequest, patchRequest } from './client';
 
 const {
   uris: {
@@ -86,7 +84,7 @@ async function getGenusByIdWithRelations(id, accessToken, format = undefined) {
 
 async function saveGenus(data, accessToken) {
   return putRequest(
-    generaUri.baseUri, miscUtils.emptyToNull(data), undefined, accessToken,
+    generaUri.baseUri, data, undefined, accessToken,
   );
 }
 
@@ -137,7 +135,7 @@ async function patchGenus(id, dataField, newValue, accessToken) {
     [dataField]: newValue,
   };
   return patchRequest(
-    generaUri.byIdUri, miscUtils.emptyToNull(data), { id }, accessToken,
+    generaUri.byIdUri, data, { id }, accessToken,
   );
 }
 
