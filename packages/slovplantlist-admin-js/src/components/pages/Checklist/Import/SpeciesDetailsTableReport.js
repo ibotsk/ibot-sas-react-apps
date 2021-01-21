@@ -30,7 +30,7 @@ const columns = [
   },
   {
     dataField: 'ntype',
-    text: 'Type',
+    text: 'Status',
     formatter: (cell, row) => row.species.ntype,
   },
   {
@@ -92,7 +92,7 @@ const expandRow = {
           <>
             <p>Errors:</p>
             <ul>
-              {errors.map((e, i) => <li key={i}>{e.reason}</li>)}
+              {errors.map((e, i) => <li key={i}>{e.message}</li>)}
             </ul>
           </>
         )}
@@ -128,7 +128,7 @@ SpeciesDetailsTableReport.propTypes = {
     species: SpeciesType.type.isRequired,
     duplicates: PropTypes.arrayOf(PropTypes.number).isRequired,
     errors: PropTypes.arrayOf(PropTypes.shape({
-      reason: PropTypes.string.isRequired,
+      message: PropTypes.string.isRequired,
     })).isRequired,
   })).isRequired,
 };

@@ -11,8 +11,9 @@ import {
  * @param {object} data 
  * @param {array<string>} exclude array of property names to be excluded from data
  * @param {array<string>} includeOnly array of property names are intersected with keys of data. If empty, no intersection is made.
+ * @param {boolean} exact if true, falsy values in data are included in the query
  */
-function whereDataAll(data, exclude = [], includeOnly = []) {
+function whereDataAll(data, exclude = [], includeOnly = [], exact = false) {
   const keysWithoutExcluded = difference(Object.keys(data), exclude);
   let keys = keysWithoutExcluded;
 
@@ -20,9 +21,12 @@ function whereDataAll(data, exclude = [], includeOnly = []) {
     keys = intersection(keysWithoutExcluded, includeOnly);
   }
 
-  const andItems = keys
-    .filter((k) => !!data[k])
-    .map((k) => eq(k, data[k]));
+  let itemKeys = keys;
+  if (!exact) {
+    // false, 0 and empty are allowed
+    itemKeys = keys.filter((k) => data[k] !== null && data[k] !== undefined);
+  }
+  const andItems = itemKeys.map((k) => eq(k, data[k]));
 
   if (andItems.length === 0) {
     return null;

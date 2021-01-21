@@ -102,6 +102,7 @@ async function importChecklistPrepare(
     const { found } = await speciesFacade.getSpeciesByAll(
       curedNomen, accessToken, undefined, {
         include: columnsForGetSpecies,
+        exact: true,
       },
     );
 
@@ -117,6 +118,12 @@ async function importChecklistPrepare(
     if (duplicates.length > 0) {
       operation = operationConfig.duplicate.key;
     }
+    if (ntype !== '' && ntype !== losType.A.key) {
+      errors.push({
+        message: `Invalid value '${ntype}' in column 'status'`,
+        ref: 'ntype',
+      });
+    }
 
     // regardless if species exists, we want to use ntype from imported data
     const newNtype = ntype || losType.S.key; // row with empty ntype is synonym
@@ -129,7 +136,8 @@ async function importChecklistPrepare(
     );
     if (!foundGeneraArray || foundGeneraArray.length === 0) {
       errors.push({
-        reason: `Genus '${genusName}' was not found`,
+        message: `Genus '${genusName}' was not found`,
+        ref: 'idGenus',
       });
     } else {
       speciesForImport.idGenus = foundGeneraArray[0].id;
@@ -142,7 +150,8 @@ async function importChecklistPrepare(
       speciesForImport.syntype = syntype;
       if (!currentAccNameRowId) {
         errors.push({
-          reason: 'No accepted name for synonym',
+          message: 'No accepted name for synonym',
+          ref: 'acceptedNameRowId',
         });
       }
     }

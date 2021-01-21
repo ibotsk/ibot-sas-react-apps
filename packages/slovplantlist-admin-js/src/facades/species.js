@@ -79,9 +79,10 @@ async function getSpeciesByAll(
   {
     exclude = undefined,
     include = undefined,
+    exact = false,
   } = {},
 ) {
-  const where = whereUtils.whereDataAll(data, exclude, include);
+  const where = whereUtils.whereDataAll(data, exclude, include, exact);
   const species = await getRequest(
     nomenclaturesUri.getAllWFilterUri, {
       where: JSON.stringify(where),
