@@ -144,7 +144,6 @@ function areEqualSpecies(a, b, properties = undefined) {
   const keys = properties || configNameParts;
   const aPicked = pick(a, keys);
   const bPicked = pick(b, keys);
-  console.log('Comparing %o, %o', aPicked, bPicked);
   return isEqual(aPicked, bPicked);
 };
 

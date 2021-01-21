@@ -117,6 +117,12 @@ export default {
         prefix: '',
       },
     },
+    synonymBySyntype: {
+      1: 'invalid',
+      2: 'taxonomic',
+      3: 'nomenclatoric',
+      4: 'misidentification',
+    },
     userRole: {
       admin: {
         name: 'admin',

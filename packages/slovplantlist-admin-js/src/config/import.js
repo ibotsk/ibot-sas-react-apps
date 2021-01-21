@@ -77,5 +77,27 @@ export default {
       name: 'aggregate',
     },
   },
-
+  constants: {
+    operation: {
+      create: {
+        key: 'create',
+        text: 'create',
+        colour: 'success',
+      },
+      update: {
+        key: 'update',
+        text: 'update',
+        colour: 'warning',
+      },
+      duplicate: {
+        key: 'duplicate',
+        text: 'duplicate',
+        colour: 'info',
+      }
+    },
+    messages: {
+      duplicates: 'info',
+      errors: 'danger',
+    },
+  },
 };

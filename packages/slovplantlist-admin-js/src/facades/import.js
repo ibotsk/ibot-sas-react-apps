@@ -14,7 +14,13 @@ const {
   mappings: { losType, synonym: synonymTypes },
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
-const { columns } = importConfig;
+const {
+  columns,
+  constants: {
+    operation: operationConfig,
+  },
+} = importConfig;
+
 const columnsForGetSpecies = Object.keys(columns)
   .filter((k) => columns[k].compare === true)
   .map((k) => columns[k].name);
@@ -25,7 +31,7 @@ const cureData = (data) => {
 };
 
 const checkForDuplicateRows = (species, referenceList = []) => {
-  const duplicates = referenceList.filter(({ species: s}) => (
+  const duplicates = referenceList.filter(({ species: s }) => (
     speciesUtils.areEqualSpecies(species, s, columnsForGetSpecies)
   )).map(({ rowId }) => rowId);
 
@@ -94,16 +100,20 @@ async function importChecklistPrepare(
     // check for exact match on all provided fields in row, except ntype and syntype
     const { found } = await speciesFacade.getSpeciesByAll(
       curedNomen, accessToken, undefined, {
-        include: columnsForGetSpecies,
-      }
+      include: columnsForGetSpecies,
+    }
     );
 
     if (!found || found.length === 0) {
       speciesForImport = curedNomen;
-      operation = 'create';
+      operation = operationConfig.create.key;
     } else {
       speciesForImport = found[0];
-      operation = 'update';
+      operation = operationConfig.update.key;
+    }
+
+    if (duplicates.length > 0) {
+      operation = operationConfig.duplicate.key;
     }
 
     // regardless if species exists, we want to use ntype from imported data
