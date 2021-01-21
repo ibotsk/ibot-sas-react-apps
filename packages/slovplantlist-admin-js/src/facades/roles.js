@@ -1,7 +1,11 @@
-import { getRequest, putRequest } from '@ibot/client';
+// import { getRequest, putRequest } from '@ibot/client';
 import { misc as miscUtils } from '@ibot/utils';
 
 import config from 'config/config';
+
+import {
+  getRequest, putRequest,
+} from './client';
 
 const {
   uris: { rolesUri, roleMappingsUri },
@@ -33,7 +37,7 @@ async function saveRoleForUser(userId, roleId, accessToken) {
   };
 
   return putRequest(
-    roleMappingsUri.baseUri, miscUtils.emptyToNull(data),
+    roleMappingsUri.baseUri, data,
     undefined, accessToken,
   );
 }

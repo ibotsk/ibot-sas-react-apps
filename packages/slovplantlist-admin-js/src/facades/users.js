@@ -1,7 +1,11 @@
-import { getRequest, postRequest } from '@ibot/client';
+// import { getRequest, postRequest } from '@ibot/client';
 import { misc as miscUtils } from '@ibot/utils';
 
 import config from 'config/config';
+
+import {
+  getRequest, postRequest,
+} from './client';
 
 const {
   uris: { usersUri },
@@ -47,20 +51,20 @@ async function saveUser(data, accessToken) {
       delete user.password;
     }
     await postRequest(
-      usersUri.updateByIdUri, miscUtils.emptyToNull(user),
+      usersUri.updateByIdUri, user,
       { id: user.id }, accessToken,
     );
     return user.id;
   }
   return postRequest(
-    usersUri.baseUri, miscUtils.emptyToNull(data), undefined, accessToken,
+    usersUri.baseUri, data, undefined, accessToken,
   );
 }
 
 async function login(username, password) {
   const data = { username, password };
   const response = await postRequest(
-    usersUri.loginUri, miscUtils.emptyToNull(data), undefined, undefined,
+    usersUri.loginUri, data, undefined, undefined,
   );
   return response.data;
 }

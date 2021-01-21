@@ -1,4 +1,7 @@
-import { getRequest } from '@ibot/client';
+// import { getRequest } from '@ibot/client';
+import {
+  getRequest,
+} from './client';
 
 async function getAll(
   uri, offset, whereString = '{}', orderString = '["id ASC"]',
