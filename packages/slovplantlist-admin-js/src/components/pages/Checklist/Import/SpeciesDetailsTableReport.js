@@ -3,6 +3,9 @@ import React from 'react';
 import { Label } from 'react-bootstrap';
 import { BootstrapTable, LosName } from '@ibot/components';
 
+import PropTypes from 'prop-types';
+import SpeciesType from 'components/propTypes/species';
+
 import config from 'config/config';
 import importConfig from 'config/import';
 
@@ -22,7 +25,7 @@ const {
 const columns = [
   {
     dataField: 'rowId',
-    text: 'Row'
+    text: 'Row',
   },
   {
     dataField: 'ntype',
@@ -115,3 +118,16 @@ const SpeciesDetailsTableReport = ({ show, data }) => {
 };
 
 export default SpeciesDetailsTableReport;
+
+SpeciesDetailsTableReport.propTypes = {
+  show: PropTypes.bool.isRequired,
+  data: PropTypes.arrayOf(PropTypes.shape({
+    rowId: PropTypes.number.isRequired,
+    operation: PropTypes.string.isRequired,
+    species: SpeciesType.type.isRequired,
+    duplicates: PropTypes.arrayOf(PropTypes.number).isRequired,
+    errors: PropTypes.arrayOf(PropTypes.shape({
+      reason: PropTypes.string.isRequired,
+    })).isRequired,
+  })).isRequired,
+};

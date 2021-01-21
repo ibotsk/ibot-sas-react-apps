@@ -93,7 +93,7 @@ export default {
         key: 'duplicate',
         text: 'duplicate',
         colour: 'info',
-      }
+      },
     },
     messages: {
       duplicates: 'info',

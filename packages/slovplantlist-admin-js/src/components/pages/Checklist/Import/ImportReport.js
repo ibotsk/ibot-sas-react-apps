@@ -24,7 +24,7 @@ const ImportReport = ({ data }) => {
   const synonymsCount = data.filter(({ species }) => (
     species.ntype === 'S'
   )).length;
-  const errors = data.filter(({ errors }) => (
+  const errorsArray = data.filter(({ errors }) => (
     errors && errors.length > 0
   ));
 
@@ -55,10 +55,10 @@ const ImportReport = ({ data }) => {
             {' '}
             {synonymsCount}
           </p>
-          {errors.length > 0 && (
+          {errorsArray.length > 0 && (
             <p className="text-danger">
               There are errors, please review them by
-              clicking 'More details' below
+              clicking &lsquo;More details&rsquo; below
             </p>
           )}
           <Button

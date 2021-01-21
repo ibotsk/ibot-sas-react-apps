@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import {
   misc, species as speciesUtils,
 } from '@ibot/utils';
@@ -36,7 +37,7 @@ const checkForDuplicateRows = (species, referenceList = []) => {
   )).map(({ rowId }) => rowId);
 
   return duplicates;
-}
+};
 
 /**
  * Pushes a synonym entity to the synonymsOfParent and deletes all existing synonyms
@@ -100,15 +101,16 @@ async function importChecklistPrepare(
     // check for exact match on all provided fields in row, except ntype and syntype
     const { found } = await speciesFacade.getSpeciesByAll(
       curedNomen, accessToken, undefined, {
-      include: columnsForGetSpecies,
-    }
+        include: columnsForGetSpecies,
+      },
     );
 
     if (!found || found.length === 0) {
       speciesForImport = curedNomen;
       operation = operationConfig.create.key;
     } else {
-      speciesForImport = found[0];
+      const [firstFound] = found;
+      speciesForImport = firstFound;
       operation = operationConfig.update.key;
     }
 
@@ -170,7 +172,9 @@ async function importChecklist(data, accessToken) {
   const synonymsByParent = {}; // synonym entities by accepted name id
 
   for (const row of data) {
-    const { species, rowId, acceptedNameRowId, duplicates } = row;
+    const {
+      species, rowId, acceptedNameRowId, duplicates,
+    } = row;
 
     if (duplicates && duplicates.length > 0) {
       // skip duplicate row
