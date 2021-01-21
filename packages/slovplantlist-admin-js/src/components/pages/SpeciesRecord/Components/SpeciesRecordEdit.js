@@ -46,7 +46,11 @@ const ID_NOMEN_NOVUM_NAME_PROP = 'idNomenNovum';
 
 const CHECKLIST_LIST_URI = '/checklist';
 
-const ntypes = config.mappings.losType;
+const {
+  mappings: {
+    losType: ntypesConfig,
+  },
+} = config;
 
 const recordInitialValues = {
   authors: '',
@@ -332,7 +336,7 @@ class SpeciesRecord extends Component {
   )
 
   handleCheck = () => {
-    const { user: { username } } = this.props;
+    const { username } = this.props;
     this.setState(({ record }) => ({
       record: {
         ...record,
@@ -344,7 +348,9 @@ class SpeciesRecord extends Component {
 
   submitForm = async (e) => {
     e.preventDefault();
-    const { accessToken } = this.props;
+    const {
+      accessToken, username,
+    } = this.props;
     const {
       record,
       nomenclatoricSynonyms,
@@ -352,6 +358,7 @@ class SpeciesRecord extends Component {
       invalidDesignations,
       misidentifications,
     } = this.state;
+
     try {
       await speciesFacade.saveSpeciesAndSynonyms({
         species: record,
@@ -360,6 +367,7 @@ class SpeciesRecord extends Component {
         invalidDesignations,
         misidentifications,
         accessToken,
+        insertedBy: username,
       });
       notifications.success('Saved');
     } catch (error) {
@@ -521,6 +529,7 @@ class SpeciesRecord extends Component {
       idGenusSelected, idAcceptedNameSelected, idBasionymSelected,
       idNomenNovumSelected, idReplacedSelected,
     } = this.state;
+
     return (
       <div id="species-detail">
         <Grid id="functions-panel">
@@ -609,8 +618,8 @@ class SpeciesRecord extends Component {
                       onChange={this.handleChangeInput}
                     >
                       {
-                        Object.keys(ntypes).map((t) => (
-                          <option value={t} key={t}>{ntypes[t].text}</option>
+                        Object.keys(ntypesConfig).map((t) => (
+                          <option value={t} key={t}>{ntypesConfig[t].text}</option>
                         ))
                       }
                     </FormControl>
@@ -1112,16 +1121,14 @@ class SpeciesRecord extends Component {
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
-  user: state.user,
+  username: state.user.username,
 });
 
 export default connect(mapStateToProps)(SpeciesRecord);
 
 SpeciesRecord.propTypes = {
   accessToken: PropTypes.string.isRequired,
-  user: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-  }).isRequired,
+  username: PropTypes.string.isRequired,
   recordId: PropTypes.string,
 };
 

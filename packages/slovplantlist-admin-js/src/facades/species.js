@@ -7,6 +7,7 @@ import config from 'config/config';
 import common from './common/common';
 
 const {
+  constants: { insertedMethod: insertedMethodConf },
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
 
@@ -85,8 +86,8 @@ async function getSpeciesByAll(
   const where = whereUtils.whereDataAll(data, exclude, include, exact);
   const species = await getRequest(
     nomenclaturesUri.getAllWFilterUri, {
-      where: JSON.stringify(where),
-    }, accessToken,
+    where: JSON.stringify(where),
+  }, accessToken,
   );
 
   let found = species;
@@ -144,8 +145,21 @@ async function getBasionymsFor(id, accessToken) {
   };
 }
 
-async function saveSpecies(data, accessToken) {
-  return putRequest(nomenclaturesUri.baseUri, data, undefined, accessToken);
+async function saveSpecies(
+  data, accessToken, insertedBy, insertedMethod = insertedMethodConf.form,
+) {
+  let dataToSave = data;
+  if (!data.id) {
+    // only create
+    dataToSave = {
+      ...data,
+      insertedBy,
+      insertedMethod,
+    };
+  }
+  return putRequest(
+    nomenclaturesUri.baseUri, dataToSave, undefined, accessToken,
+  );
 }
 
 async function saveSpeciesAndSynonyms({
@@ -155,6 +169,8 @@ async function saveSpeciesAndSynonyms({
   invalidDesignations,
   misidentifications,
   accessToken,
+  insertedBy,
+  insertedMethod = insertedMethodConf.form,
 }) {
   const allNewSynonyms = [
     ...nomenclatoricSynonyms,
@@ -163,14 +179,15 @@ async function saveSpeciesAndSynonyms({
     ...misidentifications,
   ];
 
-  return Promise.all([
-    saveSpecies(species, accessToken),
-    common.submitSynonyms(species.id, allNewSynonyms, {
-      getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
-      deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
-      updateSynonymsUri: synonymsUri.baseUri,
-    }, accessToken),
-  ]);
+  const { data } = await saveSpecies(
+    species, accessToken, insertedBy, insertedMethod
+  );
+
+  return common.submitSynonyms(data.id, allNewSynonyms, {
+    getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
+    deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
+    updateSynonymsUri: synonymsUri.baseUri,
+  }, accessToken);
 }
 
 function createSynonym(idParent, idSynonym, syntype) {

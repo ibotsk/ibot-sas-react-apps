@@ -14,11 +14,11 @@ import synonymsFacade from './synonyms';
 const {
   mappings: { losType, synonym: synonymTypes },
   uris: { nomenclaturesUri, synonymsUri },
+  constants: { insertedMethod },
 } = config;
 const {
   columns,
   constants: {
-    insertedMethod,
     operation: operationConfig,
   },
 } = importConfig;
@@ -196,12 +196,9 @@ async function importChecklist(data, accessToken, insertedBy = null) {
       // idAcceptedName must be set before saving
       species.idAcceptedName = acceptedNamesIds[acceptedNameRowId];
     }
-    // set import as method
-    species.insertedMethod = insertedMethod;
-    species.insertedBy = insertedBy;
 
     const { data: savedData } = await speciesFacade.saveSpecies(
-      species, accessToken,
+      species, accessToken, insertedBy, insertedMethod.import,
     );
     const { id, ntype, idAcceptedName } = savedData;
 

@@ -12,6 +12,10 @@ export default {
     },
     userRealm: 'slovplantlist',
     userPrincipalType: 'user',
+    insertedMethod: {
+      form: 'FORM',
+      import: 'IMPORT',
+    }
   },
   nomenclature: {
     name: {

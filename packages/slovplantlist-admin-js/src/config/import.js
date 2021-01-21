@@ -78,7 +78,6 @@ export default {
     },
   },
   constants: {
-    insertedMethod: 'IMPORT',
     operation: {
       create: {
         key: 'create',
