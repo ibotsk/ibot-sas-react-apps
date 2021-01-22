@@ -1,7 +1,7 @@
 {
-  "name": "@ibot/client",
+  "name": "@ibot/types",
   "version": "0.0.0",
-  "description": "> TODO: description",
+  "description": "Prop types of common data",
   "author": "Matus Kempa <matus.kempa@gmail.com>",
   "homepage": "https://github.com/ibotsk/ibot-sas-react-apps#readme",
   "license": "ISC",
@@ -13,13 +13,13 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
-  "dependencies": {
-    "axios": "^0.21.1",
-    "mustache": "^4.1.0"
+  "peerDependencies": {
+    "prop-types": "^15.6.0"
   },
   "devDependencies": {
     "eslint": "^7.18.0",
     "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1"
+    "eslint-plugin-import": "^2.22.1",
+    "prop-types": "^15.6.2"
   }
 }

@@ -39,7 +39,7 @@ const deleteRequest = (axiosInstance) => (
 
 const addRequestInterceptor = (interceptor) => {
   axios.interceptors.request.use(interceptor, (error) => Promise.reject(error));
-}
+};
 
 // ------------------ //
 

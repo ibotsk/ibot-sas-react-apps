@@ -7,10 +7,10 @@ const { keyState } = config;
 const removeState = () => {
   try {
     localStorage.removeItem(keyState);
-  } catch {
+  } catch (e) {
     // ignore
   }
-}
+};
 
 function handleAxiosError(error) {
   if (!error.response) {
