@@ -60,7 +60,7 @@ class SpeciesNameModal extends Component {
         ...initialValues,
       },
       genera: [],
-      genusSelected: undefined,
+      genusSelected: [],
       familySelected: undefined,
       familyApgSelected: undefined,
     };
@@ -148,7 +148,7 @@ class SpeciesNameModal extends Component {
   handleHide = () => {
     this.setState({
       record: { ...initialValues },
-      genusSelected: undefined,
+      genusSelected: [],
       familySelected: undefined,
       familyApgSelected: undefined,
     });
