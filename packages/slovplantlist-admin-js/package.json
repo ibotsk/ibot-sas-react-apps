@@ -1,6 +1,6 @@
 {
-  "name": "slovplantlist-admin",
-  "version": "0.1.0",
+  "name": "@ibot/slovplantlist-admin",
+  "version": "0.0.0",
   "private": true,
   "dependencies": {
     "@ibot/client": "^0.0.0",

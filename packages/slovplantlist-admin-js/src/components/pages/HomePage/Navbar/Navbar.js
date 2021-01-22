@@ -64,7 +64,9 @@ const CNavbar = ({ user }) => (
         <Navbar.Text pullRight style={{ marginRight: '15px' }}>
           Logged as:
           {' '}
-          <strong>{user.role.toUpperCase()}</strong>
+          <strong>{user.username}</strong>
+          {' '}
+          {`<${user.role.toUpperCase()}>`}
         </Navbar.Text>
       </Navbar.Collapse>
     </Navbar>
