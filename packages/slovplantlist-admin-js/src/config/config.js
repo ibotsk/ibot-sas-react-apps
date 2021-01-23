@@ -13,6 +13,7 @@ export default {
     userRealm: 'slovplantlist',
     userPrincipalType: 'user',
     insertedMethod: {
+      default: 'DEFAULT',
       form: 'FORM',
       import: 'IMPORT',
     },

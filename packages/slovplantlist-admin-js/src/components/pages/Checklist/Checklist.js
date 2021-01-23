@@ -32,7 +32,11 @@ const EDIT_RECORD = '/checklist/edit/';
 const NEW_RECORD = '/checklist/new';
 
 const {
-  constants: { listOfSpeciesColumn, ownership: ownershipColumn },
+  constants: {
+    listOfSpeciesColumn,
+    ownership: ownershipColumn,
+    insertedMethod: insertedMethodConfig,
+  },
   mappings,
 } = config;
 
@@ -41,6 +45,10 @@ const ownershipOptionsAdmin = helperUtils.buildFilterOptionsFromKeys(
   mappings.ownership,
 );
 const { unassigned, others, ...ownershipOptionsAuthor } = ownershipOptionsAdmin;
+const methodOptions = Object.values(insertedMethodConfig).map((v) => ({
+  label: v,
+  value: v,
+}));
 
 const getAllUri = config.uris.nomenclatureOwnersUri.getAllWFilterUri;
 const getCountUri = config.uris.nomenclatureOwnersUri.countUri;
@@ -99,6 +107,30 @@ const columns = (isAuthor) => [
   {
     dataField: 'acceptedName',
     text: 'Accepted name',
+    filter: textFilter(),
+    sort: true,
+  },
+  {
+    dataField: 'createdTimestamp',
+    text: 'Created at',
+  },
+  {
+    dataField: 'updatedTimestamp',
+    text: 'Updated at',
+  },
+  {
+    dataField: 'insertedBy',
+    text: 'Inserted by',
+    filter: textFilter(),
+    sort: true,
+  },
+  {
+    dataField: 'insertedMethod',
+    text: 'Inserted method',
+    filter: selectFilter({
+      options: methodOptions,
+    }),
+    sort: true,
   },
 ];
 
@@ -106,6 +138,84 @@ const defaultSorted = [{
   dataField: 'id',
   order: 'asc',
 }];
+
+const formatResult = (records, user) => records.map(({
+  id, accepted, idGenus, ownerNames, ntype, publication,
+  createdTimestamp, updatedTimestamp, checkedTimestamp,
+  insertedBy, insertedMethod, ...nomen
+}) => ({
+  id,
+  action: (
+    <Can
+      role={user.role}
+      perform="species:edit"
+      data={{
+        speciesGenusId: idGenus,
+        userGeneraIds: user.userGenera,
+      }}
+      yes={() => (
+        <LinkContainer to={`${EDIT_RECORD}${id}`}>
+          <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
+        </LinkContainer>
+      )}
+    />
+  ),
+  [ownershipColumn]: (
+    <Can
+      role={user.role}
+      perform="species:edit"
+      data={{
+        speciesGenusId: idGenus,
+        userGeneraIds: user.userGenera,
+      }}
+      yes={() => (
+        <Ownership role={user.role} isOwner owners={ownerNames} />
+      )}
+      no={() => (
+        <Ownership
+          role={user.role}
+          isOwner={false}
+          owners={ownerNames}
+        />
+      )}
+    />
+  ),
+  ntype,
+  [listOfSpeciesColumn]: (
+    <span>
+      <a href={`${PAGE_DETAIL}${id}`}>
+        <LosName key={id} data={nomen} />
+      </a>
+      <Can
+        role={user.role}
+        perform="species:edit"
+        data={{
+          speciesGenusId: idGenus,
+          userGeneraIds: user.userGenera,
+        }}
+        yes={() => (
+          <small className="pull-right gray-text unselectable">
+            Double click to quick edit
+          </small>
+        )}
+      />
+    </span>
+  ),
+  publication,
+  acceptedName: (
+    <a
+      href={accepted ? `${PAGE_DETAIL}${accepted.id}` : ''}
+    >
+      <LosName key={`acc${id}`} data={accepted} />
+    </a>
+  ),
+  idGenus,
+  createdTimestamp,
+  updatedTimestamp,
+  checkedTimestamp,
+  insertedBy,
+  insertedMethod,
+}));
 
 const Checklist = ({ user, accessToken }) => {
   const {
@@ -133,76 +243,6 @@ const Checklist = ({ user, accessToken }) => {
     },
   };
 
-  const formatResult = (records) => records.map((d) => ({
-    id: d.id,
-    action: (
-      <Can
-        role={user.role}
-        perform="species:edit"
-        data={{
-          speciesGenusId: d.idGenus,
-          userGeneraIds: user.userGenera,
-        }}
-        yes={() => (
-          <LinkContainer to={`${EDIT_RECORD}${d.id}`}>
-            <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
-          </LinkContainer>
-        )}
-      />
-    ),
-    [ownershipColumn]: (
-      <Can
-        role={user.role}
-        perform="species:edit"
-        data={{
-          speciesGenusId: d.idGenus,
-          userGeneraIds: user.userGenera,
-        }}
-        yes={() => (
-          <Ownership role={user.role} isOwner owners={d.ownerNames} />
-        )}
-        no={() => (
-          <Ownership
-            role={user.role}
-            isOwner={false}
-            owners={d.ownerNames}
-          />
-        )}
-      />
-    ),
-    ntype: d.ntype,
-    [listOfSpeciesColumn]: (
-      <span>
-        <a href={`${PAGE_DETAIL}${d.id}`}>
-          <LosName key={d.id} data={d} />
-        </a>
-        <Can
-          role={user.role}
-          perform="species:edit"
-          data={{
-            speciesGenusId: d.idGenus,
-            userGeneraIds: user.userGenera,
-          }}
-          yes={() => (
-            <small className="pull-right gray-text unselectable">
-              Double click to quick edit
-            </small>
-          )}
-        />
-      </span>
-    ),
-    publication: d.publication,
-    acceptedName: (
-      <a
-        href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ''}
-      >
-        <LosName key={`acc${d.id}`} data={d.accepted} />
-      </a>
-    ),
-    idGenus: d.idGenus,
-    checkedTimestamp: d.checkedTimestamp,
-  }));
-
   const onTableChange = (type, {
     page: pageTable,
     sizePerPage: sizePerPageTable,
@@ -220,7 +260,6 @@ const Checklist = ({ user, accessToken }) => {
   );
 
   const paginationOptions = { page, sizePerPage, totalSize };
-
   return (
     <div id="checklist">
       <Grid id="functions-panel">
@@ -273,7 +312,7 @@ const Checklist = ({ user, accessToken }) => {
           condensed
           remote
           keyField="id"
-          data={formatResult(data)}
+          data={formatResult(data, user)}
           columns={columns(user.role === mappings.userRole.author.name)}
           defaultSorted={defaultSorted}
           filter={filterFactory()}
