@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -8,13 +8,17 @@ import {
 import { LinkContainer } from 'react-router-bootstrap';
 
 import filterFactory, {
-  textFilter, multiSelectFilter, selectFilter, Comparator,
+  dateFilter, textFilter, multiSelectFilter, selectFilter,
+  Comparator,
 } from 'react-bootstrap-table2-filter';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
 
-import { LosName } from '@ibot/components';
+import {
+  LosName, SelectTableColumnsModal,
+} from '@ibot/components';
 
 import Can from 'components/segments/auth/Can';
 import Ownership from 'components/segments/auth/Ownership';
@@ -73,6 +77,7 @@ const columns = (isAuthor) => [
       <Glyphicon glyph="remove" className="red" />
     )),
     align: 'center',
+    hidden: false,
   },
   {
     dataField: ownershipColumn,
@@ -82,6 +87,7 @@ const columns = (isAuthor) => [
       defaultValue: ownershipOptionsAdmin.all,
       withoutEmptyOption: true,
     }),
+    hidden: false,
   },
   {
     dataField: 'ntype',
@@ -91,38 +97,49 @@ const columns = (isAuthor) => [
       comparator: Comparator.EQ,
     }),
     sort: true,
+    hidden: false,
   },
   {
     dataField: listOfSpeciesColumn,
     text: 'Name',
     filter: textFilter(),
     sort: true,
+    hidden: false,
   },
   {
     dataField: 'publication',
     text: 'Publication',
     filter: textFilter(),
     sort: true,
+    hidden: false,
   },
   {
     dataField: 'acceptedName',
     text: 'Accepted name',
     filter: textFilter(),
     sort: true,
+    hidden: false,
   },
   {
     dataField: 'createdTimestamp',
     text: 'Created at',
+    filter: dateFilter(),
+    sort: true,
+    hidden: true,
   },
   {
     dataField: 'updatedTimestamp',
     text: 'Updated at',
+    filter: dateFilter(),
+    sort: true,
+    hidden: true,
   },
   {
     dataField: 'insertedBy',
     text: 'Inserted by',
     filter: textFilter(),
     sort: true,
+    hidden: true,
   },
   {
     dataField: 'insertedMethod',
@@ -131,6 +148,7 @@ const columns = (isAuthor) => [
       options: methodOptions,
     }),
     sort: true,
+    hidden: true,
   },
 ];
 
@@ -223,6 +241,11 @@ const Checklist = ({ user, accessToken }) => {
     handleShowModal, handleHideModal,
   } = commonHooks.useModal();
 
+  const [tableColumns, setTableColumns] = useState(
+    columns(user.role === mappings.userRole.author.name),
+  );
+  const [showModalColumns, setShowModalColumns] = useState(false);
+
   const ownerId = user ? user.id : undefined;
   const {
     page, sizePerPage, where, order, setValues,
@@ -241,6 +264,19 @@ const Checklist = ({ user, accessToken }) => {
       }
       return handleShowModal(row.id);
     },
+  };
+
+  const handleColumnToggle = (toggledDataField) => {
+    const newTableColumns = tableColumns.map((val) => {
+      if (val.dataField === toggledDataField) {
+        return {
+          ...val,
+          hidden: !val.hidden,
+        };
+      }
+      return val;
+    });
+    setTableColumns(newTableColumns);
   };
 
   const onTableChange = (type, {
@@ -306,20 +342,52 @@ const Checklist = ({ user, accessToken }) => {
         </div>
       </Grid>
       <Grid fluid>
-        <RemotePagination
-          hover
-          striped
-          condensed
-          remote
+        <hr />
+        <div>
+          <Button
+            bsStyle="primary"
+            onClick={() => setShowModalColumns(true)}
+          >
+            Display columns
+            {' '}
+            <Glyphicon glyph="menu-down" />
+          </Button>
+        </div>
+        <ToolkitProvider
+          columnToggle
           keyField="id"
           data={formatResult(data, user)}
-          columns={columns(user.role === mappings.userRole.author.name)}
-          defaultSorted={defaultSorted}
-          filter={filterFactory()}
-          onTableChange={onTableChange}
-          paginationOptions={paginationOptions}
-          rowEvents={rowEvents}
-        />
+          columns={tableColumns}
+        >
+          {({ baseProps, columnToggleProps }) => (
+            <div>
+              <RemotePagination
+                hover
+                striped
+                condensed
+                remote
+                keyField={baseProps.keyField}
+                data={baseProps.data}
+                columns={baseProps.columns}
+                defaultSorted={defaultSorted}
+                filter={filterFactory()}
+                onTableChange={onTableChange}
+                paginationOptions={paginationOptions}
+                rowEvents={rowEvents}
+                columnToggle={baseProps.columnToggle}
+              />
+              <SelectTableColumnsModal
+                show={showModalColumns}
+                onHide={() => setShowModalColumns(false)}
+                toggleListProps={{
+                  columns: columnToggleProps.columns,
+                  toggles: columnToggleProps.toggles,
+                  onColumnToggle: handleColumnToggle,
+                }}
+              />
+            </div>
+          )}
+        </ToolkitProvider>
       </Grid>
       <SpeciesNameModal
         id={editId}
