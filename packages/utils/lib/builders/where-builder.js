@@ -46,6 +46,18 @@ export const likep = (key, value, encodeURI = true) => (
 export const regexp = (key, value, encodeURI = true) => ({
     [key]: { regexp: resolveEncode(encodeURI, value) },
   });
+export const gt = (key, value, encodeURI = true) => ({
+  [key]: { gt: resolveEncode(encodeURI, value) },
+});
+export const lt = (key, value, encodeURI = true) => ({
+  [key]: { lt: resolveEncode(encodeURI, value) },
+});
+export const gte = (key, value, encodeURI = true) => ({
+  [key]: { gte: resolveEncode(encodeURI, value) },
+});
+export const lte = (key, value, encodeURI = true) => ({
+  [key]: { lte: resolveEncode(encodeURI, value) },
+});
 export const and = (...objs) => ({ and: [...objs] });
 export const or = (...objs) => ({ or: [...objs] });
 export const inq = (key, ...vals) => ({ [key]: { inq: [...vals] } });

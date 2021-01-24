@@ -1,4 +1,5 @@
 import config from 'config/config';
+import { FILTER_TYPES } from 'react-bootstrap-table2-filter';
 
 const { constants } = config;
 
@@ -6,7 +7,7 @@ const makeOwnershipRegexp = (value) => (
   `${constants.ownershipRegexp.start}${value}${constants.ownershipRegexp.end}`
 );
 
-const curateListofspeciesFilter = (filters) => {
+const handleListOfSpeciesFilter = (filters) => {
   const listOfSpeciesKey = config.constants.listOfSpeciesColumn;
   const fields = config.nomenclature.filter[listOfSpeciesKey];
   const curatedFilters = {};
@@ -25,7 +26,7 @@ const curateListofspeciesFilter = (filters) => {
   return curatedFilters;
 };
 
-const curateOwnershipFilter = (filters, ownerId) => {
+const handleOwnershipFilter = (filters, ownerId) => {
   const ownershipKey = config.constants.ownership;
   const ownershipMapping = config.mappings.ownership;
   const filterContent = filters[ownershipKey];
@@ -65,6 +66,28 @@ const curateOwnershipFilter = (filters, ownerId) => {
   return curatedFilter;
 };
 
+const handleDateFilter = (filters) => {
+  const dateFilters = {};
+
+  const dateFilterKeys = Object.keys(filters).filter((k) => (
+    filters[k].filterType === FILTER_TYPES.DATE
+  ));
+  dateFilterKeys.forEach((k) => {
+    const { filterVal: { comparator, date } } = filters[k];
+    let filt;
+    if (comparator && date) {
+      filt = {
+        ...filters[k],
+        comparator,
+        filterVal: new Date(date).toISOString(),
+      };
+    }
+
+    dateFilters[k] = filt;
+  });
+  return dateFilters;
+};
+
 // ---- PUBLIC ---- //
 
 /**
@@ -72,8 +95,7 @@ const curateOwnershipFilter = (filters, ownerId) => {
  * filterVal = [{ field, value }] where field is for every value from the config nad value is original filterVal.
  * @param {*} filters
  */
-function curateSearchFilters(filters, { ownerId } = {}) {
-  let curatedFilters = { ...filters };
+function handleSpecialSearchFilters(filters, { ownerId } = {}) {
   // const keys = Object.keys(curatedFilters);
   // for (const key of keys) { //listofspecies
   //     const fields = config.nomenclature.filter[key]; // genus, species, ...
@@ -87,14 +109,16 @@ function curateSearchFilters(filters, { ownerId } = {}) {
   //         }
   //     }
   // }
-  const listOfSpeciesFilter = curateListofspeciesFilter(curatedFilters);
-  const ownershipFilter = curateOwnershipFilter(curatedFilters, ownerId);
-  curatedFilters = {
-    ...curatedFilters,
+  const listOfSpeciesFilter = handleListOfSpeciesFilter(filters);
+  const ownershipFilter = handleOwnershipFilter(filters, ownerId);
+  const dateFilters = handleDateFilter(filters);
+
+  return {
+    ...filters,
     ...listOfSpeciesFilter,
     ...ownershipFilter,
+    ...dateFilters,
   };
-  return curatedFilters;
 }
 
 function curateSortFields(sortField) {
@@ -106,6 +130,6 @@ function curateSortFields(sortField) {
 }
 
 export default {
-  curateSearchFilters,
+  handleSpecialSearchFilters,
   curateSortFields,
 };
