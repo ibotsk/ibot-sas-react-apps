@@ -358,6 +358,7 @@ class SpeciesNameModal extends Component {
                 </FormControl>
               </Col>
             </FormGroup>
+            <hr />
             <FormGroup bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 <ControlLabel>Family</ControlLabel>
@@ -391,6 +392,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
+            <hr />
             <FormGroup controlId="genus" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Genus text

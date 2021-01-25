@@ -545,16 +545,43 @@ class SpeciesRecord extends Component {
         </Grid>
         <hr />
         <Grid>
-          <h2>
-            Checklist record
-            <small>
-              {id ? <LosName data={record} /> : 'new'}
-            </small>
-          </h2>
+          <h3>
+            {id ? <LosName data={record} /> : 'Create new'}
+          </h3>
+          {id && (
+            <h5>
+              {publication || '-'}
+            </h5>
+          )}
 
           <Form horizontal onSubmit={this.submitForm}>
             <div id="name">
-              <h3>Name</h3>
+              <Well>
+                <FormGroup controlId="ntype" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Type
+                  </Col>
+                  <Col sm={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      componentClass="select"
+                      placeholder="select"
+                      value={ntype}
+                      onChange={this.handleChangeInput}
+                    >
+                      {
+                        Object.keys(ntypesConfig).map((t) => (
+                          <option
+                            value={t}
+                            key={t}
+                          >
+                            {ntypesConfig[t].text}
+                          </option>
+                        ))
+                      }
+                    </FormControl>
+                  </Col>
+                </FormGroup>
+              </Well>
               <Well>
                 <FormGroup bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
@@ -605,31 +632,8 @@ class SpeciesRecord extends Component {
                   </Col>
                 </FormGroup>
               </Well>
+              <h4>Name details</h4>
               <Well>
-                <FormGroup controlId="ntype" bsSize="sm">
-                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Type
-                  </Col>
-                  <Col sm={CONTENT_COL_WIDTH}>
-                    <FormControl
-                      componentClass="select"
-                      placeholder="select"
-                      value={ntype}
-                      onChange={this.handleChangeInput}
-                    >
-                      {
-                        Object.keys(ntypesConfig).map((t) => (
-                          <option
-                            value={t}
-                            key={t}
-                          >
-                            {ntypesConfig[t].text}
-                          </option>
-                        ))
-                      }
-                    </FormControl>
-                  </Col>
-                </FormGroup>
                 <FormGroup controlId="genus" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Genus (text)
@@ -837,7 +841,7 @@ class SpeciesRecord extends Component {
               </Well>
             </div>
             <div id="associations">
-              <h3>Associations</h3>
+              <h4>Associations</h4>
               <Well>
                 <FormGroup controlId={ID_ACCEPTED_NAME_PROP} bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
@@ -918,7 +922,7 @@ class SpeciesRecord extends Component {
               </Well>
             </div>
             <div id="synonyms">
-              <h3>Synonyms</h3>
+              <h4>Synonyms</h4>
               <Well>
                 <FormGroup controlId="nomenclatoric-synonyms" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
@@ -1062,7 +1066,7 @@ class SpeciesRecord extends Component {
               </Well>
             </div>
             <div id="associations-inherited">
-              <h3>Inherited associations</h3>
+              <h4>Inherited associations</h4>
               <Well>
                 <FormGroup controlId="idBasionymFor" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
