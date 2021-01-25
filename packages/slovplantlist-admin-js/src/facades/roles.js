@@ -1,6 +1,6 @@
-import { getRequest, putRequest } from '@ibot/client';
-
 import config from 'config/config';
+
+import { getRequest, putRequest } from './client';
 
 const {
   uris: { rolesUri, roleMappingsUri },
@@ -31,7 +31,10 @@ async function saveRoleForUser(userId, roleId, accessToken) {
     roleId,
   };
 
-  return putRequest(roleMappingsUri.baseUri, data, undefined, accessToken);
+  return putRequest(
+    roleMappingsUri.baseUri, data,
+    undefined, accessToken,
+  );
 }
 
 export default {

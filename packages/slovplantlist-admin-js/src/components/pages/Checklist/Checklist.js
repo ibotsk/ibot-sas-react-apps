@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -8,13 +8,17 @@ import {
 import { LinkContainer } from 'react-router-bootstrap';
 
 import filterFactory, {
-  textFilter, multiSelectFilter, selectFilter, Comparator,
+  dateFilter, textFilter, multiSelectFilter, selectFilter,
+  Comparator,
 } from 'react-bootstrap-table2-filter';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit';
 
 import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
 
-import { LosName } from '@ibot/components';
+import {
+  LosName, SelectTableColumnsModal,
+} from '@ibot/components';
 
 import Can from 'components/segments/auth/Can';
 import Ownership from 'components/segments/auth/Ownership';
@@ -32,7 +36,11 @@ const EDIT_RECORD = '/checklist/edit/';
 const NEW_RECORD = '/checklist/new';
 
 const {
-  constants: { listOfSpeciesColumn, ownership: ownershipColumn },
+  constants: {
+    listOfSpeciesColumn,
+    ownership: ownershipColumn,
+    insertedMethod: insertedMethodConfig,
+  },
   mappings,
 } = config;
 
@@ -41,6 +49,10 @@ const ownershipOptionsAdmin = helperUtils.buildFilterOptionsFromKeys(
   mappings.ownership,
 );
 const { unassigned, others, ...ownershipOptionsAuthor } = ownershipOptionsAdmin;
+const methodOptions = Object.values(insertedMethodConfig).map((v) => ({
+  label: v,
+  value: v,
+}));
 
 const getAllUri = config.uris.nomenclatureOwnersUri.getAllWFilterUri;
 const getCountUri = config.uris.nomenclatureOwnersUri.countUri;
@@ -49,6 +61,7 @@ const columns = (isAuthor) => [
   {
     dataField: 'id',
     text: 'ID',
+    filter: textFilter(),
     sort: true,
   },
   {
@@ -64,6 +77,7 @@ const columns = (isAuthor) => [
       <Glyphicon glyph="remove" className="red" />
     )),
     align: 'center',
+    hidden: false,
   },
   {
     dataField: ownershipColumn,
@@ -73,6 +87,7 @@ const columns = (isAuthor) => [
       defaultValue: ownershipOptionsAdmin.all,
       withoutEmptyOption: true,
     }),
+    hidden: false,
   },
   {
     dataField: 'ntype',
@@ -82,22 +97,58 @@ const columns = (isAuthor) => [
       comparator: Comparator.EQ,
     }),
     sort: true,
+    hidden: false,
   },
   {
     dataField: listOfSpeciesColumn,
     text: 'Name',
-    filter: textFilter({ caseSensitive: true }),
+    filter: textFilter(),
     sort: true,
+    hidden: false,
   },
   {
     dataField: 'publication',
     text: 'Publication',
-    filter: textFilter({ caseSensitive: true }),
+    filter: textFilter(),
     sort: true,
+    hidden: false,
   },
   {
     dataField: 'acceptedName',
     text: 'Accepted name',
+    filter: textFilter(),
+    sort: true,
+    hidden: false,
+  },
+  {
+    dataField: 'createdTimestamp',
+    text: 'Created at',
+    filter: dateFilter(),
+    sort: true,
+    hidden: true,
+  },
+  {
+    dataField: 'updatedTimestamp',
+    text: 'Updated at',
+    filter: dateFilter(),
+    sort: true,
+    hidden: true,
+  },
+  {
+    dataField: 'insertedBy',
+    text: 'Inserted by',
+    filter: textFilter(),
+    sort: true,
+    hidden: true,
+  },
+  {
+    dataField: 'insertedMethod',
+    text: 'Inserted method',
+    filter: selectFilter({
+      options: methodOptions,
+    }),
+    sort: true,
+    hidden: true,
   },
 ];
 
@@ -106,11 +157,94 @@ const defaultSorted = [{
   order: 'asc',
 }];
 
+const formatResult = (records, user) => records.map(({
+  id, accepted, idGenus, ownerNames, ntype, publication,
+  createdTimestamp, updatedTimestamp, checkedTimestamp,
+  insertedBy, insertedMethod, ...nomen
+}) => ({
+  id,
+  action: (
+    <Can
+      role={user.role}
+      perform="species:edit"
+      data={{
+        speciesGenusId: idGenus,
+        userGeneraIds: user.userGenera,
+      }}
+      yes={() => (
+        <LinkContainer to={`${EDIT_RECORD}${id}`}>
+          <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
+        </LinkContainer>
+      )}
+    />
+  ),
+  [ownershipColumn]: (
+    <Can
+      role={user.role}
+      perform="species:edit"
+      data={{
+        speciesGenusId: idGenus,
+        userGeneraIds: user.userGenera,
+      }}
+      yes={() => (
+        <Ownership role={user.role} isOwner owners={ownerNames} />
+      )}
+      no={() => (
+        <Ownership
+          role={user.role}
+          isOwner={false}
+          owners={ownerNames}
+        />
+      )}
+    />
+  ),
+  ntype,
+  [listOfSpeciesColumn]: (
+    <span>
+      <a href={`${PAGE_DETAIL}${id}`}>
+        <LosName key={id} data={nomen} />
+      </a>
+      <Can
+        role={user.role}
+        perform="species:edit"
+        data={{
+          speciesGenusId: idGenus,
+          userGeneraIds: user.userGenera,
+        }}
+        yes={() => (
+          <small className="pull-right gray-text unselectable">
+            Double click to quick edit
+          </small>
+        )}
+      />
+    </span>
+  ),
+  publication,
+  acceptedName: (
+    <a
+      href={accepted ? `${PAGE_DETAIL}${accepted.id}` : ''}
+    >
+      <LosName key={`acc${id}`} data={accepted} />
+    </a>
+  ),
+  idGenus,
+  createdTimestamp,
+  updatedTimestamp,
+  checkedTimestamp,
+  insertedBy,
+  insertedMethod,
+}));
+
 const Checklist = ({ user, accessToken }) => {
   const {
     showModal, editId,
     handleShowModal, handleHideModal,
   } = commonHooks.useModal();
+
+  const [tableColumns, setTableColumns] = useState(
+    columns(user.role === mappings.userRole.author.name),
+  );
+  const [showModalColumns, setShowModalColumns] = useState(false);
 
   const ownerId = user ? user.id : undefined;
   const {
@@ -132,75 +266,18 @@ const Checklist = ({ user, accessToken }) => {
     },
   };
 
-  const formatResult = (records) => records.map((d) => ({
-    id: d.id,
-    action: (
-      <Can
-        role={user.role}
-        perform="species:edit"
-        data={{
-          speciesGenusId: d.idGenus,
-          userGeneraIds: user.userGenera,
-        }}
-        yes={() => (
-          <LinkContainer to={`${EDIT_RECORD}${d.id}`}>
-            <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
-          </LinkContainer>
-        )}
-      />
-    ),
-    [ownershipColumn]: (
-      <Can
-        role={user.role}
-        perform="species:edit"
-        data={{
-          speciesGenusId: d.idGenus,
-          userGeneraIds: user.userGenera,
-        }}
-        yes={() => (
-          <Ownership role={user.role} isOwner owners={d.ownerNames} />
-        )}
-        no={() => (
-          <Ownership
-            role={user.role}
-            isOwner={false}
-            owners={d.ownerNames}
-          />
-        )}
-      />
-    ),
-    ntype: d.ntype,
-    [listOfSpeciesColumn]: (
-      <span>
-        <a href={`${PAGE_DETAIL}${d.id}`}>
-          <LosName key={d.id} data={d} />
-        </a>
-        <Can
-          role={user.role}
-          perform="species:edit"
-          data={{
-            speciesGenusId: d.idGenus,
-            userGeneraIds: user.userGenera,
-          }}
-          yes={() => (
-            <small className="pull-right gray-text unselectable">
-              Double click to quick edit
-            </small>
-          )}
-        />
-      </span>
-    ),
-    publication: d.publication,
-    acceptedName: (
-      <a
-        href={d.accepted ? `${PAGE_DETAIL}${d.accepted.id}` : ''}
-      >
-        <LosName key={`acc${d.id}`} data={d.accepted} />
-      </a>
-    ),
-    idGenus: d.idGenus,
-    checkedTimestamp: d.checkedTimestamp,
-  }));
+  const handleColumnToggle = (toggledDataField) => {
+    const newTableColumns = tableColumns.map((val) => {
+      if (val.dataField === toggledDataField) {
+        return {
+          ...val,
+          hidden: !val.hidden,
+        };
+      }
+      return val;
+    });
+    setTableColumns(newTableColumns);
+  };
 
   const onTableChange = (type, {
     page: pageTable,
@@ -219,7 +296,6 @@ const Checklist = ({ user, accessToken }) => {
   );
 
   const paginationOptions = { page, sizePerPage, totalSize };
-
   return (
     <div id="checklist">
       <Grid id="functions-panel">
@@ -266,20 +342,52 @@ const Checklist = ({ user, accessToken }) => {
         </div>
       </Grid>
       <Grid fluid>
-        <RemotePagination
-          hover
-          striped
-          condensed
-          remote
+        <hr />
+        <div>
+          <Button
+            bsStyle="primary"
+            onClick={() => setShowModalColumns(true)}
+          >
+            Display columns
+            {' '}
+            <Glyphicon glyph="menu-down" />
+          </Button>
+        </div>
+        <ToolkitProvider
+          columnToggle
           keyField="id"
-          data={formatResult(data)}
-          columns={columns(user.role === mappings.userRole.author.name)}
-          defaultSorted={defaultSorted}
-          filter={filterFactory()}
-          onTableChange={onTableChange}
-          paginationOptions={paginationOptions}
-          rowEvents={rowEvents}
-        />
+          data={formatResult(data, user)}
+          columns={tableColumns}
+        >
+          {({ baseProps, columnToggleProps }) => (
+            <div>
+              <RemotePagination
+                hover
+                striped
+                condensed
+                remote
+                keyField={baseProps.keyField}
+                data={baseProps.data}
+                columns={baseProps.columns}
+                defaultSorted={defaultSorted}
+                filter={filterFactory()}
+                onTableChange={onTableChange}
+                paginationOptions={paginationOptions}
+                rowEvents={rowEvents}
+                columnToggle={baseProps.columnToggle}
+              />
+              <SelectTableColumnsModal
+                show={showModalColumns}
+                onHide={() => setShowModalColumns(false)}
+                toggleListProps={{
+                  columns: columnToggleProps.columns,
+                  toggles: columnToggleProps.toggles,
+                  onColumnToggle: handleColumnToggle,
+                }}
+              />
+            </div>
+          )}
+        </ToolkitProvider>
       </Grid>
       <SpeciesNameModal
         id={editId}

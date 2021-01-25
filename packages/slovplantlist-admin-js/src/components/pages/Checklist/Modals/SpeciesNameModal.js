@@ -60,7 +60,7 @@ class SpeciesNameModal extends Component {
         ...initialValues,
       },
       genera: [],
-      genusSelected: undefined,
+      genusSelected: [],
       familySelected: undefined,
       familyApgSelected: undefined,
     };
@@ -148,7 +148,7 @@ class SpeciesNameModal extends Component {
   handleHide = () => {
     this.setState({
       record: { ...initialValues },
-      genusSelected: undefined,
+      genusSelected: [],
       familySelected: undefined,
       familyApgSelected: undefined,
     });
@@ -158,10 +158,10 @@ class SpeciesNameModal extends Component {
 
   handleSave = async () => {
     if (this.getValidationState()) {
-      const { accessToken } = this.props;
+      const { accessToken, username } = this.props;
       const { record: data } = this.state;
       try {
-        await speciesFacade.saveSpecies(data, accessToken);
+        await speciesFacade.saveSpecies(data, accessToken, username);
         notifications.success('Saved');
         this.handleHide();
       } catch (error) {
@@ -358,6 +358,7 @@ class SpeciesNameModal extends Component {
                 </FormControl>
               </Col>
             </FormGroup>
+            <hr />
             <FormGroup bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 <ControlLabel>Family</ControlLabel>
@@ -391,6 +392,7 @@ class SpeciesNameModal extends Component {
                 />
               </Col>
             </FormGroup>
+            <hr />
             <FormGroup controlId="genus" bsSize="sm">
               <Col componentClass={ControlLabel} sm={titleColWidth}>
                 Genus text
@@ -589,6 +591,7 @@ class SpeciesNameModal extends Component {
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
+  username: state.user.username,
 });
 
 export default connect(mapStateToProps)(SpeciesNameModal);
@@ -597,6 +600,7 @@ SpeciesNameModal.propTypes = {
   show: PropTypes.bool.isRequired,
   id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   accessToken: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
 };
 

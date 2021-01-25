@@ -1,9 +1,8 @@
-import { getRequest, putRequest, patchRequest } from '@ibot/client';
-
 import config from 'config/config';
 import { sorterUtils } from 'utils';
 
 import common from './common/common';
+import { getRequest, putRequest, patchRequest } from './client';
 
 const {
   uris: {
@@ -84,7 +83,9 @@ async function getGenusByIdWithRelations(id, accessToken, format = undefined) {
 }
 
 async function saveGenus(data, accessToken) {
-  return putRequest(generaUri.baseUri, data, undefined, accessToken);
+  return putRequest(
+    generaUri.baseUri, data, undefined, accessToken,
+  );
 }
 
 /**
@@ -133,7 +134,9 @@ async function patchGenus(id, dataField, newValue, accessToken) {
   const data = {
     [dataField]: newValue,
   };
-  return patchRequest(generaUri.byIdUri, data, { id }, accessToken);
+  return patchRequest(
+    generaUri.byIdUri, data, { id }, accessToken,
+  );
 }
 
 function createSynonym(idParent, idSynonym, syntype) {

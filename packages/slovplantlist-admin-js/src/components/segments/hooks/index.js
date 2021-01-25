@@ -72,7 +72,7 @@ function useTableChange(
     sortField,
     sortOrder,
   }) => {
-    const curatedFilters = filterUtils.curateSearchFilters(
+    const curatedFilters = filterUtils.handleSpecialSearchFilters(
       filters, { ownerId },
     );
     const newWhere = helperUtils.makeWhere(curatedFilters);

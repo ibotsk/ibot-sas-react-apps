@@ -1,28 +1,62 @@
 import axios from './axios';
 import Mustache from './mustache';
 
-export async function getRequest(uri, params, accessToken) {
-  const parsedUri = Mustache.render(uri, { ...params, accessToken });
-  const response = await axios.get(parsedUri);
-  return response.data;
+const getRequest = (axiosInstance) => (
+  async (uri, params, accessToken) => {
+    const parsedUri = Mustache.render(uri, { ...params, accessToken });
+    const response = await axiosInstance.get(parsedUri);
+    return response.data;
+  }
+);
+
+const postRequest = (axiosInstance) => (
+  async (uri, data, params, accessToken) => {
+    const parsedUri = Mustache.render(uri, { ...params, accessToken });
+    return axiosInstance.post(parsedUri, data);
+  }
+);
+
+const putRequest = (axiosInstance) => (
+  async (uri, data, params, accessToken) => {
+    const parsedUri = Mustache.render(uri, { ...params, accessToken });
+    return axiosInstance.put(parsedUri, data);
+  }
+);
+
+const patchRequest = (axiosInstance) => (
+  async (uri, data, params, accessToken) => {
+    const parsedUri = Mustache.render(uri, { ...params, accessToken });
+    return axiosInstance.patch(parsedUri, data);
+  }
+);
+
+const deleteRequest = (axiosInstance) => (
+  async (uri, params, accessToken) => {
+    const parsedUri = Mustache.render(uri, { ...params, accessToken });
+    return axiosInstance.delete(parsedUri);
+  }
+);
+
+const addRequestInterceptor = (interceptor) => {
+  axios.interceptors.request.use(interceptor, (error) => Promise.reject(error));
+};
+
+// ------------------ //
+
+function init({
+  requestInterceptors = [],
+}) {
+  requestInterceptors.forEach((interceptor) => (
+    addRequestInterceptor(interceptor)
+  ));
+
+  return {
+    getRequest: getRequest(axios),
+    postRequest: postRequest(axios),
+    putRequest: putRequest(axios),
+    patchRequest: patchRequest(axios),
+    deleteRequest: deleteRequest(axios),
+  };
 }
 
-export async function postRequest(uri, data, params, accessToken) {
-  const parsedUri = Mustache.render(uri, { ...params, accessToken });
-  return axios.post(parsedUri, data);
-}
-
-export async function putRequest(uri, data, params, accessToken) {
-  const parsedUri = Mustache.render(uri, { ...params, accessToken });
-  return axios.put(parsedUri, data);
-}
-
-export async function patchRequest(uri, data, params, accessToken) {
-  const parsedUri = Mustache.render(uri, { ...params, accessToken });
-  return axios.patch(parsedUri, data);
-}
-
-export async function deleteRequest(uri, params, accessToken) {
-  const parsedUri = Mustache.render(uri, { ...params, accessToken });
-  return axios.delete(parsedUri);
-}
+export default init;

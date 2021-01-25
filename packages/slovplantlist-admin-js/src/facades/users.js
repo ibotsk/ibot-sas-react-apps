@@ -1,6 +1,6 @@
-import { getRequest, postRequest } from '@ibot/client';
-
 import config from 'config/config';
+
+import { getRequest, postRequest } from './client';
 
 const {
   uris: { usersUri },
@@ -46,16 +46,20 @@ async function saveUser(data, accessToken) {
       delete user.password;
     }
     await postRequest(
-      usersUri.updateByIdUri, user, { id: user.id }, accessToken,
+      usersUri.updateByIdUri, user,
+      { id: user.id }, accessToken,
     );
     return user.id;
   }
-  return postRequest(usersUri.baseUri, data, undefined, accessToken);
+  return postRequest(
+    usersUri.baseUri, data, undefined, accessToken,
+  );
 }
 
 async function login(username, password) {
+  const data = { username, password };
   const response = await postRequest(
-    usersUri.loginUri, { username, password }, undefined, undefined,
+    usersUri.loginUri, data, undefined, undefined,
   );
   return response.data;
 }

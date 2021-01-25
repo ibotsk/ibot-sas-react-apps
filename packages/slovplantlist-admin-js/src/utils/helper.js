@@ -1,4 +1,9 @@
-import { species as speciesUtils } from '@ibot/utils';
+import {
+  species as speciesUtils,
+  WhereBuilder,
+  likep, regexp, neq, eq, lt, gt, lte, gte,
+  or, and,
+} from '@ibot/utils';
 
 /**
  * For resolving filter comparator. Supports LIKE and EQ.
@@ -12,45 +17,32 @@ const resolveByComparator = (comparator, key, value) => {
     case '':
       return {};
     case 'LIKE':
-      return {
-        [key]: {
-          like: `%25${value}%25`,
-        },
-      };
+      return likep(key, value);
     case 'REGEXP':
-      return {
-        [key]: {
-          regexp: value,
-        },
-      };
+      return regexp(key, value);
     case 'NEQ':
-      // if (Array.isArray(value)) {
-      //     return {
-      //         and: value.map(v => ({
-      //             [key]: {
-      //                 neq: v
-      //             }
-      //         }))
-      //     };
-      // }
-      return {
-        [key]: {
-          neq: value,
-        },
-      };
+    case '!=':
+      return neq(key, value);
+    case '<':
+      return lt(key, value);
+    case '<=':
+      return lte(key, value);
+    case '>':
+      return gt(key, value);
+    case '>=':
+      return gte(key, value);
     case 'EQ':
+    case '=':
     default:
-      return {
-        [key]: value,
-      };
+      return eq(key, value);
   }
 };
 
 const filterToWhereItem = (filter, key) => {
-  let conjug = 'or';
+  let conjug = or;
   let { filterVal } = filter;
   if (filterVal.and) {
-    conjug = 'and';
+    conjug = and;
     filterVal = filterVal.and;
   }
 
@@ -65,7 +57,7 @@ const filterToWhereItem = (filter, key) => {
       }
       valsOr.push(resolveByComparator(filter.comparator, itemKey, value));
     }
-    return { [conjug]: valsOr };
+    return conjug(valsOr);
   }
   return resolveByComparator(filter.comparator, key, filter.filterVal);
 };
@@ -90,19 +82,16 @@ function genusString(genus) {
 
 function makeWhere(filters) {
   const whereItems = [];
-  const keys = Object.keys(filters);
+  const keys = Object.keys(filters).filter((k) => !!filters[k]);
   // keys of filters are joined with 'and'
   for (const key of keys) {
     // array of filterVal are joined by 'or'
     whereItems.push(filterToWhereItem(filters[key], key));
   }
-  if (whereItems.length > 1) {
-    return { and: whereItems };
-  }
-  if (whereItems.length === 1) {
-    return whereItems[0];
-  }
-  return {};
+  const andItems = and(...whereItems);
+
+  const wb = new WhereBuilder();
+  return wb.add(andItems).build();
 }
 
 function makeOrder(sortFields, sortOrder = 'ASC') {

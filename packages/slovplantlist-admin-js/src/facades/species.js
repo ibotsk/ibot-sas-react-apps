@@ -1,11 +1,12 @@
-import { getRequest, putRequest } from '@ibot/client';
-
+import { where as whereUtils } from '@ibot/utils';
 import { helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
 
+import { getRequest, putRequest } from './client';
 import common from './common/common';
 
 const {
+  constants: { insertedMethod: insertedMethodConf },
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
 
@@ -73,6 +74,31 @@ async function getAllSpeciesBySearchTerm(
   return listOfSpeciess.map(format);
 }
 
+async function getSpeciesByAll(
+  data, accessToken, formatFound = undefined,
+  {
+    exclude = undefined,
+    include = undefined,
+    exact = false,
+  } = {},
+) {
+  const where = whereUtils.whereDataAll(data, exclude, include, exact);
+  const species = await getRequest(
+    nomenclaturesUri.getAllWFilterUri, {
+      where: JSON.stringify(where),
+    }, accessToken,
+  );
+
+  let found = species;
+  if (formatFound) {
+    found = formatFound(found);
+  }
+  return {
+    term: data,
+    found,
+  };
+}
+
 async function getSynonyms(id, accessToken) {
   const nomenclatoricSynonyms = await getRequest(
     nomenclaturesUri.getNomenclatoricSynonymsUri, { id }, accessToken,
@@ -118,8 +144,22 @@ async function getBasionymsFor(id, accessToken) {
   };
 }
 
-async function saveSpecies(data, accessToken) {
-  return putRequest(nomenclaturesUri.baseUri, data, undefined, accessToken);
+async function saveSpecies(
+  data, accessToken, insertedBy, insertedMethod = insertedMethodConf.form,
+) {
+  let dataToSave = data;
+  if (!data.id) {
+    // only create
+    dataToSave = {
+      ...data,
+      insertedBy,
+      insertedMethod,
+    };
+  }
+  return putRequest(
+    nomenclaturesUri.baseUri, dataToSave,
+    undefined, accessToken,
+  );
 }
 
 async function saveSpeciesAndSynonyms({
@@ -129,6 +169,8 @@ async function saveSpeciesAndSynonyms({
   invalidDesignations,
   misidentifications,
   accessToken,
+  insertedBy,
+  insertedMethod = insertedMethodConf.form,
 }) {
   const allNewSynonyms = [
     ...nomenclatoricSynonyms,
@@ -137,14 +179,15 @@ async function saveSpeciesAndSynonyms({
     ...misidentifications,
   ];
 
-  return Promise.all([
-    saveSpecies(species, accessToken),
-    common.submitSynonyms(species.id, allNewSynonyms, {
-      getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
-      deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
-      updateSynonymsUri: synonymsUri.baseUri,
-    }, accessToken),
-  ]);
+  const { data } = await saveSpecies(
+    species, accessToken, insertedBy, insertedMethod,
+  );
+
+  return common.submitSynonyms(data.id, allNewSynonyms, {
+    getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
+    deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
+    updateSynonymsUri: synonymsUri.baseUri,
+  }, accessToken);
 }
 
 function createSynonym(idParent, idSynonym, syntype) {
@@ -160,6 +203,7 @@ export default {
   getSpeciesById,
   getAllSpecies,
   getAllSpeciesBySearchTerm,
+  getSpeciesByAll,
   getSynonyms,
   getBasionymsFor,
   saveSpeciesAndSynonyms,

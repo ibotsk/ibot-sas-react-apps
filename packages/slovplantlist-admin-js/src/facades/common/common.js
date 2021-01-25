@@ -3,7 +3,7 @@ import intersectionWith from 'lodash.intersectionwith';
 
 import {
   getRequest, deleteRequest, putRequest, patchRequest,
-} from '@ibot/client';
+} from '../client';
 
 const synonymComparator = (value, other) => (
   value.idParent === other.idParent
@@ -63,12 +63,16 @@ const updateAcceptedNameOfSynonyms = async (
   // set [idPropName] of the synonym referent as idParent
   const updatePromises = synonymsForUpdate.map(({ idParent, idSynonym }) => {
     const data = { [idPropName]: idParent };
-    return patchRequest(patchUri, data, { id: idSynonym }, accessToken);
+    return patchRequest(
+      patchUri, data, { id: idSynonym }, accessToken,
+    );
   });
   // set [idPropName] to undefined
   const deletePromises = synonymsForDelete.map(({ idSynonym }) => {
     const data = { [idPropName]: null };
-    return patchRequest(patchUri, data, { id: idSynonym }, accessToken);
+    return patchRequest(
+      patchUri, data, { id: idSynonym }, accessToken,
+    );
   });
 
   return [...updatePromises, ...deletePromises];
@@ -97,7 +101,7 @@ async function submitSynonyms(
     getCurrentSynonymsUri,
     deleteSynonymsByIdUri,
     updateSynonymsUri,
-    patchSynonymRefUri,
+    patchSynonymRefUri = undefined, // must have value when isUpdateAcceptedNames is true
   },
   accessToken,
   isUpdateAcceptedNames = false,
@@ -117,7 +121,9 @@ async function submitSynonyms(
     deleteRequest(deleteSynonymsByIdUri, { id: synId }, accessToken)
   ));
   const upsertPromises = toBeUpserted.map((synonym) => (
-    putRequest(updateSynonymsUri, synonym, {}, accessToken)
+    putRequest(
+      updateSynonymsUri, synonym, {}, accessToken,
+    )
   ));
 
   const promises = [
@@ -126,7 +132,7 @@ async function submitSynonyms(
   ];
 
   if (isUpdateAcceptedNames) {
-    const patchPromises = await updateAcceptedNameOfSynonyms(
+    const patchPromises = updateAcceptedNameOfSynonyms(
       toBeUpserted, toBeDeleted, patchSynonymRefUri, accessToken,
     );
     promises.push(...patchPromises);
@@ -163,9 +169,11 @@ async function manageAcceptedNameRelations(
     } else {
       synonymsToSave = synonyms.map((s) => ({ ...s, idParent: newIdParent }));
     }
-    return synonymsToSave.map(
-      (s) => putRequest(upsertSynonymsUri, s, {}, accessToken),
-    );
+    return synonymsToSave.map((s) => (
+      putRequest(
+        upsertSynonymsUri, s, {}, accessToken,
+      )
+    ));
   }
 
   // delete because newIdParent is falsy

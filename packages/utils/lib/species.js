@@ -1,9 +1,13 @@
-import { italic, plain, makeFormat } from './common';
+import isEqual from 'lodash.isequal';
+import pick from 'lodash.pick';
+
+import { italic, plain } from './common';
 import config from '../config';
 
 const {
   species: {
     name: configName,
+    parts: configNameParts,
   },
 } = config;
 
@@ -61,7 +65,6 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
     species, genus,
     subsp, var: varieta, forma,
     authors, publication, tribus,
-
   } = nomenclature;
 
   let isAuthorLast = true;
@@ -91,17 +94,24 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
     name.push(plain(authors));
   }
 
-  if (nomenclature.hybrid) {
+  const {
+    genusH, speciesH, subspH, varH, subvarH, formaH,
+    nothosubspH, nothoformaH, authorsH,
+  } = nomenclature;
+  if (
+    genusH || speciesH || subspH || varH || subvarH || formaH
+    || nothosubspH || nothoformaH || authorsH
+  ) {
     const h = {
-      genus: nomenclature.genusH,
-      species: nomenclature.speciesH,
-      subsp: nomenclature.subspH,
-      var: nomenclature.varH,
-      subvar: nomenclature.subvarH,
-      forma: nomenclature.formaH,
-      nothosubsp: nomenclature.nothosubspH,
-      nothoforma: nomenclature.nothoformaH,
-      authors: nomenclature.authorsH,
+      genus: genusH,
+      species: speciesH,
+      subsp: subspH,
+      var: varH,
+      subvar: subvarH,
+      forma: formaH,
+      nothosubsp: nothosubspH,
+      nothoforma: nothoformaH,
+      authors: authorsH,
     };
     name.push(plain(configName.hybrid));
     name = name.concat(listOfSpeciesFormat(h));
@@ -124,7 +134,21 @@ function listOfSpeciesString(name) {
   return nameArr.map(({ string }) => string).join(' ');
 }
 
+/**
+ * Creates equality 
+ * @param {object} a 
+ * @param {object} b 
+ * @param {array} properties overrides default properties
+ */
+function areEqualSpecies(a, b, properties = undefined) {
+  const keys = properties || configNameParts;
+  const aPicked = pick(a, keys);
+  const bPicked = pick(b, keys);
+  return isEqual(aPicked, bPicked);
+};
+
 export default {
   listOfSpeciesFormat,
   listOfSpeciesString,
+  areEqualSpecies,
 };

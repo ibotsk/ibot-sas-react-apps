@@ -1,10 +1,6 @@
-import {
-  getRequest,
-  putRequest,
-  deleteRequest,
-} from '@ibot/client';
-
 import config from 'config/config';
+
+import { getRequest, putRequest, deleteRequest } from './client';
 
 const {
   uris: { userGeneraUri },
@@ -51,7 +47,10 @@ async function saveUserGenera({
         idUser: userId,
         idGenus: genusId,
       };
-      return putRequest(userGeneraUri.baseUri, data, undefined, accessToken);
+      return putRequest(
+        userGeneraUri.baseUri, data,
+        undefined, accessToken,
+      );
     });
     promises.push(...generaIdsToSavePromises);
   }

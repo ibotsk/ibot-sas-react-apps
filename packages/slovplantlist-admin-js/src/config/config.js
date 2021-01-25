@@ -12,6 +12,11 @@ export default {
     },
     userRealm: 'slovplantlist',
     userPrincipalType: 'user',
+    insertedMethod: {
+      default: 'DEFAULT',
+      form: 'FORM',
+      import: 'IMPORT',
+    },
   },
   nomenclature: {
     name: {
@@ -112,6 +117,16 @@ export default {
         numType: 4,
         prefix: '–',
       },
+      parent: {
+        numType: 9,
+        prefix: '',
+      },
+    },
+    synonymBySyntype: {
+      1: 'invalid',
+      2: 'taxonomic',
+      3: 'nomenclatoric',
+      4: 'misidentification',
     },
     userRole: {
       admin: {

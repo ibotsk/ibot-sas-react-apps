@@ -22,8 +22,8 @@ import PlainListOfSpeciesNames from
 
 import { speciesFacade, genusFacade } from 'facades';
 
-import { format } from '@ibot/utils';
-import { notifications, helperUtils, sorterUtils } from 'utils';
+import { format, species as speciesUtils } from '@ibot/utils';
+import { notifications, sorterUtils } from 'utils';
 import config from 'config/config';
 
 import 'styles/custom.css';
@@ -46,7 +46,11 @@ const ID_NOMEN_NOVUM_NAME_PROP = 'idNomenNovum';
 
 const CHECKLIST_LIST_URI = '/checklist';
 
-const ntypes = config.mappings.losType;
+const {
+  mappings: {
+    losType: ntypesConfig,
+  },
+} = config;
 
 const recordInitialValues = {
   authors: '',
@@ -249,7 +253,7 @@ class SpeciesRecord extends Component {
     return speciesFacade.getAllSpeciesBySearchTerm(
       query, accessToken, (l) => ({
         id: l.id,
-        label: helperUtils.listOfSpeciesString(l),
+        label: speciesUtils.listOfSpeciesString(l),
       }),
     );
   };
@@ -332,7 +336,7 @@ class SpeciesRecord extends Component {
   )
 
   handleCheck = () => {
-    const { user: { username } } = this.props;
+    const { username } = this.props;
     this.setState(({ record }) => ({
       record: {
         ...record,
@@ -344,7 +348,9 @@ class SpeciesRecord extends Component {
 
   submitForm = async (e) => {
     e.preventDefault();
-    const { accessToken } = this.props;
+    const {
+      accessToken, username,
+    } = this.props;
     const {
       record,
       nomenclatoricSynonyms,
@@ -352,6 +358,7 @@ class SpeciesRecord extends Component {
       invalidDesignations,
       misidentifications,
     } = this.state;
+
     try {
       await speciesFacade.saveSpeciesAndSynonyms({
         species: record,
@@ -360,6 +367,7 @@ class SpeciesRecord extends Component {
         invalidDesignations,
         misidentifications,
         accessToken,
+        insertedBy: username,
       });
       notifications.success('Saved');
     } catch (error) {
@@ -521,6 +529,7 @@ class SpeciesRecord extends Component {
       idGenusSelected, idAcceptedNameSelected, idBasionymSelected,
       idNomenNovumSelected, idReplacedSelected,
     } = this.state;
+
     return (
       <div id="species-detail">
         <Grid id="functions-panel">
@@ -536,16 +545,43 @@ class SpeciesRecord extends Component {
         </Grid>
         <hr />
         <Grid>
-          <h2>
-            Checklist record
-            <small>
-              {id ? <LosName data={record} /> : 'new'}
-            </small>
-          </h2>
+          <h3>
+            {id ? <LosName data={record} /> : 'Create new'}
+          </h3>
+          {id && (
+            <h5>
+              {publication || '-'}
+            </h5>
+          )}
 
           <Form horizontal onSubmit={this.submitForm}>
             <div id="name">
-              <h3>Name</h3>
+              <Well>
+                <FormGroup controlId="ntype" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Type
+                  </Col>
+                  <Col sm={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      componentClass="select"
+                      placeholder="select"
+                      value={ntype}
+                      onChange={this.handleChangeInput}
+                    >
+                      {
+                        Object.keys(ntypesConfig).map((t) => (
+                          <option
+                            value={t}
+                            key={t}
+                          >
+                            {ntypesConfig[t].text}
+                          </option>
+                        ))
+                      }
+                    </FormControl>
+                  </Col>
+                </FormGroup>
+              </Well>
               <Well>
                 <FormGroup bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
@@ -596,26 +632,8 @@ class SpeciesRecord extends Component {
                   </Col>
                 </FormGroup>
               </Well>
+              <h4>Name details</h4>
               <Well>
-                <FormGroup controlId="ntype" bsSize="sm">
-                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Type
-                  </Col>
-                  <Col sm={CONTENT_COL_WIDTH}>
-                    <FormControl
-                      componentClass="select"
-                      placeholder="select"
-                      value={ntype}
-                      onChange={this.handleChangeInput}
-                    >
-                      {
-                        Object.keys(ntypes).map((t) => (
-                          <option value={t} key={t}>{ntypes[t].text}</option>
-                        ))
-                      }
-                    </FormControl>
-                  </Col>
-                </FormGroup>
                 <FormGroup controlId="genus" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Genus (text)
@@ -823,7 +841,7 @@ class SpeciesRecord extends Component {
               </Well>
             </div>
             <div id="associations">
-              <h3>Associations</h3>
+              <h4>Associations</h4>
               <Well>
                 <FormGroup controlId={ID_ACCEPTED_NAME_PROP} bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
@@ -904,7 +922,7 @@ class SpeciesRecord extends Component {
               </Well>
             </div>
             <div id="synonyms">
-              <h3>Synonyms</h3>
+              <h4>Synonyms</h4>
               <Well>
                 <FormGroup controlId="nomenclatoric-synonyms" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
@@ -1048,7 +1066,7 @@ class SpeciesRecord extends Component {
               </Well>
             </div>
             <div id="associations-inherited">
-              <h3>Inherited associations</h3>
+              <h4>Inherited associations</h4>
               <Well>
                 <FormGroup controlId="idBasionymFor" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
@@ -1112,16 +1130,14 @@ class SpeciesRecord extends Component {
 
 const mapStateToProps = (state) => ({
   accessToken: state.authentication.accessToken,
-  user: state.user,
+  username: state.user.username,
 });
 
 export default connect(mapStateToProps)(SpeciesRecord);
 
 SpeciesRecord.propTypes = {
   accessToken: PropTypes.string.isRequired,
-  user: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-  }).isRequired,
+  username: PropTypes.string.isRequired,
   recordId: PropTypes.string,
 };
 

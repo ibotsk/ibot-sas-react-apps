@@ -1,9 +1,15 @@
-import React from 'react'
-import styles from './styles.module.css'
+import React from 'react';
+
+export { default as BootstrapTable } from 'react-bootstrap-table-next';
 
 export { default as LosName } from './Species/LosName';
-export { default as TimestampCheck } from './Common/TimestampCheck';
 
-export const ExampleComponent = ({ text }) => {
-  return <div className={styles.test}>Example Component: {text}</div>
-}
+export { default as TimestampCheck } from './Common/TimestampCheck';
+export { default as SelectTableColumnsModal } from
+  './Common/SelectTableColumnsModal/SelectTableColumnsModal';
+
+export const ExampleComponent = () => (
+  <div>
+    Example Component:
+  </div>
+);

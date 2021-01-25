@@ -1,7 +1,6 @@
-import { getRequest, putRequest } from '@ibot/client';
-import { miscUtils } from 'utils';
-
 import config from 'config/config';
+
+import { getRequest, putRequest } from './client';
 
 const {
   uris: { familiesUri, familiesApgUri },
@@ -22,8 +21,7 @@ async function getAllBySearchTerm(
 // ----------------------------------- //
 
 async function getFamilyByIdCurated(id, accessToken) {
-  const data = await getRequest(familiesUri.getByIdUri, { id }, accessToken);
-  return miscUtils.nullToEmpty(data);
+  return getRequest(familiesUri.getByIdUri, { id }, accessToken);
 }
 
 async function getAllFamilies(accessToken, format = undefined) {
@@ -43,8 +41,7 @@ async function getAllFamiliesBySearchTerm(
 }
 
 async function getFamilyApgByIdCurated(id, accessToken) {
-  const data = await getRequest(familiesApgUri.getByIdUri, { id }, accessToken);
-  return miscUtils.nullToEmpty(data);
+  return getRequest(familiesApgUri.getByIdUri, { id }, accessToken);
 }
 
 async function getAllFamiliesApg(accessToken, format = undefined) {
@@ -66,11 +63,15 @@ async function getAllFamiliesApgBySearchTerm(
 }
 
 async function saveFamily(data, accessToken) {
-  return putRequest(familiesUri.baseUri, data, undefined, accessToken);
+  return putRequest(
+    familiesUri.baseUri, data, undefined, accessToken,
+  );
 }
 
 async function saveFamilyApg(data, accessToken) {
-  return putRequest(familiesApgUri.baseUri, data, undefined, accessToken);
+  return putRequest(
+    familiesApgUri.baseUri, data, undefined, accessToken,
+  );
 }
 
 export default {
