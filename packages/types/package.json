@@ -1,6 +1,7 @@
 {
   "name": "@ibot/types",
   "version": "0.0.0",
+  "private": true,
   "description": "Prop types of common data",
   "author": "Matus Kempa <matus.kempa@gmail.com>",
   "homepage": "https://github.com/ibotsk/ibot-sas-react-apps#readme",

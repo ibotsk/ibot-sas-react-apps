@@ -1,6 +1,7 @@
 {
   "name": "@ibot/components",
   "version": "0.0.0",
+  "private": true,
   "description": "Made with create-react-library",
   "author": "mkempa",
   "license": "MIT",
