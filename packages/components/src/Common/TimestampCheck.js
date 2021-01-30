@@ -37,7 +37,12 @@ export default TimestampCheck;
 
 TimestampCheck.propTypes = {
   isChecked: PropTypes.bool.isRequired,
-  checkedTimestamp: PropTypes.string.isRequired,
-  checkedBy: PropTypes.string.isRequired,
+  checkedTimestamp: PropTypes.string,
+  checkedBy: PropTypes.string,
   onCheck: PropTypes.func.isRequired,
+};
+
+TimestampCheck.defaultProps = {
+  checkedTimestamp: undefined,
+  checkedBy: undefined,
 };
