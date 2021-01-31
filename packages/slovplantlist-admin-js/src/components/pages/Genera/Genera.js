@@ -102,12 +102,19 @@ const columns = [
   },
   {
     dataField: 'acceptedName',
-    text: 'Accepted name',
-    formatter: (cell) => (
-      cell
-        ? formatterUtils.genus(cell.name, cell.authors)
-        : ''
-    ),
+    text: 'Accepted names',
+    formatter: (cell) => {
+      if (!cell || cell.length === 0) {
+        return '';
+      }
+      const namesArray = cell.map(({ parent }) => (
+        formatterUtils.genus(parent.name)
+      ));
+      if (namesArray.length > 1) {
+        namesArray.sort();
+      }
+      return namesArray.join(', ');
+    },
     editable: false,
   },
 ];
