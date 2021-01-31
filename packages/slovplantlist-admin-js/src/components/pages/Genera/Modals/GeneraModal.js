@@ -368,6 +368,10 @@ const GeneraModal = ({
               Accepted names
             </Col>
             <Col sm={mainColWidth}>
+              <p className="text-warning">
+                The setting of the accepted names is temporarily disabled.
+                Please go to the desired accepted genus and add a synonym.
+              </p>
               <AcceptedNamesList data={accepted} />
             </Col>
           </FormGroup>
