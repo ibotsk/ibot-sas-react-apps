@@ -36,7 +36,25 @@ function replaceNonBreakingSpaces(obj) {
   );
 }
 
+/**
+ * if not string, return original value
+ * else try JSON.parse
+ * if fails, return original value.
+ * @param {any} value 
+ */
+function parseJSONSafe(value) {
+  if (!value || (typeof value !== 'string')) {
+    return value;
+  }
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    return value;
+  }
+}
+
 export default {
   emptyToNull,
   replaceNonBreakingSpaces,
+  parseJSONSafe,
 };

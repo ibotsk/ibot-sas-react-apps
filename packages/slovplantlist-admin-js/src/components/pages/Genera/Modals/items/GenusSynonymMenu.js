@@ -7,6 +7,7 @@ import { Menu, MenuItem } from 'react-bootstrap-typeahead';
 
 import AcceptedNameWarning from './AcceptedNameWarning';
 
+// TODO: currently not used
 const GenusSynonymMenu = ({ results, menuProps, assignedToName }) => (
   // eslint-disable-next-line react/jsx-props-no-spreading
   <Menu {...menuProps}>

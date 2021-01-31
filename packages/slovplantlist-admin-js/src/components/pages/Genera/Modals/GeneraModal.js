@@ -16,19 +16,17 @@ import { TimestampCheck } from '@ibot/components';
 import AddableList from 'components/segments/AddableList';
 
 import { helperUtils, notifications, sorterUtils } from 'utils';
-import { format } from '@ibot/utils';
+import { format, generaUtils } from '@ibot/utils';
 
 import config from 'config/config';
 
 import { genusFacade, familiesFacade } from 'facades';
 
 import GenusSynonymListItem from './items/GenusSynonymListItem';
-import GenusSynonymMenu from './items/GenusSynonymMenu';
 
 const {
   getGenusByIdWithRelations,
   saveGenusAndSynonyms,
-  getAllGeneraBySearchTerm,
   getAllGeneraBySearchTermWithAccepted,
 } = genusFacade;
 const {
@@ -95,15 +93,26 @@ const synonymsChanged = (list) => {
   return list.map((item, i) => ({ ...item, rorder: i + 1 }));
 };
 
+const AcceptedNamesList = ({ data }) => (
+  <ul>
+    {
+      data.map(({ parent }) => (
+        <li key={parent.id}>
+          {generaUtils.formatGenus(parent.name)}
+        </li>
+      ))
+    }
+  </ul>
+);
+
 const GeneraModal = ({
   editId, show, onHide,
 }) => {
   const [genus, setGenus] = useState(initialValues);
-  const [acceptedOptions, setAcceptedOptions] = useState([]);
+  const [accepted, setAccepted] = useState([]);
   const [families, setFamilies] = useState([]);
   const [familiesApg, setFamiliesApg] = useState([]);
   const [isLoading, setLoading] = useState(false);
-  const [selectedAccepted, setSelectedAccepted] = useState([]); // stored as { id, label }
   const [selectedFamily, setSelectedFamily] = useState([]);
   const [selectedFamilyApg, setSelectedFamilyApg] = useState([]);
   const [synonyms, setSynonyms] = useState([]);
@@ -114,13 +123,17 @@ const GeneraModal = ({
   const onEnter = async () => {
     if (editId) {
       const {
-        genus: dbGenus, accepted, family, familyApg, synonyms: syns,
+        genus: dbGenus,
+        accepted: acceptedNames,
+        family,
+        familyApg,
+        synonyms: syns,
       } = await getGenusByIdWithRelations(
         editId, accessToken,
       );
 
       setGenus(dbGenus);
-      setSelectedAccepted(accepted ? [genusIdLabelFormat(accepted)] : []);
+      setAccepted(acceptedNames);
       setSelectedFamily(family ? [family] : []);
       setSelectedFamilyApg(familyApg ? [familyApg] : []);
       setSynonyms(syns);
@@ -162,15 +175,6 @@ const GeneraModal = ({
     }
   };
 
-  const handleSearchAccepted = async (query) => {
-    setLoading(true);
-    const results = await getAllGeneraBySearchTerm(
-      query, accessToken, genusIdLabelFormat,
-    );
-    setLoading(false);
-    setAcceptedOptions(results);
-  };
-
   const handleSearchFamily = async (query) => {
     setLoading(true);
     const results = await getAllFamiliesBySearchTerm(query, accessToken);
@@ -183,14 +187,6 @@ const GeneraModal = ({
     const results = await getAllFamiliesApgBySearchTerm(query, accessToken);
     setLoading(false);
     setFamiliesApg(results);
-  };
-
-  const handleOnChangeTypeaheadAccepted = (selected) => {
-    setSelectedAccepted(selected);
-    setGenus({
-      ...genus,
-      idAcceptedName: selected[0] ? selected[0].id : undefined,
-    });
   };
 
   const handleOnChangeTypeaheadFamily = (selected) => {
@@ -369,19 +365,14 @@ const GeneraModal = ({
             bsSize="sm"
           >
             <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Accepted name
+              Accepted names
             </Col>
             <Col sm={mainColWidth}>
-              <AsyncTypeahead
-                id="accepted-autocomplete"
-                labelKey="label"
-                isLoading={isLoading}
-                onSearch={handleSearchAccepted}
-                options={acceptedOptions}
-                selected={selectedAccepted}
-                onChange={handleOnChangeTypeaheadAccepted}
-                placeholder="Start by typing (case sensitive)"
-              />
+              <p className="text-warning">
+                The setting of the accepted names is temporarily disabled.
+                Please go to the desired accepted genus and add a synonym.
+              </p>
+              <AcceptedNamesList data={accepted} />
             </Col>
           </FormGroup>
           <hr />
@@ -415,13 +406,13 @@ const GeneraModal = ({
                     assignedToName={genus}
                   />
                 )}
-                renderMenu={(results, menuProps) => (
-                  <GenusSynonymMenu
-                    results={results}
-                    menuProps={menuProps}
-                    assignedToName={genus}
-                  />
-                )}
+                // renderMenu={(results, menuProps) => (
+                //   <GenusSynonymMenu
+                //     results={results}
+                //     menuProps={menuProps}
+                //     assignedToName={genus}
+                //   />
+                // )}
               />
             </Col>
           </FormGroup>
@@ -458,4 +449,17 @@ GeneraModal.propTypes = {
 
 GeneraModal.defaultProps = {
   editId: undefined,
+};
+
+AcceptedNamesList.propTypes = {
+  data: PropTypes.arrayOf(PropTypes.shape({
+    parent: PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+      authors: PropTypes.string,
+    }),
+  })),
+};
+AcceptedNamesList.defaultProps = {
+  data: undefined,
 };

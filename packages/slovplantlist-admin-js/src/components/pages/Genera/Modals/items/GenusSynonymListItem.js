@@ -9,33 +9,29 @@ import GenusName from 'components/segments/genera/GenusName';
 
 import config from 'config/config';
 
-import AcceptedNameWarning from './AcceptedNameWarning';
-
 const GenusSynonymListItem = ({
   rowId,
   data,
   onRowDelete,
-  assignedToName,
-}) => {
-  const { synonym } = data;
-  const Addition = () => (
-    <AcceptedNameWarning
-      currentAccepted={synonym.accepted}
-      newAccepted={assignedToName}
-    />
-  );
-
-  return (
-    <SynonymListItem
-      rowId={rowId}
-      data={data}
-      nameComponent={GenusName}
-      prefix={config.mappings.synonym.taxonomic.prefix}
-      onRowDelete={onRowDelete}
-      additions={Addition}
-    />
-  );
-};
+  // eslint-disable-next-line no-unused-vars
+  assignedToName = undefined,
+}) => (
+  // const { synonym } = data;
+  // const Addition = () => (
+  //   <AcceptedNameWarning
+  //     currentAccepted={synonym.accepted}
+  //     newAccepted={assignedToName}
+  //   />
+  // );
+  <SynonymListItem
+    rowId={rowId}
+    data={data}
+    nameComponent={GenusName}
+    prefix={config.mappings.synonym.taxonomic.prefix}
+    onRowDelete={onRowDelete}
+  // additions={Addition}
+  />
+);
 
 export default GenusSynonymListItem;
 
