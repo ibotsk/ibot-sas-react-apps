@@ -14,7 +14,7 @@ const GenusSynonymListItem = ({
   data,
   onRowDelete,
   // eslint-disable-next-line no-unused-vars
-  assignedToName,
+  assignedToName = undefined,
 }) => (
   // const { synonym } = data;
   // const Addition = () => (
