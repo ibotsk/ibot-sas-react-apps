@@ -26,6 +26,7 @@ const columns = [
   {
     dataField: 'id',
     text: 'ID',
+    filter: textFilter(),
     sort: true,
   },
   {

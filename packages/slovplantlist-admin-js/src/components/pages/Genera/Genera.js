@@ -37,6 +37,7 @@ const columns = [
     dataField: 'id',
     text: 'ID',
     sort: true,
+    filter: textFilter(),
     editable: false,
   },
   {
