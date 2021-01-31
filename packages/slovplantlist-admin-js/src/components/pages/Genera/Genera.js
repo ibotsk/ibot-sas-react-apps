@@ -17,9 +17,8 @@ import RemotePagination from 'components/segments/RemotePagination';
 import Can from 'components/segments/auth/Can';
 
 import config from 'config/config';
-import {
-  formatterUtils, helperUtils, notifications, miscUtils,
-} from 'utils';
+import { generaUtils } from '@ibot/utils';
+import { helperUtils, notifications, miscUtils } from 'utils';
 
 import commonHooks from 'components/segments/hooks';
 import { genusFacade } from 'facades';
@@ -103,18 +102,7 @@ const columns = [
   {
     dataField: 'acceptedName',
     text: 'Accepted names',
-    formatter: (cell) => {
-      if (!cell || cell.length === 0) {
-        return '';
-      }
-      const namesArray = cell.map(({ parent }) => (
-        formatterUtils.genus(parent.name)
-      ));
-      if (namesArray.length > 1) {
-        namesArray.sort();
-      }
-      return namesArray.join(', ');
-    },
+    formatter: (cell) => generaUtils.formatGeneraAcceptedNames(cell).join(', '),
     editable: false,
   },
 ];

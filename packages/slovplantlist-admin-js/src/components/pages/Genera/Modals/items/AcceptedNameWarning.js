@@ -10,6 +10,7 @@ const tooltipText = (currentAN, newAN) => (
   After save it will be ressigned to '${newAN}'.`
 );
 
+// TODO: currently not used
 /**
  * @param {object} props currentAccepted - accepted name currently assigned to a genus
  * newAccepted - accepted name to which the genus will be reassigned
