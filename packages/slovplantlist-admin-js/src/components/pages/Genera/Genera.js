@@ -101,9 +101,8 @@ const columns = [
     editable: false,
   },
   {
-    dataField: 'acceptedName',
+    dataField: 'acceptedNames',
     text: 'Accepted names',
-    formatter: (cell) => generaUtils.formatGeneraAcceptedNames(cell).join(', '),
     editable: false,
   },
 ];
@@ -114,8 +113,11 @@ const defaultSorted = [{
 }];
 
 const formatResult = (records, userRole, handleShowModal) => (
-  records.map((g) => ({
-    id: g.id,
+  records.map(({
+    id, 'family-apg': familyApg, accepted, ...genus
+  }) => ({
+    ...genus,
+    id,
     action: (
       <Can
         role={userRole}
@@ -124,20 +126,32 @@ const formatResult = (records, userRole, handleShowModal) => (
           <Button
             bsSize="xsmall"
             bsStyle="warning"
-            onClick={() => handleShowModal(g.id)}
+            onClick={() => handleShowModal(id)}
           >
             Edit
           </Button>
         )}
       />),
-    ntype: g.ntype,
-    name: g.name,
-    authors: g.authors,
-    vernacular: g.vernacular,
-    familyApg: g['family-apg'],
-    family: g.family,
-    acceptedName: g.accepted,
-    checkedTimestamp: g.checkedTimestamp,
+    familyApg,
+    acceptedNames: (
+      <Can
+        role={userRole}
+        perform="genus:edit"
+        yes={() => (
+          accepted.map(({ parent }, i) => [
+            i > 0 && ', ',
+            <Button
+              bsStyle="link"
+              className="no-padding"
+              key={parent.id}
+              onClick={() => handleShowModal(parent.id)}
+            >
+              {generaUtils.formatGenus(parent.name)}
+            </Button>,
+          ])
+        )}
+      />
+    ),
   }))
 );
 

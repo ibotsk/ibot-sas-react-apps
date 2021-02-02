@@ -58,6 +58,9 @@
 .red {
     color: #c21920;
 }
+.no-padding {
+    padding: 0;
+}
 
 .white-badge {
     background-color: #fff;
