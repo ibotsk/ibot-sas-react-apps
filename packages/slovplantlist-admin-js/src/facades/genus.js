@@ -98,23 +98,22 @@ async function saveGenus(data, accessToken) {
 async function saveGenusAndSynonyms(
   genus, synonyms, accessToken, isManageAcceptedNames = false,
 ) {
-  const promises = [
-    saveGenus(genus, accessToken),
-    common.submitSynonyms(
-      genus.id,
-      synonyms,
-      {
-        getCurrentSynonymsUri: generaUri.getSynonymsOfParent,
-        deleteSynonymsByIdUri: synonymsGeneraUri.synonymsByIdUri,
-        updateSynonymsUri: synonymsGeneraUri.baseUri,
-        patchSynonymRefUri: generaUri.byIdUri,
-      },
-      accessToken,
-      isManageAcceptedNames,
-    ),
-  ];
+  const { data } = await saveGenus(genus, accessToken);
+  await common.submitSynonyms(
+    data.id,
+    synonyms,
+    {
+      getCurrentSynonymsUri: generaUri.getSynonymsOfParent,
+      deleteSynonymsByIdUri: synonymsGeneraUri.synonymsByIdUri,
+      updateSynonymsUri: synonymsGeneraUri.baseUri,
+      patchSynonymRefUri: generaUri.byIdUri,
+    },
+    accessToken,
+    isManageAcceptedNames,
+  );
+
   if (isManageAcceptedNames) {
-    const mngAcceptedNamePromise = common.manageAcceptedNameRelations(
+    await common.manageAcceptedNameRelations(
       genus.id,
       genus.idAcceptedName,
       synonymConfig.taxonomic.numType,
@@ -125,9 +124,7 @@ async function saveGenusAndSynonyms(
       },
       accessToken,
     );
-    promises.push(mngAcceptedNamePromise);
   }
-  return Promise.all(promises);
 }
 
 async function patchGenus(id, dataField, newValue, accessToken) {

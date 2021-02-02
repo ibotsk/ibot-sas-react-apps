@@ -59,7 +59,7 @@ const ntypes = config.mappings.genusType;
 
 const initialValues = {
   id: undefined,
-  ntype: '',
+  ntype: ntypes.A.value,
   name: '',
   authors: '',
   vernacular: '',
