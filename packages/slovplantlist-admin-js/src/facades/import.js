@@ -24,7 +24,7 @@ const {
 } = importConfig;
 
 const columnsForGetSpecies = Object.keys(columns)
-  .filter((k) => columns[k].compare === true)
+  .filter((k) => columns[k].compareInDB === true)
   .map((k) => columns[k].name);
 
 const cureData = (data) => {
@@ -108,11 +108,16 @@ async function importChecklistPrepare(
     );
 
     if (!found || found.length === 0) {
+      // all new
       speciesForImport = curedNomen;
       operation = operationConfig.create.key;
     } else {
       const [firstFound] = found;
-      speciesForImport = firstFound;
+      // merge existing with imported
+      speciesForImport = {
+        ...firstFound,
+        ...curedNomen,
+      };
       operation = operationConfig.update.key;
     }
 

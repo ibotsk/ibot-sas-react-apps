@@ -83,7 +83,7 @@ const ChecklistImport = () => {
         config={{
           header: true,
           transformHeader: (_, i) => (
-            columns[i].name
+            columns[i] ? columns[i].name : 'unknown'
           ),
           skipEmptyLines: true,
         }}
