@@ -1,7 +1,7 @@
 import config from '../config';
 
 const {
-  constants: { nonRegularWhitespacesRegex },
+  constants: { nonRegularWhitespacesRegex, escape },
 } = config;
 
 const nonRegularWhitespacesRegexObj = new RegExp(
@@ -36,6 +36,10 @@ function replaceNonBreakingSpaces(obj) {
   );
 }
 
+function escapeDoubleQuotes(val) {
+  return val.replaceAll(new RegExp(escape, 'gi'), '\\$&');
+}
+
 /**
  * if not string, return original value
  * else try JSON.parse
@@ -56,5 +60,6 @@ function parseJSONSafe(value) {
 export default {
   emptyToNull,
   replaceNonBreakingSpaces,
+  escapeDoubleQuotes,
   parseJSONSafe,
 };
