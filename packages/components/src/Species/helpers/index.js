@@ -10,8 +10,8 @@ const makeFormat = (subject, formatString, key) => {
   }
 };
 
-function listOfSpeciesForComponent(name, formatString) {
-  const nameArr = speciesUtils.listOfSpeciesFormat(name);
+function listOfSpeciesForComponent(name, formatString, options) {
+  const nameArr = speciesUtils.listOfSpeciesFormat(name, options);
 
   const formattedNameArr = nameArr.map((t, i) => {
     if (t.format === formatString) {

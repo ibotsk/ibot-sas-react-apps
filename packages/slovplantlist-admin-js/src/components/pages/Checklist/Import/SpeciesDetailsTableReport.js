@@ -49,7 +49,7 @@ const columns = [
     dataField: 'species',
     text: 'Name',
     formatter: (cell, row, rowIndex) => (
-      <LosName key={rowIndex} data={cell} format="italic" />
+      <LosName key={rowIndex} data={cell} format="italic" isAggregates />
     ),
   },
   {
