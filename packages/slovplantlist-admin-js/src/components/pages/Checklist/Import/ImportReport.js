@@ -64,7 +64,7 @@ const ImportReport = ({ data }) => {
           <Button
             bsStyle="link"
             bsSize="xsmall"
-            onClick={() => setIsDetailTableShowed(true)}
+            onClick={() => setIsDetailTableShowed(!isDetailTableShowed)}
           >
             {isDetailTableShowed ? 'Less details <<<' : 'More details >>>'}
           </Button>
