@@ -46,7 +46,10 @@ const ChecklistImport = () => {
     try {
       setIsLoadingImport(true);
       setIsImportButtonClicked(true);
-      await importFacade.importChecklist(dataToSave, accessToken, username);
+      await importFacade.importChecklist(dataToSave, accessToken, {
+        insertedBy: username,
+        updatedBy: username,
+      });
       setIsLoadingImport(false);
       notifications.success('Data successfully imported');
     } catch (e) {
