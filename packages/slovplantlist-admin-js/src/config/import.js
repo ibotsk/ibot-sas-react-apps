@@ -75,12 +75,14 @@ export default {
     },
     19: {
       name: 'aggregate',
+      compareInDB: true,
     },
     20: {
       name: 'notes',
     },
     21: {
       name: 'subaggregate',
+      compareInDB: true,
     },
   },
   constants: {
