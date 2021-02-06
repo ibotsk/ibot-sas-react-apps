@@ -39,7 +39,10 @@ function replaceNonBreakingSpaces(obj) {
 }
 
 function escapeDoubleQuotes(val) {
-  return val.replaceAll(new RegExp(escape, 'gi'), '\\$&');
+  if (typeof val !== 'string') {
+    return val;
+  }
+  return val.replace(new RegExp(escape, 'gi'), '\\$&');
 }
 
 /**
