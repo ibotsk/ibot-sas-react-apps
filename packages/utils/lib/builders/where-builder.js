@@ -85,6 +85,11 @@ export const lte = (key, value, options = {
 }) => ({
   [key]: { lte: resolveEncode(value, options) },
 });
-export const and = (...objs) => ({ and: [...objs] });
+export const and = (...objs) => {
+  if (objs.length === 1) {
+    return objs[0];
+  }
+  return { and: [...objs] };
+};
 export const or = (...objs) => ({ or: [...objs] });
 export const inq = (key, ...vals) => ({ [key]: { inq: [...vals] } });

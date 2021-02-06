@@ -1,3 +1,5 @@
+import isEmpty from 'lodash.isempty';
+
 import config from '../config';
 
 const {
@@ -62,4 +64,5 @@ export default {
   replaceNonBreakingSpaces,
   escapeDoubleQuotes,
   parseJSONSafe,
+  isEmpty,
 };
