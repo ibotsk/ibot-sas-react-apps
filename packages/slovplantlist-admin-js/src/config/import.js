@@ -108,4 +108,13 @@ export default {
       errors: 'danger',
     },
   },
+  mappings: {
+    syntypeString: {
+      1: 'invalid',
+      2: 'taxonomic',
+      3: 'nomenclatoric',
+      R: 'parent',
+      '': 'none',
+    },
+  },
 };
