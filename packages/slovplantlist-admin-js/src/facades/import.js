@@ -206,11 +206,8 @@ async function importChecklist(data, accessToken, {
       continue;
     }
 
-    if (acceptedNameRowId) {
-      // S: only synonyms should have this prop not empty
-      // idAcceptedName must be set before saving
-      species.idAcceptedName = acceptedNamesIds[acceptedNameRowId];
-    }
+    species.idAcceptedName = acceptedNameRowId
+      ? acceptedNamesIds[acceptedNameRowId] : null;
 
     const { data: savedData } = await speciesFacade.saveSpecies(
       species, accessToken, {
