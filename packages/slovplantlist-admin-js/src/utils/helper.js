@@ -1,5 +1,6 @@
 import {
   species as speciesUtils,
+  misc as miscUtils,
   WhereBuilder,
   likep, regexp, neq, eq, lt, gt, lte, gte,
   or, and,
@@ -57,7 +58,7 @@ const filterToWhereItem = (filter, key) => {
       }
       valsOr.push(resolveByComparator(filter.comparator, itemKey, value));
     }
-    return conjug(valsOr);
+    return conjug(...valsOr);
   }
   return resolveByComparator(filter.comparator, key, filter.filterVal);
 };
@@ -86,7 +87,10 @@ function makeWhere(filters) {
   // keys of filters are joined with 'and'
   for (const key of keys) {
     // array of filterVal are joined by 'or'
-    whereItems.push(filterToWhereItem(filters[key], key));
+    const item = filterToWhereItem(filters[key], key);
+    if (!miscUtils.isEmpty(item)) {
+      whereItems.push(item);
+    }
   }
   const andItems = and(...whereItems);
 

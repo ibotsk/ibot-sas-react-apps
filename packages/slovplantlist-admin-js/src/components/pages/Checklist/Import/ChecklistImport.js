@@ -46,7 +46,10 @@ const ChecklistImport = () => {
     try {
       setIsLoadingImport(true);
       setIsImportButtonClicked(true);
-      await importFacade.importChecklist(dataToSave, accessToken, username);
+      await importFacade.importChecklist(dataToSave, accessToken, {
+        insertedBy: username,
+        updatedBy: username,
+      });
       setIsLoadingImport(false);
       notifications.success('Data successfully imported');
     } catch (e) {
@@ -83,7 +86,7 @@ const ChecklistImport = () => {
         config={{
           header: true,
           transformHeader: (_, i) => (
-            columns[i].name
+            columns[i] ? columns[i].name : 'unknown'
           ),
           skipEmptyLines: true,
         }}

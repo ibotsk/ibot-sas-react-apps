@@ -1,21 +1,21 @@
 import React from 'react';
 import { species as speciesUtils } from '@ibot/utils';
 
-const makeFormat = (subject, formatString) => {
+const makeFormat = (subject, formatString, key) => {
   switch (formatString) {
     case 'italic':
-      return <i>{subject}</i>;
+      return <i key={key}>{subject}</i>;
     default:
       return subject;
   }
 };
 
-function listOfSpeciesForComponent(name, formatString) {
-  const nameArr = speciesUtils.listOfSpeciesFormat(name);
+function listOfSpeciesForComponent(name, formatString, options) {
+  const nameArr = speciesUtils.listOfSpeciesFormat(name, options);
 
-  const formattedNameArr = nameArr.map((t) => {
+  const formattedNameArr = nameArr.map((t, i) => {
     if (t.format === formatString) {
-      return makeFormat(t.string, formatString);
+      return makeFormat(t.string, formatString, i);
     }
     return t.string;
   });

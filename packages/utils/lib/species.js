@@ -10,6 +10,9 @@ const {
     parts: configNameParts,
   },
 } = config;
+const {
+  aggregates: { wrapL, wrapR },
+} = configName;
 
 const makeSl = (string) => {
   const { sl } = configName;
@@ -59,12 +62,14 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
   const opts = {
     isPublication: false,
     isTribus: false,
+    isAggregates: false,
     ...options,
   };
   const {
     species, genus,
     subsp, var: varieta, forma,
     authors, publication, tribus,
+    aggregate, subaggregate,
   } = nomenclature;
 
   let isAuthorLast = true;
@@ -123,14 +128,19 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
     name.push(plain(','));
     name.push(plain(publication));
   }
+  const aggregates = [aggregate, subaggregate].filter((a) => !!a);
+  if (opts.isAggregates && aggregates.length > 0) {
+    const aggregatesString =  `${wrapL}${aggregates.join(', ')}${wrapR}`;
+    name.push(plain(aggregatesString));
+  }
   if (opts.isTribus && tribus) {
     name.push(plain(tribus));
   }
   return name;
 }
 
-function listOfSpeciesString(name) {
-  const nameArr = listOfSpeciesFormat(name);
+function listOfSpeciesString(name, options) {
+  const nameArr = listOfSpeciesFormat(name, options);
   return nameArr.map(({ string }) => string).join(' ');
 }
 

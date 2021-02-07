@@ -368,6 +368,7 @@ class SpeciesRecord extends Component {
         misidentifications,
         accessToken,
         insertedBy: username,
+        updatedBy: username,
       });
       notifications.success('Saved');
     } catch (error) {

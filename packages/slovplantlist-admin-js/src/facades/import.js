@@ -14,17 +14,21 @@ import synonymsFacade from './synonyms';
 const {
   mappings: { losType, synonym: synonymTypes },
   uris: { nomenclaturesUri, synonymsUri },
-  constants: { insertedMethod },
+  constants: {
+    insertedMethod: insertedMethodConfig,
+    updatedMethod: updatedMethodConfig,
+  },
 } = config;
 const {
   columns,
   constants: {
     operation: operationConfig,
   },
+  mappings: { syntypeString: syntypeStringConfig },
 } = importConfig;
 
 const columnsForGetSpecies = Object.keys(columns)
-  .filter((k) => columns[k].compare === true)
+  .filter((k) => columns[k].compareInDB === true)
   .map((k) => columns[k].name);
 
 const cureData = (data) => {
@@ -49,13 +53,13 @@ const checkForDuplicateRows = (species, referenceList = []) => {
  */
 const processSynonym = async (species, synonymsOfParent, accessToken) => {
   const { id, idAcceptedName, syntype } = species;
+  const syntypeString = syntype || '';
 
-  // collect synonyms of the same accepted name
-  const syntypeCurated = syntype === 'R'
-    ? synonymTypes.parent.numType : syntype;
+  const syntypeName = syntypeStringConfig[syntypeString];
+  const syntypeValue = synonymTypes[syntypeName].numType;
 
   synonymsOfParent.push(
-    common.createSynonym(idAcceptedName, id, syntypeCurated),
+    common.createSynonym(idAcceptedName, id, syntypeValue),
   );
   // delete all possibly existing synonyms of this synonym
   await synonymsFacade.deleteSynonymsByIdParent(id, accessToken);
@@ -108,11 +112,16 @@ async function importChecklistPrepare(
     );
 
     if (!found || found.length === 0) {
+      // all new
       speciesForImport = curedNomen;
       operation = operationConfig.create.key;
     } else {
       const [firstFound] = found;
-      speciesForImport = firstFound;
+      // merge existing with imported
+      speciesForImport = {
+        ...firstFound,
+        ...curedNomen,
+      };
       operation = operationConfig.update.key;
     }
 
@@ -155,6 +164,9 @@ async function importChecklistPrepare(
           ref: 'acceptedNameRowId',
         });
       }
+    } else {
+      // this branch must be present, otherwise acceptedNameRowId would carry over the value from currentAccNameRowId
+      acceptedNameRowId = undefined;
     }
 
     dataToImport.push({
@@ -177,7 +189,10 @@ async function importChecklistPrepare(
   return dataToImport;
 }
 
-async function importChecklist(data, accessToken, insertedBy = null) {
+async function importChecklist(data, accessToken, {
+  insertedBy = null,
+  updatedBy = null,
+}) {
   const acceptedNamesIds = {}; // key = accepted name rowId, value = accepted name id
   const synonymsByParent = {}; // synonym entities by accepted name id
 
@@ -191,14 +206,16 @@ async function importChecklist(data, accessToken, insertedBy = null) {
       continue;
     }
 
-    if (acceptedNameRowId) {
-      // S: only synonyms should have this prop not empty
-      // idAcceptedName must be set before saving
-      species.idAcceptedName = acceptedNamesIds[acceptedNameRowId];
-    }
+    species.idAcceptedName = acceptedNameRowId
+      ? acceptedNamesIds[acceptedNameRowId] : null;
 
     const { data: savedData } = await speciesFacade.saveSpecies(
-      species, accessToken, insertedBy, insertedMethod.import,
+      species, accessToken, {
+        insertedBy,
+        insertedMethod: insertedMethodConfig.import,
+        updatedBy,
+        updatedMethod: updatedMethodConfig.import,
+      },
     );
     const { id, ntype, idAcceptedName } = savedData;
 

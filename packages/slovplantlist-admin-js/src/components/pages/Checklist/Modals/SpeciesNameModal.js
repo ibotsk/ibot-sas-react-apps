@@ -161,7 +161,11 @@ class SpeciesNameModal extends Component {
       const { accessToken, username } = this.props;
       const { record: data } = this.state;
       try {
-        await speciesFacade.saveSpecies(data, accessToken, username);
+        // saveSpecies handles if data are created or updated
+        await speciesFacade.saveSpecies(data, accessToken, {
+          insertedBy: username,
+          updatedBy: username,
+        });
         notifications.success('Saved');
         this.handleHide();
       } catch (error) {

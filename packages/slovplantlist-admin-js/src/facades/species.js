@@ -6,7 +6,10 @@ import { getRequest, putRequest } from './client';
 import common from './common/common';
 
 const {
-  constants: { insertedMethod: insertedMethodConf },
+  constants: {
+    insertedMethod: insertedMethodConf,
+    updatedMethod: updatedMethodConf,
+  },
   uris: { nomenclaturesUri, synonymsUri },
 } = config;
 
@@ -145,7 +148,12 @@ async function getBasionymsFor(id, accessToken) {
 }
 
 async function saveSpecies(
-  data, accessToken, insertedBy, insertedMethod = insertedMethodConf.form,
+  data, accessToken, {
+    insertedBy,
+    insertedMethod = insertedMethodConf.form,
+    updatedBy,
+    updatedMethod = updatedMethodConf.form,
+  },
 ) {
   let dataToSave = data;
   if (!data.id) {
@@ -155,7 +163,14 @@ async function saveSpecies(
       insertedBy,
       insertedMethod,
     };
+  } else {
+    dataToSave = {
+      ...data,
+      updatedBy,
+      updatedMethod,
+    };
   }
+
   return putRequest(
     nomenclaturesUri.baseUri, dataToSave,
     undefined, accessToken,
@@ -171,6 +186,8 @@ async function saveSpeciesAndSynonyms({
   accessToken,
   insertedBy,
   insertedMethod = insertedMethodConf.form,
+  updatedBy,
+  updatedMethod = updatedMethodConf.form,
 }) {
   const allNewSynonyms = [
     ...nomenclatoricSynonyms,
@@ -180,7 +197,12 @@ async function saveSpeciesAndSynonyms({
   ];
 
   const { data } = await saveSpecies(
-    species, accessToken, insertedBy, insertedMethod,
+    species, accessToken, {
+      insertedBy,
+      insertedMethod,
+      updatedBy,
+      updatedMethod,
+    },
   );
 
   return common.submitSynonyms(data.id, allNewSynonyms, {

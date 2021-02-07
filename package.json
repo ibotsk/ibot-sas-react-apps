@@ -4,6 +4,9 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "slovplantlist:start": "yarn --cwd packages/slovplantlist-admin-js start"
+  },
   "devDependencies": {
     "lerna": "^3.22.1"
   }

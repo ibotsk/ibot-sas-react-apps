@@ -1,3 +1,5 @@
+import { misc } from '..';
+
 export class WhereBuilder {
   constructor() {
     this.where = {};
@@ -23,41 +25,71 @@ const replaceNonBreakingSpace = (val) => (
   val.replaceAll(NONBREAKING_WHITESPACE, REGULAR_WHITESPACE)
 );
 
-const resolveEncode = (isEncode, val) => {
+const resolveEncode = (val, { encodeUri, escapeQuotes }) => {
   if (!val) {
     return val;
   }
-  const encoded = isEncode ? encodeURIComponent(val) : val;
+  const escaped = escapeQuotes ? misc.escapeDoubleQuotes(val) : val;
+  const encoded = encodeUri ? encodeURIComponent(escaped) : escaped;
   return replaceNonBreakingSpace(encoded);
 };
 
-export const eq = (key, value, encodeURI = true) => ({
-    [key]: resolveEncode(encodeURI, value),
+/**
+ * 
+ * @param {string} key 
+ * @param {string|number} value 
+ * @param {{ encodeUri:boolean, escape:boolean }} options 
+ */
+export const eq = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => ({
+    [key]: resolveEncode(value, options),
   });
-export const neq = (key, value, encodeURI = true) => ({
-    [key]: { neq: resolveEncode(encodeURI, value) },
+export const neq = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => ({
+  [key]: { neq: resolveEncode(value, options) },
   });
-export const like = (key, value, encodeURI = true) => ({
-    [key]: { like: resolveEncode(encodeURI, value) },
+export const like = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => ({
+  [key]: { like: resolveEncode(value, options) },
   });
-export const likep = (key, value, encodeURI = true) => (
-    like(key, `%${value}%`, encodeURI)
+export const likep = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => (
+  like(key, `%${value}%`, options)
   );
-export const regexp = (key, value, encodeURI = true) => ({
-    [key]: { regexp: resolveEncode(encodeURI, value) },
+export const regexp = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => ({
+  [key]: { regexp: resolveEncode(value, options) },
   });
-export const gt = (key, value, encodeURI = true) => ({
-  [key]: { gt: resolveEncode(encodeURI, value) },
+export const gt = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => ({
+  [key]: { gt: resolveEncode(value, options) },
 });
-export const lt = (key, value, encodeURI = true) => ({
-  [key]: { lt: resolveEncode(encodeURI, value) },
+export const lt = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => ({
+  [key]: { lt: resolveEncode(value, options) },
 });
-export const gte = (key, value, encodeURI = true) => ({
-  [key]: { gte: resolveEncode(encodeURI, value) },
+export const gte = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => ({
+  [key]: { gte: resolveEncode(value, options) },
 });
-export const lte = (key, value, encodeURI = true) => ({
-  [key]: { lte: resolveEncode(encodeURI, value) },
+export const lte = (key, value, options = {
+  encodeUri: true, escapeQuotes: true,
+}) => ({
+  [key]: { lte: resolveEncode(value, options) },
 });
-export const and = (...objs) => ({ and: [...objs] });
+export const and = (...objs) => {
+  if (objs.length === 1) {
+    return objs[0];
+  }
+  return { and: [...objs] };
+};
 export const or = (...objs) => ({ or: [...objs] });
 export const inq = (key, ...vals) => ({ [key]: { inq: [...vals] } });

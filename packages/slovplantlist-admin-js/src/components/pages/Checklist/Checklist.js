@@ -40,6 +40,7 @@ const {
     listOfSpeciesColumn,
     ownership: ownershipColumn,
     insertedMethod: insertedMethodConfig,
+    updatedMethod: updatedMethodConfig,
   },
   mappings,
 } = config;
@@ -49,7 +50,7 @@ const ownershipOptionsAdmin = helperUtils.buildFilterOptionsFromKeys(
   mappings.ownership,
 );
 const { unassigned, others, ...ownershipOptionsAuthor } = ownershipOptionsAdmin;
-const methodOptions = Object.values(insertedMethodConfig).map((v) => ({
+const methodOptions = (opts) => Object.values(opts).map((v) => ({
   label: v,
   value: v,
 }));
@@ -145,7 +146,23 @@ const columns = (isAuthor) => [
     dataField: 'insertedMethod',
     text: 'Inserted method',
     filter: selectFilter({
-      options: methodOptions,
+      options: methodOptions(insertedMethodConfig),
+    }),
+    sort: true,
+    hidden: true,
+  },
+  {
+    dataField: 'updatedBy',
+    text: 'Updated by',
+    filter: textFilter(),
+    sort: true,
+    hidden: true,
+  },
+  {
+    dataField: 'updatedMethod',
+    text: 'Updated method',
+    filter: selectFilter({
+      options: methodOptions(updatedMethodConfig),
     }),
     sort: true,
     hidden: true,
@@ -158,10 +175,9 @@ const defaultSorted = [{
 }];
 
 const formatResult = (records, user) => records.map(({
-  id, accepted, idGenus, ownerNames, ntype, publication,
-  createdTimestamp, updatedTimestamp, checkedTimestamp,
-  insertedBy, insertedMethod, ...nomen
+  id, accepted, idGenus, ownerNames, ...nomen
 }) => ({
+  ...nomen,
   id,
   action: (
     <Can
@@ -198,7 +214,6 @@ const formatResult = (records, user) => records.map(({
       )}
     />
   ),
-  ntype,
   [listOfSpeciesColumn]: (
     <span>
       <a href={`${PAGE_DETAIL}${id}`}>
@@ -219,7 +234,6 @@ const formatResult = (records, user) => records.map(({
       />
     </span>
   ),
-  publication,
   acceptedName: (
     <a
       href={accepted ? `${PAGE_DETAIL}${accepted.id}` : ''}
@@ -227,12 +241,6 @@ const formatResult = (records, user) => records.map(({
       <LosName key={`acc${id}`} data={accepted} />
     </a>
   ),
-  idGenus,
-  createdTimestamp,
-  updatedTimestamp,
-  checkedTimestamp,
-  insertedBy,
-  insertedMethod,
 }));
 
 const Checklist = ({ user, accessToken }) => {

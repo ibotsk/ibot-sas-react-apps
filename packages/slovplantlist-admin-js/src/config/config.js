@@ -17,6 +17,10 @@ export default {
       form: 'FORM',
       import: 'IMPORT',
     },
+    updatedMethod: {
+      form: 'FORM',
+      import: 'IMPORT',
+    },
   },
   nomenclature: {
     name: {
@@ -121,12 +125,18 @@ export default {
         numType: 9,
         prefix: '',
       },
+      none: {
+        numType: 0,
+        prefix: '',
+      },
     },
     synonymBySyntype: {
+      0: 'none',
       1: 'invalid',
       2: 'taxonomic',
       3: 'nomenclatoric',
       4: 'misidentification',
+      9: 'parent',
     },
     userRole: {
       admin: {
