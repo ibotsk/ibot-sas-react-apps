@@ -235,21 +235,15 @@ const formatResult = (records, user) => records.map(({
     </span>
   ),
   acceptedNames: (
-    <Can
-      role={user.role}
-      perform="species:edit"
-      yes={() => (
-        accepted.map(({ parent }, i) => [
-          i > 0 && ', ',
-          <a
-            key={parent.id}
-            href={`${PAGE_DETAIL}${parent.id}`}
-          >
-            <LosName data={parent} />
-          </a>,
-        ])
-      )}
-    />
+    accepted.map(({ parent }, i) => [
+      i > 0 && ', ',
+      <a
+        key={parent.id}
+        href={`${PAGE_DETAIL}${parent.id}`}
+      >
+        <LosName data={parent} />
+      </a>,
+    ])
   ),
 }));
 
