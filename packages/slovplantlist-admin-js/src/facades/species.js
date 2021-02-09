@@ -18,7 +18,8 @@ async function getRecordById(id, accessToken) {
     nomenclaturesUri.getByIdWFilterUri, { id }, accessToken,
   );
 
-  const accepted = helperUtils.losToTypeaheadSelected(speciesRecord.accepted);
+  const { accepted } = speciesRecord;
+
   const basionym = helperUtils.losToTypeaheadSelected(speciesRecord.basionym);
   const replaced = helperUtils.losToTypeaheadSelected(speciesRecord.replaced);
   const nomenNovum = helperUtils.losToTypeaheadSelected(
