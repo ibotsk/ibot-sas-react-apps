@@ -115,8 +115,8 @@ const columns = (isAuthor) => [
     hidden: false,
   },
   {
-    dataField: 'acceptedName',
-    text: 'Accepted name',
+    dataField: 'acceptedNames',
+    text: 'Accepted name (s)',
     filter: textFilter(),
     sort: true,
     hidden: false,
@@ -234,12 +234,22 @@ const formatResult = (records, user) => records.map(({
       />
     </span>
   ),
-  acceptedName: (
-    <a
-      href={accepted ? `${PAGE_DETAIL}${accepted.id}` : ''}
-    >
-      <LosName key={`acc${id}`} data={accepted} />
-    </a>
+  acceptedNames: (
+    <Can
+      role={user.role}
+      perform="species:edit"
+      yes={() => (
+        accepted.map(({ parent }, i) => [
+          i > 0 && ', ',
+          <a
+            key={parent.id}
+            href={`${PAGE_DETAIL}${parent.id}`}
+          >
+            <LosName data={parent} />
+          </a>,
+        ])
+      )}
+    />
   ),
 }));
 

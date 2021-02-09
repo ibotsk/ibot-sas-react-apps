@@ -26,7 +26,7 @@ export default {
     name: {
       sl: 's.l.',
       tribus: 'tribus',
-      hybrid: 'x',
+      hybrid: '×',
       infra: {
         subsp: 'subsp.',
         var: 'var.',
