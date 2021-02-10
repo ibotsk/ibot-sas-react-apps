@@ -125,6 +125,10 @@ export default {
         numType: 9,
         prefix: '',
       },
+      position: {
+        numType: 5,
+        prefix: '',
+      },
       none: {
         numType: 0,
         prefix: '',

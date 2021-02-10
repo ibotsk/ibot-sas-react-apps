@@ -31,6 +31,9 @@ import {
   TaxonomicSynonymListItem,
   InvalidSynonymListItem,
   MisidentifiedSynonymListItem,
+  OtherSynonymListItem,
+  ParentalCombinationListItem,
+  TaxonPositionListItem,
 } from './items';
 
 const LABEL_COL_WIDTH = 2;
@@ -54,7 +57,6 @@ const recordInitialValues = {
   genusH: '',
   hybrid: false,
   id: undefined,
-  idAcceptedName: undefined,
   idBasionym: undefined,
   idGenus: undefined,
   idNomenNovum: undefined,
@@ -128,6 +130,9 @@ class SpeciesRecord extends Component {
       taxonomicSynonyms: [],
       invalidDesignations: [],
       misidentifications: [],
+      otherSynonyms: [],
+      parentalCombinations: [],
+      taxonPositions: [],
 
       basionymFor: [],
       replacedFor: [],
@@ -146,7 +151,8 @@ class SpeciesRecord extends Component {
 
         const {
           nomenclatoricSynonyms, taxonomicSynonyms,
-          invalidDesignations, misidentifications,
+          invalidDesignations, misidentifications, otherSynonyms,
+          parentalCombinations, taxonPositions,
         } = await speciesFacade.getSynonyms(recordId, accessToken);
         const {
           basionymFor, replacedFor, nomenNovumFor,
@@ -165,6 +171,9 @@ class SpeciesRecord extends Component {
           taxonomicSynonyms,
           invalidDesignations,
           misidentifications,
+          otherSynonyms,
+          parentalCombinations,
+          taxonPositions,
           basionymFor,
           replacedFor,
           nomenNovumFor,
@@ -355,15 +364,23 @@ class SpeciesRecord extends Component {
       taxonomicSynonyms,
       invalidDesignations,
       misidentifications,
+      otherSynonyms,
+      parentalCombinations,
+      taxonPositions,
     } = this.state;
 
     try {
       await speciesFacade.saveSpeciesAndSynonyms({
         species: record,
-        nomenclatoricSynonyms,
-        taxonomicSynonyms,
-        invalidDesignations,
-        misidentifications,
+        synonyms: [
+          ...nomenclatoricSynonyms,
+          ...taxonomicSynonyms,
+          ...invalidDesignations,
+          ...misidentifications,
+          ...otherSynonyms,
+          ...parentalCombinations,
+          ...taxonPositions,
+        ],
         accessToken,
         insertedBy: username,
         updatedBy: username,
@@ -516,7 +533,7 @@ class SpeciesRecord extends Component {
       familyApg, family, generaOptions, record,
       listOfSpecies,
       nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
-      misidentifications,
+      misidentifications, otherSynonyms, parentalCombinations, taxonPositions,
       basionymFor, replacedFor, nomenNovumFor,
       record: {
         id, ntype, genus, species, subsp, var: variety,
@@ -1057,6 +1074,77 @@ class SpeciesRecord extends Component {
                       onSearch={this.handleSearchSpeciesAsync}
                       // props specific to itemComponent
                       onChangeAuthor={this.handleChangeMisidentificationAuthor}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="other-synonyms" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Other synonyms
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AddableList
+                      id="otherSynonyms"
+                      async
+                      data={otherSynonyms}
+                      onAddItemToList={(selected) => this.handleSynonymAddRow(
+                        selected,
+                        'otherSynonyms',
+                        config.mappings.synonym.none.numType,
+                      )}
+                      onRowDelete={(rowId) => this.handleSynonymRemoveRow(
+                        rowId,
+                        'otherSynonyms',
+                      )}
+                      itemComponent={OtherSynonymListItem}
+                      onSearch={this.handleSearchSpeciesAsync}
+                    />
+                  </Col>
+                </FormGroup>
+              </Well>
+              <Well>
+                <FormGroup controlId="parental-combinations" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Parental combinations
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AddableList
+                      id="parentalCombinations"
+                      async
+                      data={parentalCombinations}
+                      onAddItemToList={(selected) => this.handleSynonymAddRow(
+                        selected,
+                        'parentalCombinations',
+                        config.mappings.synonym.parent.numType,
+                      )}
+                      onRowDelete={(rowId) => this.handleSynonymRemoveRow(
+                        rowId,
+                        'parentalCombinations',
+                      )}
+                      itemComponent={ParentalCombinationListItem}
+                      onSearch={this.handleSearchSpeciesAsync}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="taxon-positions" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Taxon positions
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AddableList
+                      id="taxonPositions"
+                      async
+                      data={taxonPositions}
+                      onAddItemToList={(selected) => this.handleSynonymAddRow(
+                        selected,
+                        'taxonPositions',
+                        config.mappings.synonym.position.numType,
+                      )}
+                      onRowDelete={(rowId) => this.handleSynonymRemoveRow(
+                        rowId,
+                        'taxonPositions',
+                      )}
+                      itemComponent={TaxonPositionListItem}
+                      onSearch={this.handleSearchSpeciesAsync}
                     />
                   </Col>
                 </FormGroup>

@@ -123,11 +123,26 @@ async function getSynonyms(id, accessToken) {
     nomenclaturesUri.getMisidentificationsUri, { id }, accessToken,
   );
 
+  const otherSynonyms = await getRequest(
+    nomenclaturesUri.getOtherSynonyms, { id }, accessToken,
+  );
+
+  // these are not synonyms per se
+  const parentalCombinations = await getRequest(
+    nomenclaturesUri.getParentalCombinations, { id }, accessToken,
+  );
+  const taxonPositions = await getRequest(
+    nomenclaturesUri.getTaxonPositions, { id }, accessToken,
+  );
+
   return {
     nomenclatoricSynonyms,
     taxonomicSynonyms,
     invalidDesignations,
     misidentifications,
+    otherSynonyms,
+    parentalCombinations,
+    taxonPositions,
   };
 }
 
@@ -180,23 +195,13 @@ async function saveSpecies(
 
 async function saveSpeciesAndSynonyms({
   species,
-  nomenclatoricSynonyms,
-  taxonomicSynonyms,
-  invalidDesignations,
-  misidentifications,
+  synonyms,
   accessToken,
   insertedBy,
   insertedMethod = insertedMethodConf.form,
   updatedBy,
   updatedMethod = updatedMethodConf.form,
 }) {
-  const allNewSynonyms = [
-    ...nomenclatoricSynonyms,
-    ...taxonomicSynonyms,
-    ...invalidDesignations,
-    ...misidentifications,
-  ];
-
   const { data } = await saveSpecies(
     species, accessToken, {
       insertedBy,
@@ -206,7 +211,7 @@ async function saveSpeciesAndSynonyms({
     },
   );
 
-  return common.submitSynonyms(data.id, allNewSynonyms, {
+  return common.submitSynonyms(data.id, synonyms, {
     getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
     deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
     updateSynonymsUri: synonymsUri.baseUri,
