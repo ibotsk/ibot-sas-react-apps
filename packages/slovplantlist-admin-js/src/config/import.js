@@ -106,7 +106,9 @@ export default {
     messages: {
       duplicates: 'info',
       errors: 'danger',
+      nosave: 'warning',
     },
+    trimChars: ' „“"\'',
   },
   mappings: {
     syntypeString: {

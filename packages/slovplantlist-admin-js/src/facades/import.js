@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import {
-  misc, species as speciesUtils,
+  misc as miscUtils,
 } from '@ibot/utils';
 
 import config from 'config/config';
@@ -23,6 +23,7 @@ const {
   columns,
   constants: {
     operation: operationConfig,
+    trimChars,
   },
   mappings: { syntypeString: syntypeStringConfig },
 } = importConfig;
@@ -32,16 +33,44 @@ const columnsForGetSpecies = Object.keys(columns)
   .map((k) => columns[k].name);
 
 const cureData = (data) => {
-  const etndata = misc.emptyToNull(data);
-  return misc.replaceNonBreakingSpaces(etndata);
+  const etndata = miscUtils.emptyToNull(data);
+  return miscUtils.replaceNonBreakingSpaces(etndata);
 };
 
-const checkForDuplicateRows = (species, referenceList = []) => {
-  const duplicates = referenceList.filter(({ species: s }) => (
-    speciesUtils.areEqualSpecies(species, s, columnsForGetSpecies)
-  )).map(({ rowId }) => rowId);
+// duplicate: row is twice in the data and (ntype === 'A' or the synonym is assigned to a duplicate accepted)
+const checkForDuplicateRows = (data) => {
+  const rowIdToDuplicates = new Map();
+  const reference = new Map();
 
-  return duplicates;
+  const dataToCheck = [...data];
+  dataToCheck.forEach((row) => {
+    const {
+      species, rowId, acceptedNameRowId, operation, duplicates = [],
+    } = row;
+    const speciesKey = miscUtils.stringifyObj(species, columnsForGetSpecies);
+    let assignedOperation = operation;
+
+    if (reference.has(speciesKey)) {
+      const referencedDuplicate = reference.get(speciesKey);
+      assignedOperation = operationConfig.duplicate.key;
+      duplicates.push(referencedDuplicate.rowId);
+
+      if (species.ntype !== losType.A.key) {
+        const acceptedDuplicates = rowIdToDuplicates.get(acceptedNameRowId);
+        if (!acceptedDuplicates || acceptedDuplicates.length === 0) {
+          // eslint-disable-next-line no-param-reassign
+          row.save = false;
+          assignedOperation = operation; // leave the original operation
+        }
+      }
+
+      // eslint-disable-next-line no-param-reassign
+      row.operation = assignedOperation;
+    }
+    rowIdToDuplicates.set(rowId, duplicates);
+    reference.set(speciesKey, { rowId, acceptedNameRowId });
+  });
+  return dataToCheck;
 };
 
 /**
@@ -51,8 +80,10 @@ const checkForDuplicateRows = (species, referenceList = []) => {
  * @param {array} synonymsOfParent
  * @param {string} accessToken
  */
-const processSynonym = async (species, synonymsOfParent, accessToken) => {
-  const { id, idAcceptedName, syntype } = species;
+const processSynonym = async (
+  species, synonymsOfParent, idAcceptedName, accessToken,
+) => {
+  const { id, syntype } = species;
   const syntypeString = syntype || '';
 
   const syntypeName = syntypeStringConfig[syntypeString];
@@ -101,11 +132,10 @@ async function importChecklistPrepare(
     const errors = [];
     let operation;
 
-    const duplicates = checkForDuplicateRows(curedNomen, dataToImport);
-
     // check for exact match on all provided fields in row, except ntype and syntype
     const { found } = await speciesFacade.getSpeciesByAll(
-      curedNomen, accessToken, undefined, {
+      curedNomen, accessToken, undefined,
+      {
         include: columnsForGetSpecies,
         exact: true,
       },
@@ -125,9 +155,6 @@ async function importChecklistPrepare(
       operation = operationConfig.update.key;
     }
 
-    if (duplicates.length > 0) {
-      operation = operationConfig.duplicate.key;
-    }
     if (ntype !== '' && ntype !== losType.A.key) {
       errors.push({
         message: `Invalid value '${ntype}' in column 'status'`,
@@ -141,16 +168,19 @@ async function importChecklistPrepare(
 
     // get idGenus by name, if not found, add it to report
     const { genus: genusName } = curedNomen;
-    const foundGeneraArray = await genusFacade.getAllGeneraBySearchTerm(
-      genusName, accessToken,
-    );
-    if (!foundGeneraArray || foundGeneraArray.length === 0) {
-      errors.push({
-        message: `Genus '${genusName}' was not found`,
-        ref: 'idGenus',
-      });
-    } else {
-      speciesForImport.idGenus = foundGeneraArray[0].id;
+    if (genusName) {
+      const genusTrimmed = miscUtils.trim(genusName, trimChars);
+      const foundGeneraArray = await genusFacade.getAllGeneraBySearchTerm(
+        genusTrimmed, accessToken,
+      );
+      if (!foundGeneraArray || foundGeneraArray.length === 0) {
+        errors.push({
+          message: `Genus '${genusName}' was not found`,
+          ref: 'idGenus',
+        });
+      } else {
+        speciesForImport.idGenus = foundGeneraArray[0].id;
+      }
     }
 
     let acceptedNameRowId;
@@ -175,7 +205,8 @@ async function importChecklistPrepare(
       acceptedNameRowId,
       operation,
       errors,
-      duplicates,
+      duplicates: [],
+      save: true, // save all by default
     });
     // update accepted name row id
     if (newNtype === losType.A.key) {
@@ -186,7 +217,9 @@ async function importChecklistPrepare(
     rowId += 1;
   }
 
-  return dataToImport;
+  const dataToImportWithDuplicates = checkForDuplicateRows(dataToImport);
+
+  return dataToImportWithDuplicates;
 }
 
 async function importChecklist(data, accessToken, {
@@ -206,18 +239,19 @@ async function importChecklist(data, accessToken, {
       continue;
     }
 
-    species.idAcceptedName = acceptedNameRowId
-      ? acceptedNamesIds[acceptedNameRowId] : null;
+    // TODO: create a special flag: row has been created/updated before but process it as a synonym of another accepted name
+    // in that case, skip save species, instead get species
 
     const { data: savedData } = await speciesFacade.saveSpecies(
-      species, accessToken, {
+      species, accessToken,
+      {
         insertedBy,
         insertedMethod: insertedMethodConfig.import,
         updatedBy,
         updatedMethod: updatedMethodConfig.import,
       },
     );
-    const { id, ntype, idAcceptedName } = savedData;
+    const { id, ntype } = savedData;
 
     if (ntype === losType.A.key) {
       // store id of the accepted name
@@ -227,8 +261,10 @@ async function importChecklist(data, accessToken, {
     }
 
     if (ntype === losType.S.key) {
+      const idAcceptedName = acceptedNamesIds[acceptedNameRowId];
       synonymsByParent[idAcceptedName] = await processSynonym(
-        savedData, synonymsByParent[idAcceptedName], accessToken,
+        savedData, synonymsByParent[idAcceptedName], idAcceptedName,
+        accessToken,
       );
     }
   }

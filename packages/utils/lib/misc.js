@@ -1,4 +1,6 @@
 import isEmpty from 'lodash.isempty';
+import trim from 'lodash.trim';
+import pick from 'lodash.pick';
 
 import config from '../config';
 
@@ -62,10 +64,25 @@ function parseJSONSafe(value) {
   }
 }
 
+/**
+ * Creates a stringified version of the obj with pricked properties
+ * @param {object} obj 
+ * @param {array<string>} properties properties to pick from obj
+ */
+function stringifyObj(obj, properties = undefined) {
+  let objToStringify = obj;
+  if (properties) {
+    objToStringify = pick(obj, properties);
+  }
+  return JSON.stringify(objToStringify);
+}
+
 export default {
   emptyToNull,
   replaceNonBreakingSpaces,
   escapeDoubleQuotes,
   parseJSONSafe,
+  stringifyObj,
   isEmpty,
+  trim,
 };

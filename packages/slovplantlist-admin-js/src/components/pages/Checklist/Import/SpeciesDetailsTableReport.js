@@ -64,11 +64,14 @@ const columns = [
 ];
 
 const rowClasses = (row) => {
-  const { duplicates, errors } = row;
+  const { duplicates, errors, save } = row;
   let classes;
 
   if (duplicates && duplicates.length > 0) {
     classes = messagesConfig.duplicates;
+  }
+  if (!save) {
+    classes = messagesConfig.nosave;
   }
   // overrides anything else before
   if (errors && errors.length > 0) {
@@ -79,10 +82,16 @@ const rowClasses = (row) => {
 
 const expandRow = {
   renderer: (row) => {
-    const { duplicates = [], errors = [] } = row;
+    const { duplicates = [], errors = [], save } = row;
 
     return (
       <div>
+        {!save && (
+          <p>
+            This record is created/updated earlier.
+            Only new accepted name will be assigned.
+          </p>
+        )}
         {duplicates.length > 0 && (
           <p>
             Duplicate of rows:
