@@ -17,8 +17,6 @@ import { NotificationContainer } from 'react-notifications';
 import { LosName, LosNameList, TimestampCheck } from '@ibot/components';
 
 import AddableList from 'components/segments/AddableList';
-import PlainListOfSpeciesNames from
-  'components/segments/Checklist/PlainListOfSpeciesNames';
 
 import { speciesFacade, genusFacade } from 'facades';
 
@@ -39,6 +37,7 @@ const LABEL_COL_WIDTH = 2;
 const CONTENT_COL_WIDTH = 10;
 
 const CHECKLIST_LIST_URI = '/checklist';
+const CHECKLIST_EDIT_URI = (id) => `/checklist/edit/${id}`;
 
 const {
   mappings: {
@@ -139,36 +138,41 @@ class SpeciesRecord extends Component {
   async componentDidMount() {
     const { recordId, accessToken } = this.props;
     if (recordId) {
-      const {
-        speciesRecord, accepted, basionym, replaced,
-        nomenNovum, genus, familyApg, family,
-      } = await speciesFacade.getRecordById(recordId, accessToken);
+      try {
+        const {
+          speciesRecord, accepted, basionym, replaced,
+          nomenNovum, genus, familyApg, family,
+        } = await speciesFacade.getRecordById(recordId, accessToken);
 
-      const {
-        nomenclatoricSynonyms, taxonomicSynonyms,
-        invalidDesignations, misidentifications,
-      } = await speciesFacade.getSynonyms(recordId, accessToken);
-      const {
-        basionymFor, replacedFor, nomenNovumFor,
-      } = await speciesFacade.getBasionymsFor(recordId, accessToken);
+        const {
+          nomenclatoricSynonyms, taxonomicSynonyms,
+          invalidDesignations, misidentifications,
+        } = await speciesFacade.getSynonyms(recordId, accessToken);
+        const {
+          basionymFor, replacedFor, nomenNovumFor,
+        } = await speciesFacade.getBasionymsFor(recordId, accessToken);
 
-      this.setState({
-        record: speciesRecord,
-        accepted,
-        idBasionymSelected: basionym || [],
-        idReplacedSelected: replaced || [],
-        idNomenNovumSelected: nomenNovum || [],
-        idGenusSelected: genus || [],
-        familyApg,
-        family,
-        nomenclatoricSynonyms,
-        taxonomicSynonyms,
-        invalidDesignations,
-        misidentifications,
-        basionymFor,
-        replacedFor,
-        nomenNovumFor,
-      });
+        this.setState({
+          record: speciesRecord,
+          accepted,
+          idBasionymSelected: basionym || [],
+          idReplacedSelected: replaced || [],
+          idNomenNovumSelected: nomenNovum || [],
+          idGenusSelected: genus || [],
+          familyApg,
+          family,
+          nomenclatoricSynonyms,
+          taxonomicSynonyms,
+          invalidDesignations,
+          misidentifications,
+          basionymFor,
+          replacedFor,
+          nomenNovumFor,
+        });
+      } catch (e) {
+        console.log(e.response);
+        throw e;
+      }
     }
   }
 
@@ -845,9 +849,16 @@ class SpeciesRecord extends Component {
                     Accepted name(s)
                   </Col>
                   <Col sm={CONTENT_COL_WIDTH}>
-                    <LosNameList list={accepted.map(({ parent }) => parent)} />
+                    <LosNameList
+                      list={accepted.map(({ parent }) => parent)}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
                   </Col>
                 </FormGroup>
+              </Well>
+              <Well>
                 <FormGroup controlId="idBasionym" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Basionym
@@ -1059,7 +1070,12 @@ class SpeciesRecord extends Component {
                     Basionym For
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    <PlainListOfSpeciesNames list={basionymFor} />
+                    <LosNameList
+                      list={basionymFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="idReplacedFor" bsSize="sm">
@@ -1067,7 +1083,12 @@ class SpeciesRecord extends Component {
                     Replaced For
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    <PlainListOfSpeciesNames list={replacedFor} />
+                    <LosNameList
+                      list={replacedFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="idNomenNovumFor" bsSize="sm">
@@ -1075,7 +1096,12 @@ class SpeciesRecord extends Component {
                     Nomen Novum For
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    <PlainListOfSpeciesNames list={nomenNovumFor} />
+                    <LosNameList
+                      list={nomenNovumFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
                   </Col>
                 </FormGroup>
               </Well>

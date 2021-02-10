@@ -7,10 +7,11 @@ import {
 import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
-import SynonymListItem from 'components/segments/SynonymListItem';
-import { LosName } from '@ibot/components';
+import { LosName, SynonymListItem } from '@ibot/components';
 
 import config from 'config/config';
+
+const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
 
 const MisidentifiedSynonymListItem = ({
   rowId,
@@ -23,7 +24,10 @@ const MisidentifiedSynonymListItem = ({
     <SynonymListItem
       rowId={rowId}
       data={data}
-      nameComponent={LosName}
+      nameComponent={(props) => (
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        <LosName {...props} uri={CHECKLIST_PAGE(props.data.id)} />
+      )}
       prefix={config.mappings.synonym.misidentification.prefix}
       onRowDelete={onRowDelete}
     >

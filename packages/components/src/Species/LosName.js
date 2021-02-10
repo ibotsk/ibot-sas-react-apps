@@ -11,6 +11,7 @@ const LosName = ({
   isPublication = false,
   isTribus = false,
   isAggregates = false,
+  uri = undefined,
 }) => {
   if (!data) {
     return null;
@@ -20,9 +21,18 @@ const LosName = ({
     isTribus,
     isAggregates,
   };
+  const los = helper.listOfSpeciesForComponent(data, format, options);
+
+  if (uri) {
+    return (
+      <a href={uri}>
+        {los}
+      </a>
+    );
+  }
   return (
     <span>
-      {helper.listOfSpeciesForComponent(data, format, options)}
+      {los}
     </span>
   );
 };
@@ -35,6 +45,7 @@ LosName.propTypes = {
   isPublication: PropTypes.bool,
   isTribus: PropTypes.bool,
   isAggregates: PropTypes.bool,
+  uri: PropTypes.string,
 };
 
 LosName.defaultProps = {
@@ -43,4 +54,5 @@ LosName.defaultProps = {
   isPublication: false,
   isTribus: false,
   isAggregates: false,
+  uri: undefined,
 };

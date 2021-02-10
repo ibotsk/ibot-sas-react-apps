@@ -22,7 +22,7 @@ class AddableList extends Component {
     };
   }
 
-  onChange = (selected) => {
+  handleChange = (selected) => {
     this.setState({
       selected,
     });
@@ -68,7 +68,7 @@ class AddableList extends Component {
           ref={(typeahead) => { this.typeahead = typeahead; }}
           isLoading={isLoading}
           options={stateOptions}
-          onChange={this.onChange}
+          onChange={this.handleChange}
           selected={selected}
           onSearch={this.handleSearchAsync}
           placeholder="Start by typing (case sensitive)"
@@ -82,7 +82,7 @@ class AddableList extends Component {
         size="sm"
         ref={(typeahead) => { this.typeahead = typeahead; }}
         options={propsOptions}
-        onChange={this.onChange}
+        onChange={this.handleChange}
         selected={selected}
         placeholder="Start by typing"
         renderMenu={renderMenu}
