@@ -81,9 +81,9 @@ const checkForDuplicateRows = (data) => {
  * @param {string} accessToken
  */
 const processSynonym = async (
-  species, synonymsOfParent, idAcceptedName, accessToken,
+  species, synonymsOfParent, idAcceptedName, syntype, accessToken,
 ) => {
-  const { id, syntype } = species;
+  const { id } = species;
   const syntypeString = syntype || '';
 
   const syntypeName = syntypeStringConfig[syntypeString];
@@ -218,7 +218,6 @@ async function importChecklistPrepare(
   }
 
   const dataToImportWithDuplicates = checkForDuplicateRows(dataToImport);
-
   return dataToImportWithDuplicates;
 }
 
@@ -231,27 +230,47 @@ async function importChecklist(data, accessToken, {
 
   for (const row of data) {
     const {
-      species, rowId, acceptedNameRowId, duplicates,
+      species, rowId, acceptedNameRowId, operation, save,
     } = row;
+    const { syntype } = species;
 
-    if (duplicates && duplicates.length > 0) {
+    if (operation === operationConfig.duplicate.key) {
       // skip duplicate row
       continue;
     }
 
-    // TODO: create a special flag: row has been created/updated before but process it as a synonym of another accepted name
-    // in that case, skip save species, instead get species
+    let nomenclatureData;
 
-    const { data: savedData } = await speciesFacade.saveSpecies(
-      species, accessToken,
-      {
-        insertedBy,
-        insertedMethod: insertedMethodConfig.import,
-        updatedBy,
-        updatedMethod: updatedMethodConfig.import,
-      },
-    );
-    const { id, ntype } = savedData;
+    if (save === false) {
+      const { found } = await speciesFacade.getSpeciesByAll(
+        species, accessToken, undefined,
+        {
+          include: columnsForGetSpecies,
+          exact: true,
+        },
+      );
+      if (!found || found.length === 0) {
+        throw new Error(
+          `Nomenclature record not found but should exist.
+          ${JSON.stringify(species)}`,
+        );
+      }
+      const [firstFound] = found;
+      nomenclatureData = firstFound;
+    } else {
+      const { data: savedData } = await speciesFacade.saveSpecies(
+        species, accessToken,
+        {
+          insertedBy,
+          insertedMethod: insertedMethodConfig.import,
+          updatedBy,
+          updatedMethod: updatedMethodConfig.import,
+        },
+      );
+      nomenclatureData = savedData;
+    }
+
+    const { id, ntype } = nomenclatureData;
 
     if (ntype === losType.A.key) {
       // store id of the accepted name
@@ -263,7 +282,8 @@ async function importChecklist(data, accessToken, {
     if (ntype === losType.S.key) {
       const idAcceptedName = acceptedNamesIds[acceptedNameRowId];
       synonymsByParent[idAcceptedName] = await processSynonym(
-        savedData, synonymsByParent[idAcceptedName], idAcceptedName,
+        nomenclatureData, synonymsByParent[idAcceptedName],
+        idAcceptedName, syntype,
         accessToken,
       );
     }
