@@ -14,11 +14,9 @@ import PropTypes from 'prop-types';
 
 import { NotificationContainer } from 'react-notifications';
 
-import { LosName, TimestampCheck } from '@ibot/components';
+import { LosName, LosNameList, TimestampCheck } from '@ibot/components';
 
 import AddableList from 'components/segments/AddableList';
-import PlainListOfSpeciesNames from
-  'components/segments/Checklist/PlainListOfSpeciesNames';
 
 import { speciesFacade, genusFacade } from 'facades';
 
@@ -33,18 +31,14 @@ import {
   TaxonomicSynonymListItem,
   InvalidSynonymListItem,
   MisidentifiedSynonymListItem,
+  OtherSynonymListItem,
 } from './items';
 
 const LABEL_COL_WIDTH = 2;
 const CONTENT_COL_WIDTH = 10;
 
-const ID_GENUS_NAME_PROP = 'idGenus';
-const ID_ACCEPTED_NAME_PROP = 'idAcceptedName';
-const ID_BASIONYM_NAME_PROP = 'idBasionym';
-const ID_REPLACED_NAME_PROP = 'idReplaced';
-const ID_NOMEN_NOVUM_NAME_PROP = 'idNomenNovum';
-
 const CHECKLIST_LIST_URI = '/checklist';
+const CHECKLIST_EDIT_URI = (id) => `/checklist/edit/${id}`;
 
 const {
   mappings: {
@@ -61,11 +55,12 @@ const recordInitialValues = {
   genusH: '',
   hybrid: false,
   id: undefined,
-  idAcceptedName: undefined,
   idBasionym: undefined,
   idGenus: undefined,
   idNomenNovum: undefined,
   idReplaced: undefined,
+  idParentCombination: undefined,
+  idTaxonPosition: undefined,
   isBasionym: false,
   isIsonym: false,
   notes: '',
@@ -125,20 +120,25 @@ class SpeciesRecord extends Component {
       familyApg: '',
       family: '',
       isLoading: false,
-      idAcceptedNameSelected: [],
+      accepted: [],
       idBasionymSelected: [],
       idReplacedSelected: [],
       idNomenNovumSelected: [],
+      idParentCombinationSelected: [],
+      idTaxonPositionSelected: [],
       idGenusSelected: [],
 
       nomenclatoricSynonyms: [], // contains objects of synonym
       taxonomicSynonyms: [],
       invalidDesignations: [],
       misidentifications: [],
+      otherSynonyms: [],
 
       basionymFor: [],
       replacedFor: [],
       nomenNovumFor: [],
+      parentCombinationFor: [],
+      taxonPositionFor: [],
     };
   }
 
@@ -146,34 +146,42 @@ class SpeciesRecord extends Component {
     const { recordId, accessToken } = this.props;
     if (recordId) {
       const {
-        speciesRecord, accepted, basionym, replaced,
-        nomenNovum, genus, familyApg, family,
+        speciesRecord, accepted,
+        genus, familyApg, family,
+        basionym, replaced, nomenNovum,
+        parentCombination, taxonPosition,
       } = await speciesFacade.getRecordById(recordId, accessToken);
 
       const {
         nomenclatoricSynonyms, taxonomicSynonyms,
-        invalidDesignations, misidentifications,
+        invalidDesignations, misidentifications, otherSynonyms,
       } = await speciesFacade.getSynonyms(recordId, accessToken);
       const {
         basionymFor, replacedFor, nomenNovumFor,
-      } = await speciesFacade.getBasionymsFor(recordId, accessToken);
+        parentCombinationFor, taxonPositionFor,
+      } = await speciesFacade.getForRelations(recordId, accessToken);
 
       this.setState({
         record: speciesRecord,
-        idAcceptedNameSelected: accepted,
-        idBasionymSelected: basionym,
-        idReplacedSelected: replaced,
-        idNomenNovumSelected: nomenNovum,
-        idGenusSelected: genus,
+        accepted,
+        idBasionymSelected: basionym || [],
+        idReplacedSelected: replaced || [],
+        idNomenNovumSelected: nomenNovum || [],
+        idParentCombinationSelected: parentCombination || [],
+        idTaxonPositionSelected: taxonPosition || [],
+        idGenusSelected: genus || [],
         familyApg,
         family,
         nomenclatoricSynonyms,
         taxonomicSynonyms,
         invalidDesignations,
         misidentifications,
+        otherSynonyms,
         basionymFor,
         replacedFor,
         nomenNovumFor,
+        parentCombinationFor,
+        taxonPositionFor,
       });
     }
   }
@@ -357,15 +365,19 @@ class SpeciesRecord extends Component {
       taxonomicSynonyms,
       invalidDesignations,
       misidentifications,
+      otherSynonyms,
     } = this.state;
 
     try {
       await speciesFacade.saveSpeciesAndSynonyms({
         species: record,
-        nomenclatoricSynonyms,
-        taxonomicSynonyms,
-        invalidDesignations,
-        misidentifications,
+        synonyms: [
+          ...nomenclatoricSynonyms,
+          ...taxonomicSynonyms,
+          ...invalidDesignations,
+          ...misidentifications,
+          ...otherSynonyms,
+        ],
         accessToken,
         insertedBy: username,
         updatedBy: username,
@@ -509,7 +521,7 @@ class SpeciesRecord extends Component {
         </Panel>
       );
     }
-    return undefined;
+    return null;
   }
 
   render() {
@@ -517,9 +529,9 @@ class SpeciesRecord extends Component {
       isLoading,
       familyApg, family, generaOptions, record,
       listOfSpecies,
+      accepted,
       nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
-      misidentifications,
-      basionymFor, replacedFor, nomenNovumFor,
+      misidentifications, otherSynonyms,
       record: {
         id, ntype, genus, species, subsp, var: variety,
         subvar, forma, nothosubsp, nothoforma, proles, unranked, authors,
@@ -527,8 +539,11 @@ class SpeciesRecord extends Component {
         aggregate,
         checkedTimestamp, checkedBy,
       } = {},
-      idGenusSelected, idAcceptedNameSelected, idBasionymSelected,
+      basionymFor, replacedFor, nomenNovumFor,
+      parentCombinationFor, taxonPositionFor,
+      idGenusSelected, idBasionymSelected,
       idNomenNovumSelected, idReplacedSelected,
+      idParentCombinationSelected, idTaxonPositionSelected,
     } = this.state;
 
     return (
@@ -600,7 +615,7 @@ class SpeciesRecord extends Component {
                     <FormControl.Static>{family}</FormControl.Static>
                   </Col>
                 </FormGroup>
-                <FormGroup controlId={ID_ACCEPTED_NAME_PROP} bsSize="sm">
+                <FormGroup controlId="idGenus" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Genus (reference)
                   </Col>
@@ -612,7 +627,7 @@ class SpeciesRecord extends Component {
                       onSearch={this.handleSearchGeneraAsyncTypeahead}
                       selected={idGenusSelected}
                       onChange={(selected) => this.handleChangeGenusTypeahead(
-                        selected, ID_GENUS_NAME_PROP,
+                        selected, 'idGenus',
                       )}
                       placeholder="Start by typing a genus present
                         in the database (case sensitive)"
@@ -844,26 +859,22 @@ class SpeciesRecord extends Component {
             <div id="associations">
               <h4>Associations</h4>
               <Well>
-                <FormGroup controlId={ID_ACCEPTED_NAME_PROP} bsSize="sm">
+                <FormGroup bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Accepted name
+                    Accepted name(s)
                   </Col>
-                  <Col xs={CONTENT_COL_WIDTH}>
-                    <AsyncTypeahead
-                      id="id-accepted-name-autocomplete"
-                      isLoading={isLoading}
-                      options={listOfSpecies}
-                      onSearch={this.handleSearchSpeciesAsyncTypeahead}
-                      selected={idAcceptedNameSelected}
-                      onChange={(selected) => this.handleChangeTypeaheadSingle(
-                        selected, ID_ACCEPTED_NAME_PROP,
-                      )}
-                      placeholder="Start by typing a species present
-                        in the database (case sensitive)"
+                  <Col sm={CONTENT_COL_WIDTH}>
+                    <LosNameList
+                      list={accepted.map(({ parent }) => parent)}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
                     />
                   </Col>
                 </FormGroup>
-                <FormGroup controlId={ID_BASIONYM_NAME_PROP} bsSize="sm">
+              </Well>
+              <Well>
+                <FormGroup controlId="idBasionym" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Basionym
                   </Col>
@@ -875,14 +886,14 @@ class SpeciesRecord extends Component {
                       onSearch={this.handleSearchSpeciesAsyncTypeahead}
                       selected={idBasionymSelected}
                       onChange={(selected) => this.handleChangeTypeaheadSingle(
-                        selected, ID_BASIONYM_NAME_PROP,
+                        selected, 'idBasionym',
                       )}
                       placeholder="Start by typing a species present
                         in the database (case sensitive)"
                     />
                   </Col>
                 </FormGroup>
-                <FormGroup controlId={ID_REPLACED_NAME_PROP} bsSize="sm">
+                <FormGroup controlId="idReplaced" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Replaced name
                   </Col>
@@ -894,14 +905,14 @@ class SpeciesRecord extends Component {
                       onSearch={this.handleSearchSpeciesAsyncTypeahead}
                       selected={idReplacedSelected}
                       onChange={(selected) => this.handleChangeTypeaheadSingle(
-                        selected, ID_REPLACED_NAME_PROP,
+                        selected, 'idReplaced',
                       )}
                       placeholder="Start by typing a species present
                         in the database (case sensitive)"
                     />
                   </Col>
                 </FormGroup>
-                <FormGroup controlId={ID_NOMEN_NOVUM_NAME_PROP} bsSize="sm">
+                <FormGroup controlId="idNomenNovum" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Nomen novum
                   </Col>
@@ -913,7 +924,45 @@ class SpeciesRecord extends Component {
                       onSearch={this.handleSearchSpeciesAsyncTypeahead}
                       selected={idNomenNovumSelected}
                       onChange={(selected) => this.handleChangeTypeaheadSingle(
-                        selected, ID_NOMEN_NOVUM_NAME_PROP,
+                        selected, 'idNomenNovum',
+                      )}
+                      placeholder="Start by typing a species present
+                        in the database (case sensitive)"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="idParentCombination" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Parent combination
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AsyncTypeahead
+                      id="id-parent-combination-autocomplete"
+                      isLoading={isLoading}
+                      options={listOfSpecies}
+                      onSearch={this.handleSearchSpeciesAsyncTypeahead}
+                      selected={idParentCombinationSelected}
+                      onChange={(selected) => this.handleChangeTypeaheadSingle(
+                        selected, 'idParentCombination',
+                      )}
+                      placeholder="Start by typing a species present
+                        in the database (case sensitive)"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="idTaxonPosition" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Taxon position
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AsyncTypeahead
+                      id="id-taxon-position-autocomplete"
+                      isLoading={isLoading}
+                      options={listOfSpecies}
+                      onSearch={this.handleSearchSpeciesAsyncTypeahead}
+                      selected={idTaxonPositionSelected}
+                      onChange={(selected) => this.handleChangeTypeaheadSingle(
+                        selected, 'idTaxonPosition',
                       )}
                       placeholder="Start by typing a species present
                         in the database (case sensitive)"
@@ -1064,6 +1113,29 @@ class SpeciesRecord extends Component {
                     />
                   </Col>
                 </FormGroup>
+                <FormGroup controlId="other-synonyms" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Other synonyms
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AddableList
+                      id="otherSynonyms"
+                      async
+                      data={otherSynonyms}
+                      onAddItemToList={(selected) => this.handleSynonymAddRow(
+                        selected,
+                        'otherSynonyms',
+                        config.mappings.synonym.none.numType,
+                      )}
+                      onRowDelete={(rowId) => this.handleSynonymRemoveRow(
+                        rowId,
+                        'otherSynonyms',
+                      )}
+                      itemComponent={OtherSynonymListItem}
+                      onSearch={this.handleSearchSpeciesAsync}
+                    />
+                  </Col>
+                </FormGroup>
               </Well>
             </div>
             <div id="associations-inherited">
@@ -1071,26 +1143,67 @@ class SpeciesRecord extends Component {
               <Well>
                 <FormGroup controlId="idBasionymFor" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Basionym For
+                    Basionym for
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    <PlainListOfSpeciesNames list={basionymFor} />
+                    <LosNameList
+                      list={basionymFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="idReplacedFor" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Replaced For
+                    Replaced for
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    <PlainListOfSpeciesNames list={replacedFor} />
+                    <LosNameList
+                      list={replacedFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
                   </Col>
                 </FormGroup>
                 <FormGroup controlId="idNomenNovumFor" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Nomen Novum For
+                    Nomen novum for
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
-                    <PlainListOfSpeciesNames list={nomenNovumFor} />
+                    <LosNameList
+                      list={nomenNovumFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="idParentCombinationFor" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Parent combination for
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <LosNameList
+                      list={parentCombinationFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="idTaxonPositionFor" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Taxon position for
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <LosNameList
+                      list={taxonPositionFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
                   </Col>
                 </FormGroup>
               </Well>

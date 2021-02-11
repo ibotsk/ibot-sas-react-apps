@@ -26,7 +26,7 @@ export default {
     name: {
       sl: 's.l.',
       tribus: 'tribus',
-      hybrid: 'x',
+      hybrid: '×',
       infra: {
         subsp: 'subsp.',
         var: 'var.',
@@ -121,10 +121,6 @@ export default {
         numType: 4,
         prefix: '–',
       },
-      parent: {
-        numType: 9,
-        prefix: '',
-      },
       none: {
         numType: 0,
         prefix: '',
@@ -136,7 +132,6 @@ export default {
       2: 'taxonomic',
       3: 'nomenclatoric',
       4: 'misidentification',
-      9: 'parent',
     },
     userRole: {
       admin: {

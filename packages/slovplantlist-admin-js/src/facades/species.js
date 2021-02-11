@@ -2,7 +2,7 @@ import { where as whereUtils } from '@ibot/utils';
 import { helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
 
-import { getRequest, putRequest } from './client';
+import { getRequest, putRequest, patchRequest } from './client';
 import common from './common/common';
 
 const {
@@ -18,11 +18,18 @@ async function getRecordById(id, accessToken) {
     nomenclaturesUri.getByIdWFilterUri, { id }, accessToken,
   );
 
-  const accepted = helperUtils.losToTypeaheadSelected(speciesRecord.accepted);
+  const { accepted } = speciesRecord;
+
   const basionym = helperUtils.losToTypeaheadSelected(speciesRecord.basionym);
   const replaced = helperUtils.losToTypeaheadSelected(speciesRecord.replaced);
   const nomenNovum = helperUtils.losToTypeaheadSelected(
     speciesRecord['nomen-novum'],
+  );
+  const parentCombination = helperUtils.losToTypeaheadSelected(
+    speciesRecord['parent-combination'],
+  );
+  const taxonPosition = helperUtils.losToTypeaheadSelected(
+    speciesRecord['taxon-position'],
   );
 
   const genus = [{
@@ -36,6 +43,8 @@ async function getRecordById(id, accessToken) {
   delete speciesRecord.basionym;
   delete speciesRecord.replaced;
   delete speciesRecord['nomen-novum'];
+  delete speciesRecord['parent-combination'];
+  delete speciesRecord['taxon-position'];
   delete speciesRecord['genus-rel'];
 
   return {
@@ -44,6 +53,8 @@ async function getRecordById(id, accessToken) {
     basionym,
     replaced,
     nomenNovum,
+    parentCombination,
+    taxonPosition,
     genus,
     familyApg,
     family,
@@ -122,15 +133,20 @@ async function getSynonyms(id, accessToken) {
     nomenclaturesUri.getMisidentificationsUri, { id }, accessToken,
   );
 
+  const otherSynonyms = await getRequest(
+    nomenclaturesUri.getOtherSynonyms, { id }, accessToken,
+  );
+
   return {
     nomenclatoricSynonyms,
     taxonomicSynonyms,
     invalidDesignations,
     misidentifications,
+    otherSynonyms,
   };
 }
 
-async function getBasionymsFor(id, accessToken) {
+async function getForRelations(id, accessToken) {
   const basionymFor = await getRequest(
     nomenclaturesUri.getBasionymForUri, { id }, accessToken,
   );
@@ -140,10 +156,18 @@ async function getBasionymsFor(id, accessToken) {
   const nomenNovumFor = await getRequest(
     nomenclaturesUri.getNomenNovumForUri, { id }, accessToken,
   );
+  const parentCombinationFor = await getRequest(
+    nomenclaturesUri.getParentCombinationForUri, { id }, accessToken,
+  );
+  const taxonPositionFor = await getRequest(
+    nomenclaturesUri.getTaxonPositionForUri, { id }, accessToken,
+  );
   return {
     basionymFor,
     replacedFor,
     nomenNovumFor,
+    parentCombinationFor,
+    taxonPositionFor,
   };
 }
 
@@ -179,23 +203,13 @@ async function saveSpecies(
 
 async function saveSpeciesAndSynonyms({
   species,
-  nomenclatoricSynonyms,
-  taxonomicSynonyms,
-  invalidDesignations,
-  misidentifications,
+  synonyms,
   accessToken,
   insertedBy,
   insertedMethod = insertedMethodConf.form,
   updatedBy,
   updatedMethod = updatedMethodConf.form,
 }) {
-  const allNewSynonyms = [
-    ...nomenclatoricSynonyms,
-    ...taxonomicSynonyms,
-    ...invalidDesignations,
-    ...misidentifications,
-  ];
-
   const { data } = await saveSpecies(
     species, accessToken, {
       insertedBy,
@@ -205,11 +219,17 @@ async function saveSpeciesAndSynonyms({
     },
   );
 
-  return common.submitSynonyms(data.id, allNewSynonyms, {
+  return common.submitSynonyms(data.id, synonyms, {
     getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
     deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
     updateSynonymsUri: synonymsUri.baseUri,
   }, accessToken);
+}
+
+function patchSpecies(id, data, accessToken) {
+  return patchRequest(
+    nomenclaturesUri.getByIdUri, data, { id }, accessToken,
+  );
 }
 
 function createSynonym(idParent, idSynonym, syntype) {
@@ -227,8 +247,9 @@ export default {
   getAllSpeciesBySearchTerm,
   getSpeciesByAll,
   getSynonyms,
-  getBasionymsFor,
+  getForRelations,
   saveSpeciesAndSynonyms,
   saveSpecies,
+  patchSpecies,
   createSynonym,
 };

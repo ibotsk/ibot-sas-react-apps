@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
 import {
-  misc, species as speciesUtils,
+  misc as miscUtils,
 } from '@ibot/utils';
 
 import config from 'config/config';
@@ -23,6 +23,9 @@ const {
   columns,
   constants: {
     operation: operationConfig,
+    trimChars,
+    legalSynonyms,
+    referenceSyntype,
   },
   mappings: { syntypeString: syntypeStringConfig },
 } = importConfig;
@@ -32,16 +35,44 @@ const columnsForGetSpecies = Object.keys(columns)
   .map((k) => columns[k].name);
 
 const cureData = (data) => {
-  const etndata = misc.emptyToNull(data);
-  return misc.replaceNonBreakingSpaces(etndata);
+  const etndata = miscUtils.emptyToNull(data);
+  return miscUtils.replaceNonBreakingSpaces(etndata);
 };
 
-const checkForDuplicateRows = (species, referenceList = []) => {
-  const duplicates = referenceList.filter(({ species: s }) => (
-    speciesUtils.areEqualSpecies(species, s, columnsForGetSpecies)
-  )).map(({ rowId }) => rowId);
+// duplicate: row is twice in the data and (ntype === 'A' or the synonym is assigned to a duplicate accepted)
+const checkForDuplicateRows = (data) => {
+  const rowIdToDuplicates = new Map();
+  const reference = new Map();
 
-  return duplicates;
+  const dataToCheck = [...data];
+  dataToCheck.forEach((row) => {
+    const {
+      record, rowId, acceptedNameRowId, operation, duplicates = [],
+    } = row;
+    const speciesKey = miscUtils.stringifyObj(record, columnsForGetSpecies);
+    let assignedOperation = operation;
+
+    if (reference.has(speciesKey)) {
+      const referencedDuplicate = reference.get(speciesKey);
+      assignedOperation = operationConfig.duplicate.key;
+      duplicates.push(referencedDuplicate.rowId);
+
+      if (record.ntype !== losType.A.key) {
+        const acceptedDuplicates = rowIdToDuplicates.get(acceptedNameRowId);
+        if (!acceptedDuplicates || acceptedDuplicates.length === 0) {
+          // eslint-disable-next-line no-param-reassign
+          row.save = false;
+          assignedOperation = operation; // leave the original operation
+        }
+      }
+
+      // eslint-disable-next-line no-param-reassign
+      row.operation = assignedOperation;
+    }
+    rowIdToDuplicates.set(rowId, duplicates);
+    reference.set(speciesKey, { rowId, acceptedNameRowId });
+  });
+  return dataToCheck;
 };
 
 /**
@@ -51,18 +82,23 @@ const checkForDuplicateRows = (species, referenceList = []) => {
  * @param {array} synonymsOfParent
  * @param {string} accessToken
  */
-const processSynonym = async (species, synonymsOfParent, accessToken) => {
-  const { id, idAcceptedName, syntype } = species;
+const processSynonym = async (
+  species, synonymsOfParent, idAcceptedName, syntype, accessToken,
+) => {
+  const { id } = species;
   const syntypeString = syntype || '';
 
   const syntypeName = syntypeStringConfig[syntypeString];
-  const syntypeValue = synonymTypes[syntypeName].numType;
 
-  synonymsOfParent.push(
-    common.createSynonym(idAcceptedName, id, syntypeValue),
-  );
-  // delete all possibly existing synonyms of this synonym
-  await synonymsFacade.deleteSynonymsByIdParent(id, accessToken);
+  // create only known types
+  if (syntypeName !== undefined) {
+    const syntypeValue = synonymTypes[syntypeName].numType;
+    synonymsOfParent.push(
+      common.createSynonym(idAcceptedName, id, syntypeValue),
+    );
+    // delete all possibly existing synonyms of this synonym
+    await synonymsFacade.deleteSynonymsByIdParent(id, accessToken);
+  }
 
   return synonymsOfParent;
 };
@@ -85,6 +121,14 @@ const processSynonymsOfParents = async (synonymsByParent, accessToken) => {
   return Promise.all(promises);
 };
 
+const patchAcceptedNames = async (mapOfAcceptedIds, accessToken) => {
+  const promises = [];
+  mapOfAcceptedIds.forEach((val, key) => {
+    promises.push(speciesFacade.patchSpecies(key, val, accessToken));
+  });
+  return Promise.all(promises);
+};
+
 async function importChecklistPrepare(
   data, accessToken, onIncreaseCounter = () => { },
 ) {
@@ -101,11 +145,10 @@ async function importChecklistPrepare(
     const errors = [];
     let operation;
 
-    const duplicates = checkForDuplicateRows(curedNomen, dataToImport);
-
     // check for exact match on all provided fields in row, except ntype and syntype
     const { found } = await speciesFacade.getSpeciesByAll(
-      curedNomen, accessToken, undefined, {
+      curedNomen, accessToken, undefined,
+      {
         include: columnsForGetSpecies,
         exact: true,
       },
@@ -125,9 +168,6 @@ async function importChecklistPrepare(
       operation = operationConfig.update.key;
     }
 
-    if (duplicates.length > 0) {
-      operation = operationConfig.duplicate.key;
-    }
     if (ntype !== '' && ntype !== losType.A.key) {
       errors.push({
         message: `Invalid value '${ntype}' in column 'status'`,
@@ -141,23 +181,28 @@ async function importChecklistPrepare(
 
     // get idGenus by name, if not found, add it to report
     const { genus: genusName } = curedNomen;
-    const foundGeneraArray = await genusFacade.getAllGeneraBySearchTerm(
-      genusName, accessToken,
-    );
-    if (!foundGeneraArray || foundGeneraArray.length === 0) {
-      errors.push({
-        message: `Genus '${genusName}' was not found`,
-        ref: 'idGenus',
-      });
-    } else {
-      speciesForImport.idGenus = foundGeneraArray[0].id;
+    if (genusName) {
+      const genusTrimmed = miscUtils.trim(genusName, trimChars);
+      const foundGeneraArray = await genusFacade.getAllGeneraBySearchTerm(
+        genusTrimmed, accessToken,
+      );
+      if (!foundGeneraArray || foundGeneraArray.length === 0) {
+        errors.push({
+          message: `Genus '${genusName}' was not found`,
+          ref: 'idGenus',
+        });
+      } else {
+        speciesForImport.idGenus = foundGeneraArray[0].id;
+      }
     }
 
+    let newSyntype;
     let acceptedNameRowId;
     if (newNtype === losType.S.key) {
+      newSyntype = syntype || '0';
       // add rowId of accepted name only if current row is synonym
       acceptedNameRowId = currentAccNameRowId;
-      speciesForImport.syntype = syntype;
+      // speciesForImport.syntype = syntype;
       if (!currentAccNameRowId) {
         errors.push({
           message: 'No accepted name for synonym',
@@ -167,15 +212,18 @@ async function importChecklistPrepare(
     } else {
       // this branch must be present, otherwise acceptedNameRowId would carry over the value from currentAccNameRowId
       acceptedNameRowId = undefined;
+      newSyntype = undefined;
     }
 
     dataToImport.push({
       rowId, // in excel/csv 0 does not exist, 1 is heading
-      species: speciesForImport,
+      record: speciesForImport,
       acceptedNameRowId,
+      syntype: newSyntype,
       operation,
       errors,
-      duplicates,
+      duplicates: [],
+      save: true, // save all by default
     });
     // update accepted name row id
     if (newNtype === losType.A.key) {
@@ -186,7 +234,8 @@ async function importChecklistPrepare(
     rowId += 1;
   }
 
-  return dataToImport;
+  const dataToImportWithDuplicates = checkForDuplicateRows(dataToImport);
+  return dataToImportWithDuplicates;
 }
 
 async function importChecklist(data, accessToken, {
@@ -195,29 +244,50 @@ async function importChecklist(data, accessToken, {
 }) {
   const acceptedNamesIds = {}; // key = accepted name rowId, value = accepted name id
   const synonymsByParent = {}; // synonym entities by accepted name id
+  const acceptedToParentAndPostion = new Map();
 
   for (const row of data) {
     const {
-      species, rowId, acceptedNameRowId, duplicates,
+      record, rowId, acceptedNameRowId, syntype, operation, save,
     } = row;
 
-    if (duplicates && duplicates.length > 0) {
+    if (operation === operationConfig.duplicate.key) {
       // skip duplicate row
       continue;
     }
 
-    species.idAcceptedName = acceptedNameRowId
-      ? acceptedNamesIds[acceptedNameRowId] : null;
+    let nomenclatureData;
 
-    const { data: savedData } = await speciesFacade.saveSpecies(
-      species, accessToken, {
-        insertedBy,
-        insertedMethod: insertedMethodConfig.import,
-        updatedBy,
-        updatedMethod: updatedMethodConfig.import,
-      },
-    );
-    const { id, ntype, idAcceptedName } = savedData;
+    if (save === false) {
+      const { found } = await speciesFacade.getSpeciesByAll(
+        record, accessToken, undefined,
+        {
+          include: columnsForGetSpecies,
+          exact: true,
+        },
+      );
+      if (!found || found.length === 0) {
+        throw new Error(
+          `Nomenclature record not found but should exist.
+          ${JSON.stringify(record)}`,
+        );
+      }
+      const [firstFound] = found;
+      nomenclatureData = firstFound;
+    } else {
+      const { data: savedData } = await speciesFacade.saveSpecies(
+        record, accessToken,
+        {
+          insertedBy,
+          insertedMethod: insertedMethodConfig.import,
+          updatedBy,
+          updatedMethod: updatedMethodConfig.import,
+        },
+      );
+      nomenclatureData = savedData;
+    }
+
+    const { id, ntype } = nomenclatureData;
 
     if (ntype === losType.A.key) {
       // store id of the accepted name
@@ -227,15 +297,41 @@ async function importChecklist(data, accessToken, {
     }
 
     if (ntype === losType.S.key) {
-      synonymsByParent[idAcceptedName] = await processSynonym(
-        savedData, synonymsByParent[idAcceptedName], accessToken,
-      );
+      const idAcceptedName = acceptedNamesIds[acceptedNameRowId];
+
+      if (legalSynonyms.includes(syntype)) {
+        synonymsByParent[idAcceptedName] = await processSynonym(
+          nomenclatureData, synonymsByParent[idAcceptedName],
+          idAcceptedName, syntype,
+          accessToken,
+        );
+      } else {
+        // handle parent combination and taxon position
+        const parentAndPosition = acceptedToParentAndPostion.get(idAcceptedName)
+          || {};
+
+        let newVal = {};
+        if (syntype === referenceSyntype.parent) {
+          newVal = { idParentCombination: id };
+        }
+        if (syntype === referenceSyntype.position) {
+          newVal = { idTaxonPosition: id };
+        }
+        acceptedToParentAndPostion.set(
+          idAcceptedName,
+          {
+            ...parentAndPosition,
+            ...newVal,
+          },
+        );
+      }
     }
   }
 
-  await processSynonymsOfParents(
-    synonymsByParent, accessToken,
-  );
+  await Promise.all([
+    processSynonymsOfParents(synonymsByParent, accessToken),
+    patchAcceptedNames(acceptedToParentAndPostion, accessToken),
+  ]);
 }
 
 export default {

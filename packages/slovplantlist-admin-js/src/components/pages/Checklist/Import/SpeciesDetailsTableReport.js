@@ -31,13 +31,13 @@ const columns = [
   {
     dataField: 'ntype',
     text: 'Status',
-    formatter: (cell, row) => row.species.ntype,
+    formatter: (cell, row) => row.record.ntype,
   },
   {
     dataField: 'syntype',
     text: 'Syn. type',
     formatter: (cell, row) => {
-      const { syntype } = row.species;
+      const { syntype } = row;
       const key = synonymBySyntype[syntype];
       if (!key) {
         return syntype;
@@ -46,7 +46,7 @@ const columns = [
     },
   },
   {
-    dataField: 'species',
+    dataField: 'record',
     text: 'Name',
     formatter: (cell, row, rowIndex) => (
       <LosName key={rowIndex} data={cell} format="italic" isAggregates />
@@ -64,11 +64,14 @@ const columns = [
 ];
 
 const rowClasses = (row) => {
-  const { duplicates, errors } = row;
+  const { duplicates, errors, save } = row;
   let classes;
 
   if (duplicates && duplicates.length > 0) {
     classes = messagesConfig.duplicates;
+  }
+  if (!save) {
+    classes = messagesConfig.nosave;
   }
   // overrides anything else before
   if (errors && errors.length > 0) {
@@ -79,10 +82,16 @@ const rowClasses = (row) => {
 
 const expandRow = {
   renderer: (row) => {
-    const { duplicates = [], errors = [] } = row;
+    const { duplicates = [], errors = [], save } = row;
 
     return (
       <div>
+        {!save && (
+          <p>
+            This record is created/updated earlier.
+            Only new accepted name will be assigned.
+          </p>
+        )}
         {duplicates.length > 0 && (
           <p>
             Duplicate of rows:
@@ -127,7 +136,7 @@ SpeciesDetailsTableReport.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
     rowId: PropTypes.number.isRequired,
     operation: PropTypes.string.isRequired,
-    species: SpeciesType.type.isRequired,
+    record: SpeciesType.type.isRequired,
     duplicates: PropTypes.arrayOf(PropTypes.number).isRequired,
     errors: PropTypes.arrayOf(PropTypes.shape({
       message: PropTypes.string.isRequired,

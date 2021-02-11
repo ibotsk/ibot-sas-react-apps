@@ -18,11 +18,11 @@ const ImportReport = ({ data }) => {
   const updateRecordsCount = data.filter(({ operation }) => (
     operation === 'update'
   )).length;
-  const acceptedNamesCount = data.filter(({ species }) => (
-    species.ntype === 'A'
+  const acceptedNamesCount = data.filter(({ record }) => (
+    record.ntype === 'A'
   )).length;
-  const synonymsCount = data.filter(({ species }) => (
-    species.ntype === 'S'
+  const synonymsCount = data.filter(({ record }) => (
+    record.ntype === 'S'
   )).length;
   const errorsArray = data.filter(({ errors }) => (
     errors && errors.length > 0
@@ -83,6 +83,6 @@ export default ImportReport;
 ImportReport.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
     operation: PropTypes.string.isRequired,
-    species: SpeciesType.type.isRequired,
+    record: SpeciesType.type.isRequired,
   })).isRequired,
 };

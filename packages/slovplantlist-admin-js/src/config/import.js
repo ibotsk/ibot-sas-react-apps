@@ -106,6 +106,13 @@ export default {
     messages: {
       duplicates: 'info',
       errors: 'danger',
+      nosave: 'warning',
+    },
+    trimChars: ' „“"\'',
+    legalSynonyms: ['0', '1', '2', '3', '4'],
+    referenceSyntype: {
+      parent: 'R',
+      position: '5',
     },
   },
   mappings: {
@@ -113,7 +120,7 @@ export default {
       1: 'invalid',
       2: 'taxonomic',
       3: 'nomenclatoric',
-      R: 'parent',
+      4: 'misidentification',
       '': 'none',
     },
   },

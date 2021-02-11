@@ -1,17 +1,15 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
-  Grid, Col, Row, Well,
-  ListGroup, ListGroupItem, Button,
+  Grid, Col, Row, Panel, Button,
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
-import { LosName } from '@ibot/components';
-import SynonymListItem from 'components/segments/SynonymListItem';
+import { LosName, LosNameList, SynonymsList } from '@ibot/components';
 
 import { speciesFacade } from 'facades';
 
@@ -29,133 +27,120 @@ const MisidentificationAuthor = ({ item }) => (
   </div>
 );
 
-class SpeciesRecordView extends React.Component {
-  constructor(props) {
-    super(props);
+const SpeciesRecordView = ({ recordId }) => {
+  const [record, setRecord] = useState();
+  const [genus, setGenus] = useState();
+  const [familyApg, setFamilyApg] = useState();
+  const [family, setFamily] = useState();
 
-    this.state = {
-      record: undefined,
-      accepted: undefined,
-      basionym: undefined,
-      replaced: undefined,
-      nomenNovum: undefined,
-      genus: undefined,
-      familyApg: undefined,
-      family: undefined,
-      nomenclatoricSynonyms: [],
-      taxonomicSynonyms: [],
-      invalidDesignations: [],
-      misidentifications: [],
-      basionymFor: [],
-      replacedFor: [],
-      nomenNovumFor: [],
+  const [accepted, setAccepted] = useState([]);
+
+  const [basionym, setBasionym] = useState();
+  const [replaced, setReplaced] = useState();
+  const [nomenNovum, setNomenNovum] = useState();
+  const [parentCombination, setParentCombination] = useState();
+  const [taxonPosition, setTaxonPosition] = useState();
+
+  const [nomenclatoricSynonyms, setNomenclatoricSynonyms] = useState([]);
+  const [taxonomicSynonyms, setTaxonomicSynonyms] = useState([]);
+  const [misidentifications, setMisidentifications] = useState([]);
+  const [invalidDesignations, setInvalidDesignations] = useState([]);
+  const [otherSynonyms, setOtherSynonyms] = useState([]);
+
+  const [basionymFor, setBasionymFor] = useState([]);
+  const [replacedFor, setReplacedFor] = useState([]);
+  const [nomenNovumFor, setNomenNovumFor] = useState([]);
+  const [parentCombinationFor, setParentCombinationFor] = useState([]);
+  const [taxonPositionFor, setTaxonPositionFor] = useState([]);
+
+  const accessToken = useSelector((state) => state.authentication.accessToken);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (recordId) {
+        const {
+          speciesRecord,
+          accepted: _accepted,
+          basionym: _basionym, replaced: _replaced, nomenNovum: _nomenNovum,
+          parentCombination: _parentCombination, taxonPosition: _taxonPosition,
+          genus: _genus, familyApg: _familyApg, family: _family,
+        } = await speciesFacade.getRecordById(recordId, accessToken);
+
+        const {
+          nomenclatoricSynonyms: _nomenclatoricSynonyms,
+          taxonomicSynonyms: _taxonomicSynonyms,
+          invalidDesignations: _invalidDesignations,
+          misidentifications: _misidentifications,
+          otherSynonyms: _otherSynonyms,
+        } = await speciesFacade.getSynonyms(recordId, accessToken);
+        const {
+          basionymFor: _basionymFor,
+          replacedFor: _replacedFor,
+          nomenNovumFor: _nomenNovumFor,
+          parentCombinationFor: _parentCombinationFor,
+          taxonPositionFor: _taxonPositionFor,
+        } = await speciesFacade.getForRelations(recordId, accessToken);
+
+        setRecord(speciesRecord);
+        setAccepted(_accepted);
+        setBasionym(_basionym);
+        setReplaced(_replaced);
+        setNomenNovum(_nomenNovum);
+        setParentCombination(_parentCombination);
+        setTaxonPosition(_taxonPosition);
+        setGenus(_genus);
+        setFamilyApg(_familyApg);
+        setFamily(_family);
+        setNomenclatoricSynonyms(_nomenclatoricSynonyms);
+        setTaxonomicSynonyms(_taxonomicSynonyms);
+        setMisidentifications(_misidentifications);
+        setInvalidDesignations(_invalidDesignations);
+        setOtherSynonyms(_otherSynonyms);
+        setBasionymFor(_basionymFor);
+        setReplacedFor(_replacedFor);
+        setNomenNovumFor(_nomenNovumFor);
+        setParentCombinationFor(_parentCombinationFor);
+        setTaxonPositionFor(_taxonPositionFor);
+      }
     };
+
+    fetch();
+  }, [accessToken, recordId]);
+
+  if (!record) {
+    return null;
   }
-
-  async componentDidMount() {
-    const { recordId, accessToken } = this.props;
-    if (recordId) {
-      const {
-        speciesRecord, accepted, basionym, replaced, nomenNovum,
-        genus, familyApg, family,
-      } = await speciesFacade.getRecordById(recordId, accessToken);
-
-      const {
-        nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
-        misidentifications,
-      } = await speciesFacade.getSynonyms(recordId, accessToken);
-      const {
-        basionymFor, replacedFor, nomenNovumFor,
-      } = await speciesFacade.getBasionymsFor(recordId, accessToken);
-
-      this.setState({
-        record: speciesRecord,
-        accepted,
-        basionym,
-        replaced,
-        nomenNovum,
-        genus,
-        familyApg,
-        family,
-        nomenclatoricSynonyms,
-        taxonomicSynonyms,
-        invalidDesignations,
-        misidentifications,
-        basionymFor,
-        replacedFor,
-        nomenNovumFor,
-      });
-    }
-  }
-
-  renderSynonyms = (list, prefix, Addition = undefined) => {
-    if (list && list.length) {
-      return list.map((s) => {
-        let adt;
-        if (Addition) {
-          // used for misidentification authors
-          adt = () => (<Addition item={s} />);
-        }
-        return (
-          <SynonymListItem
-            data={s}
-            prefix={prefix}
-            key={s.id}
-            additions={adt}
-            nameComponent={LosName}
-          />
-        );
-      });
-    }
-    return <ListGroupItem />;
-  }
-
-  renderPlainListOfSpeciesNames = (list) => {
-    if (list && list.length) {
-      return list.map((b) => (
-        <ListGroupItem key={b.id}>
-          <LosName data={b} />
-        </ListGroupItem>
-      ));
-    }
-    return <ListGroupItem />;
-  }
-
-  render() {
-    const {
-      familyApg, family, genus,
-      accepted, basionym, replaced, nomenNovum,
-      nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
-      misidentifications,
-      basionymFor, replacedFor, nomenNovumFor,
-      record,
-    } = this.state;
-    if (!record) {
-      return null;
-    }
-    const {
-      ntype, publication, vernacular, tribus,
-    } = record;
-    const type = config.mappings.losType[ntype];
-    return (
-      <div id="species-detail">
-        <Grid id="functions-panel">
-          <div id="functions">
-            <Row>
-              <Col sm={5} smOffset={2}>
-                <LinkContainer to={CHECKLIST_LIST_URI}>
-                  <Button bsStyle="default">Back</Button>
-                </LinkContainer>
-              </Col>
-            </Row>
-          </div>
-        </Grid>
-        <hr />
-        <Grid>
-          <h2><LosName data={record} /></h2>
-          <div id="name">
-            <h3>Name</h3>
-            <Well>
+  const {
+    ntype, publication, vernacular, tribus,
+  } = record;
+  const type = config.mappings.losType[ntype];
+  return (
+    <div id="species-detail">
+      <Grid id="functions-panel">
+        <div id="functions">
+          <Row>
+            <Col sm={5} smOffset={2}>
+              <LinkContainer to={CHECKLIST_LIST_URI}>
+                <Button bsStyle="default">Back</Button>
+              </LinkContainer>
+            </Col>
+          </Row>
+        </div>
+      </Grid>
+      <hr />
+      <Grid>
+        <h2><LosName data={record} /></h2>
+        <div id="name">
+          <Panel>
+            <Panel.Body>
+              <dl className="dl-horizontal">
+                <dt>Type</dt>
+                <dd>{type.text || ''}</dd>
+              </dl>
+            </Panel.Body>
+          </Panel>
+          <Panel>
+            <Panel.Body>
               <dl className="dl-horizontal">
                 <dt>Family APG</dt>
                 <dd>{familyApg || '-'}</dd>
@@ -164,18 +149,22 @@ class SpeciesRecordView extends React.Component {
                 <dt>Genus (reference)</dt>
                 <dd>{genus ? genus[0].label : '-'}</dd>
               </dl>
-            </Well>
-            <Well>
+            </Panel.Body>
+          </Panel>
+          <Panel>
+            <Panel.Body>
               <dl className="dl-horizontal">
-                <dt>Type</dt>
-                <dd>{type.text || ''}</dd>
                 <dt>Species</dt>
                 <dd><LosName data={record} /></dd>
                 <dt>Aggregate</dt>
-                <dd>{record.aggregate || ''}</dd>
+                <dd>{record.aggregate || '-'}</dd>
+                <dt>Subaggregate</dt>
+                <dd>{record.subaggregate || '-'}</dd>
               </dl>
-            </Well>
-            <Well>
+            </Panel.Body>
+          </Panel>
+          <Panel>
+            <Panel.Body>
               <dl className="dl-horizontal">
                 <dt>Publication</dt>
                 <dd>{publication || '-'}</dd>
@@ -184,116 +173,130 @@ class SpeciesRecordView extends React.Component {
                 <dt>Tribus</dt>
                 <dd>{tribus || '-'}</dd>
               </dl>
-            </Well>
-          </div>
-          <div id="associations">
-            <h3>Associations</h3>
-            <Well>
+            </Panel.Body>
+          </Panel>
+        </div>
+        <div id="associations">
+          <h3>Associations</h3>
+          <Panel>
+            <Panel.Body>
               <dl className="dl-horizontal">
-                <dt>Accepted name</dt>
-                <dd>{accepted ? accepted[0].label : '-'}</dd>
+                <dt>Accepted name(s)</dt>
+                <dd>
+                  <LosNameList list={accepted.map(({ parent }) => parent)} />
+                </dd>
+              </dl>
+            </Panel.Body>
+          </Panel>
+          <Panel>
+            <Panel.Body>
+              <dl className="dl-horizontal">
                 <dt>Basionym</dt>
                 <dd>{basionym ? basionym[0].label : '-'}</dd>
                 <dt>Replaced name</dt>
                 <dd>{replaced ? replaced[0].label : '-'}</dd>
                 <dt>Nomen novum</dt>
                 <dd>{nomenNovum ? nomenNovum[0].label : '-'}</dd>
+                <dt>Parent combination</dt>
+                <dd>{parentCombination ? parentCombination[0].label : '-'}</dd>
+                <dt>Taxon position</dt>
+                <dd>{taxonPosition ? taxonPosition[0].label : '-'}</dd>
               </dl>
-            </Well>
-          </div>
-          <div id="synonyms">
-            <h3>Synonyms</h3>
-            <Well>
+            </Panel.Body>
+          </Panel>
+        </div>
+        <div id="synonyms">
+          <h3>Synonyms</h3>
+          <Panel>
+            <Panel.Body>
               <dl className="dl-horizontal">
                 <dt>Nomenclatoric Synonyms</dt>
                 <dd>
-                  <ListGroup>
-                    {this.renderSynonyms(
-                      nomenclatoricSynonyms,
-                      config.mappings.synonym.nomenclatoric.prefix,
-                    )}
-                  </ListGroup>
+                  <SynonymsList
+                    list={nomenclatoricSynonyms}
+                    prefix={config.mappings.synonym.nomenclatoric.prefix}
+                  />
                 </dd>
                 <dt>Taxonomic Synonyms</dt>
                 <dd>
-                  <ListGroup>
-                    {this.renderSynonyms(
-                      taxonomicSynonyms,
-                      config.mappings.synonym.taxonomic.prefix,
-                    )}
-                  </ListGroup>
+                  <SynonymsList
+                    list={taxonomicSynonyms}
+                    prefix={config.mappings.synonym.taxonomic.prefix}
+                  />
                 </dd>
                 <dt>Invalid Designations</dt>
                 <dd>
-                  <ListGroup>
-                    {this.renderSynonyms(
-                      invalidDesignations,
-                      config.mappings.synonym.invalid.prefix,
-                    )}
-                  </ListGroup>
+                  <SynonymsList
+                    list={invalidDesignations}
+                    prefix={config.mappings.synonym.invalid.prefix}
+                  />
                 </dd>
                 <dt>Misidentifications</dt>
                 <dd>
-                  <ListGroup>
-                    {this.renderSynonyms(
-                      misidentifications,
-                      config.mappings.synonym.misidentification.prefix,
-                      MisidentificationAuthor,
-                    )}
-                  </ListGroup>
+                  <SynonymsList
+                    list={misidentifications}
+                    prefix={config.mappings.synonym.misidentification.prefix}
+                    addition={MisidentificationAuthor}
+                  />
+                </dd>
+                <dt>Other Synonyms</dt>
+                <dd>
+                  <SynonymsList
+                    list={otherSynonyms}
+                    prefix={config.mappings.synonym.none.prefix}
+                  />
                 </dd>
               </dl>
-            </Well>
-          </div>
-          <div id="associations-inherited">
-            <h3>Inherited associations</h3>
-            <Well>
+            </Panel.Body>
+          </Panel>
+        </div>
+        <div id="associations-inherited">
+          <h3>Inherited associations</h3>
+          <Panel>
+            <Panel.Body>
               <dl className="dl-horizontal">
-                <dt>Basionym For</dt>
+                <dt>Basionym for</dt>
                 <dd>
-                  <ListGroup>
-                    {this.renderPlainListOfSpeciesNames(basionymFor)}
-                  </ListGroup>
+                  <LosNameList list={basionymFor} />
                 </dd>
-                <dt>Replaced For</dt>
+                <dt>Replaced for</dt>
                 <dd>
-                  <ListGroup>
-                    {this.renderPlainListOfSpeciesNames(replacedFor)}
-                  </ListGroup>
+                  <LosNameList list={replacedFor} />
                 </dd>
-                <dt>Nomen Novum For</dt>
+                <dt>Nomen novum for</dt>
                 <dd>
-                  <ListGroup>
-                    {this.renderPlainListOfSpeciesNames(nomenNovumFor)}
-                  </ListGroup>
+                  <LosNameList list={nomenNovumFor} />
+                </dd>
+                <dt>Parent combination for</dt>
+                <dd>
+                  <LosNameList list={parentCombinationFor} />
+                </dd>
+                <dt>Taxon position for</dt>
+                <dd>
+                  <LosNameList list={taxonPositionFor} />
                 </dd>
               </dl>
-            </Well>
-          </div>
+            </Panel.Body>
+          </Panel>
+        </div>
 
-          <div id="controls">
-            <Row>
-              <Col sm={5} smOffset={2}>
-                <LinkContainer to={CHECKLIST_LIST_URI}>
-                  <Button bsStyle="default">Back</Button>
-                </LinkContainer>
-              </Col>
-            </Row>
-          </div>
-        </Grid>
-      </div>
-    );
-  }
-}
+        <div id="controls">
+          <Row>
+            <Col sm={5} smOffset={2}>
+              <LinkContainer to={CHECKLIST_LIST_URI}>
+                <Button bsStyle="default">Back</Button>
+              </LinkContainer>
+            </Col>
+          </Row>
+        </div>
+      </Grid>
+    </div>
+  );
+};
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-});
-
-export default connect(mapStateToProps)(SpeciesRecordView);
+export default SpeciesRecordView;
 
 SpeciesRecordView.propTypes = {
-  accessToken: PropTypes.string.isRequired,
   recordId: PropTypes.string,
 };
 
