@@ -32,8 +32,6 @@ import {
   InvalidSynonymListItem,
   MisidentifiedSynonymListItem,
   OtherSynonymListItem,
-  ParentalCombinationListItem,
-  TaxonPositionListItem,
 } from './items';
 
 const LABEL_COL_WIDTH = 2;
@@ -131,57 +129,52 @@ class SpeciesRecord extends Component {
       invalidDesignations: [],
       misidentifications: [],
       otherSynonyms: [],
-      parentalCombinations: [],
-      taxonPositions: [],
 
       basionymFor: [],
       replacedFor: [],
       nomenNovumFor: [],
+      parentCombinationFor: [],
+      taxonPositionFor: [],
     };
   }
 
   async componentDidMount() {
     const { recordId, accessToken } = this.props;
     if (recordId) {
-      try {
-        const {
-          speciesRecord, accepted, basionym, replaced,
-          nomenNovum, genus, familyApg, family,
-        } = await speciesFacade.getRecordById(recordId, accessToken);
+      const {
+        speciesRecord, accepted, basionym, replaced,
+        nomenNovum, genus, familyApg, family,
+      } = await speciesFacade.getRecordById(recordId, accessToken);
 
-        const {
-          nomenclatoricSynonyms, taxonomicSynonyms,
-          invalidDesignations, misidentifications, otherSynonyms,
-          parentalCombinations, taxonPositions,
-        } = await speciesFacade.getSynonyms(recordId, accessToken);
-        const {
-          basionymFor, replacedFor, nomenNovumFor,
-        } = await speciesFacade.getForRelations(recordId, accessToken);
+      const {
+        nomenclatoricSynonyms, taxonomicSynonyms,
+        invalidDesignations, misidentifications, otherSynonyms,
+      } = await speciesFacade.getSynonyms(recordId, accessToken);
+      const {
+        basionymFor, replacedFor, nomenNovumFor,
+        parentCombinationFor, taxonPositionFor,
+      } = await speciesFacade.getForRelations(recordId, accessToken);
 
-        this.setState({
-          record: speciesRecord,
-          accepted,
-          idBasionymSelected: basionym || [],
-          idReplacedSelected: replaced || [],
-          idNomenNovumSelected: nomenNovum || [],
-          idGenusSelected: genus || [],
-          familyApg,
-          family,
-          nomenclatoricSynonyms,
-          taxonomicSynonyms,
-          invalidDesignations,
-          misidentifications,
-          otherSynonyms,
-          parentalCombinations,
-          taxonPositions,
-          basionymFor,
-          replacedFor,
-          nomenNovumFor,
-        });
-      } catch (e) {
-        console.log(e.response);
-        throw e;
-      }
+      this.setState({
+        record: speciesRecord,
+        accepted,
+        idBasionymSelected: basionym || [],
+        idReplacedSelected: replaced || [],
+        idNomenNovumSelected: nomenNovum || [],
+        idGenusSelected: genus || [],
+        familyApg,
+        family,
+        nomenclatoricSynonyms,
+        taxonomicSynonyms,
+        invalidDesignations,
+        misidentifications,
+        otherSynonyms,
+        basionymFor,
+        replacedFor,
+        nomenNovumFor,
+        parentCombinationFor,
+        taxonPositionFor,
+      });
     }
   }
 
@@ -365,8 +358,6 @@ class SpeciesRecord extends Component {
       invalidDesignations,
       misidentifications,
       otherSynonyms,
-      parentalCombinations,
-      taxonPositions,
     } = this.state;
 
     try {
@@ -378,8 +369,6 @@ class SpeciesRecord extends Component {
           ...invalidDesignations,
           ...misidentifications,
           ...otherSynonyms,
-          ...parentalCombinations,
-          ...taxonPositions,
         ],
         accessToken,
         insertedBy: username,
@@ -533,8 +522,9 @@ class SpeciesRecord extends Component {
       familyApg, family, generaOptions, record,
       listOfSpecies,
       nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
-      misidentifications, otherSynonyms, parentalCombinations, taxonPositions,
+      misidentifications, otherSynonyms,
       basionymFor, replacedFor, nomenNovumFor,
+      parentCombinationFor, taxonPositionFor,
       record: {
         id, ntype, genus, species, subsp, var: variety,
         subvar, forma, nothosubsp, nothoforma, proles, unranked, authors,
@@ -1101,61 +1091,13 @@ class SpeciesRecord extends Component {
                   </Col>
                 </FormGroup>
               </Well>
-              <Well>
-                <FormGroup controlId="parental-combinations" bsSize="sm">
-                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Parental combinations
-                  </Col>
-                  <Col xs={CONTENT_COL_WIDTH}>
-                    <AddableList
-                      id="parentalCombinations"
-                      async
-                      data={parentalCombinations}
-                      onAddItemToList={(selected) => this.handleSynonymAddRow(
-                        selected,
-                        'parentalCombinations',
-                        config.mappings.synonym.parent.numType,
-                      )}
-                      onRowDelete={(rowId) => this.handleSynonymRemoveRow(
-                        rowId,
-                        'parentalCombinations',
-                      )}
-                      itemComponent={ParentalCombinationListItem}
-                      onSearch={this.handleSearchSpeciesAsync}
-                    />
-                  </Col>
-                </FormGroup>
-                <FormGroup controlId="taxon-positions" bsSize="sm">
-                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Taxon positions
-                  </Col>
-                  <Col xs={CONTENT_COL_WIDTH}>
-                    <AddableList
-                      id="taxonPositions"
-                      async
-                      data={taxonPositions}
-                      onAddItemToList={(selected) => this.handleSynonymAddRow(
-                        selected,
-                        'taxonPositions',
-                        config.mappings.synonym.position.numType,
-                      )}
-                      onRowDelete={(rowId) => this.handleSynonymRemoveRow(
-                        rowId,
-                        'taxonPositions',
-                      )}
-                      itemComponent={TaxonPositionListItem}
-                      onSearch={this.handleSearchSpeciesAsync}
-                    />
-                  </Col>
-                </FormGroup>
-              </Well>
             </div>
             <div id="associations-inherited">
               <h4>Inherited associations</h4>
               <Well>
                 <FormGroup controlId="idBasionymFor" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Basionym For
+                    Basionym for
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
                     <LosNameList
@@ -1168,7 +1110,7 @@ class SpeciesRecord extends Component {
                 </FormGroup>
                 <FormGroup controlId="idReplacedFor" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Replaced For
+                    Replaced for
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
                     <LosNameList
@@ -1181,11 +1123,37 @@ class SpeciesRecord extends Component {
                 </FormGroup>
                 <FormGroup controlId="idNomenNovumFor" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
-                    Nomen Novum For
+                    Nomen novum for
                   </Col>
                   <Col xs={CONTENT_COL_WIDTH}>
                     <LosNameList
                       list={nomenNovumFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="idParentCombinationFor" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Parent combination for
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <LosNameList
+                      list={parentCombinationFor}
+                      losNameOptions={{
+                        uri: CHECKLIST_EDIT_URI,
+                      }}
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="idTaxonPositionFor" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Taxon position for
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <LosNameList
+                      list={taxonPositionFor}
                       losNameOptions={{
                         uri: CHECKLIST_EDIT_URI,
                       }}
