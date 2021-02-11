@@ -15,6 +15,7 @@ import LoggedUserType from 'components/propTypes/loggedUser';
 
 import RemotePagination from 'components/segments/RemotePagination';
 import Can from 'components/segments/auth/Can';
+import { PageTitle } from '@ibot/components';
 
 import config from 'config/config';
 import { generaUtils } from '@ibot/utils';
@@ -210,6 +211,7 @@ const Genera = ({ user, accessToken }) => {
 
   return (
     <div id="genera">
+      <PageTitle title="Genera - Slovplantlist" />
       <Grid id="functions-panel">
         <div id="functions">
           <Can

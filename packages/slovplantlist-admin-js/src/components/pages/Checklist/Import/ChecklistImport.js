@@ -8,6 +8,8 @@ import { notifications } from 'utils';
 
 import { CSVReader } from 'react-papaparse';
 
+import { PageTitle } from '@ibot/components';
+
 import { importFacade } from 'facades';
 import importConfig from 'config/import';
 
@@ -76,92 +78,95 @@ const ChecklistImport = () => {
   };
 
   return (
-    <Grid>
-      <h2>Import checklist</h2>
-      <p className="text-warning">
-        Please use with caution!
-      </p>
-      <CSVReader
-        onFileLoad={handleFileLoad}
-        config={{
-          header: true,
-          transformHeader: (_, i) => (
-            columns[i] ? columns[i].name : 'unknown'
-          ),
-          skipEmptyLines: true,
-        }}
-      >
-        <span>Click to upload</span>
-      </CSVReader>
-      {
-        (isLoadingUpload || dataToSave.length > 0) && (
-          <>
-            <Panel>
-              <Panel.Body>
-                <h4>
-                  {isLoadingUpload ? 'Loading data...' : 'Loading finished'}
-                </h4>
-                <ProgressBar
-                  now={dataToSavePercent()}
-                  label={`${dataToSaveCounter} / ${dataToSaveTotal}`}
-                />
-              </Panel.Body>
-            </Panel>
-            { dataToSave.length > 0 && (
+    <div>
+      <PageTitle title="Import checklist - Slovplantlist" />
+      <Grid>
+        <h2>Import checklist</h2>
+        <p className="text-warning">
+          Please use with caution!
+        </p>
+        <CSVReader
+          onFileLoad={handleFileLoad}
+          config={{
+            header: true,
+            transformHeader: (_, i) => (
+              columns[i] ? columns[i].name : 'unknown'
+            ),
+            skipEmptyLines: true,
+          }}
+        >
+          <span>Click to upload</span>
+        </CSVReader>
+        {
+          (isLoadingUpload || dataToSave.length > 0) && (
+            <>
               <Panel>
                 <Panel.Body>
                   <h4>
-                    {dataToSaveTotal}
-                    {' '}
-                    records ready for import
+                    {isLoadingUpload ? 'Loading data...' : 'Loading finished'}
                   </h4>
-                  <ImportReport data={dataToSave} />
-                  <Row>
-                    <Col md={6}>
-                      <Button
-                        bsStyle="info"
-                        onClick={handleImportRecords}
-                        disabled={isImportButtonClicked}
-                      >
-                        Import
-                      </Button>
-                    </Col>
-                    {!isImportButtonClicked && (
-                      <Col md={6}>
-                        <Button
-                          className="pull-right"
-                          bsStyle="default"
-                          onClick={handleStartOver}
-                        >
-                          Start over
-                        </Button>
-                      </Col>
-                    )}
-                  </Row>
+                  <ProgressBar
+                    now={dataToSavePercent()}
+                    label={`${dataToSaveCounter} / ${dataToSaveTotal}`}
+                  />
                 </Panel.Body>
               </Panel>
-            )}
-          </>
-        )
-      }
-      { isImportButtonClicked && (
-        <Panel>
-          <Panel.Body>
-            <h4>{isLoadingImport ? 'Importing...' : 'Import finished'}</h4>
-            <ProgressBar
-              active={isLoadingImport}
-              now={100}
-            />
-            <Button
-              bsStyle="default"
-              onClick={handleStartOver}
-            >
-              Start over
-            </Button>
-          </Panel.Body>
-        </Panel>
-      )}
-    </Grid>
+              {dataToSave.length > 0 && (
+                <Panel>
+                  <Panel.Body>
+                    <h4>
+                      {dataToSaveTotal}
+                      {' '}
+                      records ready for import
+                    </h4>
+                    <ImportReport data={dataToSave} />
+                    <Row>
+                      <Col md={6}>
+                        <Button
+                          bsStyle="info"
+                          onClick={handleImportRecords}
+                          disabled={isImportButtonClicked}
+                        >
+                          Import
+                        </Button>
+                      </Col>
+                      {!isImportButtonClicked && (
+                        <Col md={6}>
+                          <Button
+                            className="pull-right"
+                            bsStyle="default"
+                            onClick={handleStartOver}
+                          >
+                            Start over
+                          </Button>
+                        </Col>
+                      )}
+                    </Row>
+                  </Panel.Body>
+                </Panel>
+              )}
+            </>
+          )
+        }
+        {isImportButtonClicked && (
+          <Panel>
+            <Panel.Body>
+              <h4>{isLoadingImport ? 'Importing...' : 'Import finished'}</h4>
+              <ProgressBar
+                active={isLoadingImport}
+                now={100}
+              />
+              <Button
+                bsStyle="default"
+                onClick={handleStartOver}
+              >
+                Start over
+              </Button>
+            </Panel.Body>
+          </Panel>
+        )}
+      </Grid>
+    </div>
   );
 };
 

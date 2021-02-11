@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
 
 import {
-  LosName, SelectTableColumnsModal,
+  LosName, PageTitle, SelectTableColumnsModal,
 } from '@ibot/components';
 
 import Can from 'components/segments/auth/Can';
@@ -310,6 +310,7 @@ const Checklist = ({ user, accessToken }) => {
   const paginationOptions = { page, sizePerPage, totalSize };
   return (
     <div id="checklist">
+      <PageTitle title="Checklist - Slovplantlist" />
       <Grid id="functions-panel">
         <div id="functions">
           <Can

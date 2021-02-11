@@ -10,6 +10,8 @@ import {
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
 
+import { PageTitle } from '@ibot/components';
+
 import PropTypes from 'prop-types';
 
 import { usersFacade } from 'facades';
@@ -90,6 +92,7 @@ class Login extends Component {
 
     return (
       <div id="login-page">
+        <PageTitle title="Login - Slovplantlist" />
         <Grid>
           <Col xs={12} md={4} mdOffset={4}>
             <h2>Login</h2>

@@ -12,6 +12,7 @@ import LoggedUserType from 'components/propTypes/loggedUser';
 
 import Can from 'components/segments/auth/Can';
 import RemotePagination from 'components/segments/RemotePagination';
+import { PageTitle } from '@ibot/components';
 
 import config from 'config/config';
 
@@ -120,6 +121,7 @@ const FamiliesAPG = ({ user, accessToken }) => {
 
   return (
     <div id="families-apg">
+      <PageTitle title="Families APG - Slovplantlist" />
       <Grid id="functions-panel">
         <div id="functions">
           <Can

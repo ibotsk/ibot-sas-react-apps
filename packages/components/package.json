@@ -30,7 +30,8 @@
   "dependencies": {
     "@ibot/types": "^0.0.0",
     "@ibot/utils": "^0.0.0",
-    "react-bootstrap-table-next": "^4.0.3"
+    "react-bootstrap-table-next": "^4.0.3",
+    "react-helmet": "^6.1.0"
   },
   "peerDependencies": {
     "prop-types": "^15.6.0",
