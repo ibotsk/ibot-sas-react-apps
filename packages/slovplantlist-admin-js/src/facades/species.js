@@ -25,6 +25,12 @@ async function getRecordById(id, accessToken) {
   const nomenNovum = helperUtils.losToTypeaheadSelected(
     speciesRecord['nomen-novum'],
   );
+  const parentCombination = helperUtils.losToTypeaheadSelected(
+    speciesRecord['parent-combination'],
+  );
+  const taxonPosition = helperUtils.losToTypeaheadSelected(
+    speciesRecord['taxon-position'],
+  );
 
   const genus = [{
     id: speciesRecord['genus-rel'].id,
@@ -37,6 +43,8 @@ async function getRecordById(id, accessToken) {
   delete speciesRecord.basionym;
   delete speciesRecord.replaced;
   delete speciesRecord['nomen-novum'];
+  delete speciesRecord['parent-combination'];
+  delete speciesRecord['taxon-position'];
   delete speciesRecord['genus-rel'];
 
   return {
@@ -45,6 +53,8 @@ async function getRecordById(id, accessToken) {
     basionym,
     replaced,
     nomenNovum,
+    parentCombination,
+    taxonPosition,
     genus,
     familyApg,
     family,

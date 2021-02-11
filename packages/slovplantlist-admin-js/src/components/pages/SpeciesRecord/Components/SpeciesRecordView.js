@@ -29,17 +29,24 @@ const MisidentificationAuthor = ({ item }) => (
 
 const SpeciesRecordView = ({ recordId }) => {
   const [record, setRecord] = useState();
-  const [accepted, setAccepted] = useState([]);
-  const [basionym, setBasionym] = useState();
-  const [replaced, setReplaced] = useState();
-  const [nomenNovum, setNomenNovum] = useState();
   const [genus, setGenus] = useState();
   const [familyApg, setFamilyApg] = useState();
   const [family, setFamily] = useState();
+
+  const [accepted, setAccepted] = useState([]);
+
+  const [basionym, setBasionym] = useState();
+  const [replaced, setReplaced] = useState();
+  const [nomenNovum, setNomenNovum] = useState();
+  const [parentCombination, setParentCombination] = useState();
+  const [taxonPosition, setTaxonPosition] = useState();
+
   const [nomenclatoricSynonyms, setNomenclatoricSynonyms] = useState([]);
   const [taxonomicSynonyms, setTaxonomicSynonyms] = useState([]);
   const [misidentifications, setMisidentifications] = useState([]);
   const [invalidDesignations, setInvalidDesignations] = useState([]);
+  const [otherSynonyms, setOtherSynonyms] = useState([]);
+
   const [basionymFor, setBasionymFor] = useState([]);
   const [replacedFor, setReplacedFor] = useState([]);
   const [nomenNovumFor, setNomenNovumFor] = useState([]);
@@ -54,9 +61,8 @@ const SpeciesRecordView = ({ recordId }) => {
         const {
           speciesRecord,
           accepted: _accepted,
-          basionym: _basionym,
-          replaced: _replaced,
-          nomenNovum: _nomenNovum,
+          basionym: _basionym, replaced: _replaced, nomenNovum: _nomenNovum,
+          parentCombination: _parentCombination, taxonPosition: _taxonPosition,
           genus: _genus, familyApg: _familyApg, family: _family,
         } = await speciesFacade.getRecordById(recordId, accessToken);
 
@@ -79,6 +85,8 @@ const SpeciesRecordView = ({ recordId }) => {
         setBasionym(_basionym);
         setReplaced(_replaced);
         setNomenNovum(_nomenNovum);
+        setParentCombination(_parentCombination);
+        setTaxonPosition(_taxonPosition);
         setGenus(_genus);
         setFamilyApg(_familyApg);
         setFamily(_family);
@@ -187,6 +195,10 @@ const SpeciesRecordView = ({ recordId }) => {
                 <dd>{replaced ? replaced[0].label : '-'}</dd>
                 <dt>Nomen novum</dt>
                 <dd>{nomenNovum ? nomenNovum[0].label : '-'}</dd>
+                <dt>Parent combination</dt>
+                <dd>{parentCombination ? parentCombination[0].label : '-'}</dd>
+                <dt>Taxon position</dt>
+                <dd>{taxonPosition ? taxonPosition[0].label : '-'}</dd>
               </dl>
             </Panel.Body>
           </Panel>
@@ -223,6 +235,13 @@ const SpeciesRecordView = ({ recordId }) => {
                     list={misidentifications}
                     prefix={config.mappings.synonym.misidentification.prefix}
                     addition={MisidentificationAuthor}
+                  />
+                </dd>
+                <dt>Other Synonyms</dt>
+                <dd>
+                  <SynonymsList
+                    list={otherSynonyms}
+                    prefix={config.mappings.synonym.none.prefix}
                   />
                 </dd>
               </dl>
