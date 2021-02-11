@@ -23,21 +23,6 @@ export default {
     },
   },
   nomenclature: {
-    name: {
-      sl: 's.l.',
-      tribus: 'tribus',
-      hybrid: '×',
-      infra: {
-        subsp: 'subsp.',
-        var: 'var.',
-        subvar: 'subvar.',
-        forma: 'forma',
-        nothosubsp: 'nothosubsp.',
-        nothoforma: 'nothoforma',
-        proles: "'prol'",
-        unranked: '[unranked]',
-      },
-    },
     filter: {
       ntypesGroup: ['A', 'PA', 'S', 'DS'],
       listOfSpecies: [
@@ -61,10 +46,6 @@ export default {
         'authorsH',
       ],
     },
-  },
-  format: {
-    formatted: 'formatted',
-    plain: 'plain',
   },
   mappings: {
     losType: {
