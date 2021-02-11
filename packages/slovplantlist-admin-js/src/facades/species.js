@@ -127,26 +127,16 @@ async function getSynonyms(id, accessToken) {
     nomenclaturesUri.getOtherSynonyms, { id }, accessToken,
   );
 
-  // these are not synonyms per se
-  const parentalCombinations = await getRequest(
-    nomenclaturesUri.getParentalCombinations, { id }, accessToken,
-  );
-  const taxonPositions = await getRequest(
-    nomenclaturesUri.getTaxonPositions, { id }, accessToken,
-  );
-
   return {
     nomenclatoricSynonyms,
     taxonomicSynonyms,
     invalidDesignations,
     misidentifications,
     otherSynonyms,
-    parentalCombinations,
-    taxonPositions,
   };
 }
 
-async function getBasionymsFor(id, accessToken) {
+async function getForRelations(id, accessToken) {
   const basionymFor = await getRequest(
     nomenclaturesUri.getBasionymForUri, { id }, accessToken,
   );
@@ -156,10 +146,18 @@ async function getBasionymsFor(id, accessToken) {
   const nomenNovumFor = await getRequest(
     nomenclaturesUri.getNomenNovumForUri, { id }, accessToken,
   );
+  const parentCombinationFor = await getRequest(
+    nomenclaturesUri.getParentCombinationForUri, { id }, accessToken,
+  );
+  const taxonPositionFor = await getRequest(
+    nomenclaturesUri.getTaxonPositionForUri, { id }, accessToken,
+  );
   return {
     basionymFor,
     replacedFor,
     nomenNovumFor,
+    parentCombinationFor,
+    taxonPositionFor,
   };
 }
 
@@ -233,7 +231,7 @@ export default {
   getAllSpeciesBySearchTerm,
   getSpeciesByAll,
   getSynonyms,
-  getBasionymsFor,
+  getForRelations,
   saveSpeciesAndSynonyms,
   saveSpecies,
   createSynonym,

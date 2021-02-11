@@ -43,6 +43,8 @@ const SpeciesRecordView = ({ recordId }) => {
   const [basionymFor, setBasionymFor] = useState([]);
   const [replacedFor, setReplacedFor] = useState([]);
   const [nomenNovumFor, setNomenNovumFor] = useState([]);
+  const [parentCombinationFor, setParentCombinationFor] = useState([]);
+  const [taxonPositionFor, setTaxonPositionFor] = useState([]);
 
   const accessToken = useSelector((state) => state.authentication.accessToken);
 
@@ -68,7 +70,9 @@ const SpeciesRecordView = ({ recordId }) => {
           basionymFor: _basionymFor,
           replacedFor: _replacedFor,
           nomenNovumFor: _nomenNovumFor,
-        } = await speciesFacade.getBasionymsFor(recordId, accessToken);
+          parentCombinationFor: _parentCombinationFor,
+          taxonPositionFor: _taxonPositionFor,
+        } = await speciesFacade.getForRelations(recordId, accessToken);
 
         setRecord(speciesRecord);
         setAccepted(_accepted);
@@ -85,6 +89,8 @@ const SpeciesRecordView = ({ recordId }) => {
         setBasionymFor(_basionymFor);
         setReplacedFor(_replacedFor);
         setNomenNovumFor(_nomenNovumFor);
+        setParentCombinationFor(_parentCombinationFor);
+        setTaxonPositionFor(_taxonPositionFor);
       }
     };
 
@@ -228,17 +234,25 @@ const SpeciesRecordView = ({ recordId }) => {
           <Panel>
             <Panel.Body>
               <dl className="dl-horizontal">
-                <dt>Basionym For</dt>
+                <dt>Basionym for</dt>
                 <dd>
                   <LosNameList list={basionymFor} />
                 </dd>
-                <dt>Replaced For</dt>
+                <dt>Replaced for</dt>
                 <dd>
                   <LosNameList list={replacedFor} />
                 </dd>
-                <dt>Nomen Novum For</dt>
+                <dt>Nomen novum for</dt>
                 <dd>
                   <LosNameList list={nomenNovumFor} />
+                </dd>
+                <dt>Parent combination for</dt>
+                <dd>
+                  <LosNameList list={parentCombinationFor} />
+                </dd>
+                <dt>Taxon position for</dt>
+                <dd>
+                  <LosNameList list={taxonPositionFor} />
                 </dd>
               </dl>
             </Panel.Body>

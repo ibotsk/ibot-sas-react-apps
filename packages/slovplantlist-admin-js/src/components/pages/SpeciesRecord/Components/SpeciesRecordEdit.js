@@ -156,7 +156,7 @@ class SpeciesRecord extends Component {
         } = await speciesFacade.getSynonyms(recordId, accessToken);
         const {
           basionymFor, replacedFor, nomenNovumFor,
-        } = await speciesFacade.getBasionymsFor(recordId, accessToken);
+        } = await speciesFacade.getForRelations(recordId, accessToken);
 
         this.setState({
           record: speciesRecord,
