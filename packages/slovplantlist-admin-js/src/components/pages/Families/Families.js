@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import {
   Grid, Button, Glyphicon,
 } from 'react-bootstrap';
-import { Helmet } from 'react-helmet';
 
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
@@ -13,6 +12,7 @@ import LoggedUserType from 'components/propTypes/loggedUser';
 
 import Can from 'components/segments/auth/Can';
 import RemotePagination from 'components/segments/RemotePagination';
+import { PageTitle } from '@ibot/components';
 
 import config from 'config/config';
 
@@ -121,9 +121,7 @@ const Families = ({ user, accessToken }) => {
 
   return (
     <div id="families">
-      <Helmet>
-        <title>Families - Slovplantlist</title>
-      </Helmet>
+      <PageTitle title="Families - Slovplantlist" />
       <Grid id="functions-panel">
         <div id="functions">
           <Can

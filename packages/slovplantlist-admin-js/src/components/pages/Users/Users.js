@@ -6,11 +6,11 @@ import {
   Grid,
   Tabs, Tab,
 } from 'react-bootstrap';
-import { Helmet } from 'react-helmet';
 
 import LoggedUserType from 'components/propTypes/loggedUser';
 
 import Can from 'components/segments/auth/Can';
+import { PageTitle } from '@ibot/components';
 
 import AllUsers from './Tabs/AllUsers';
 import GeneraUsers from './Tabs/GeneraUsers';
@@ -35,9 +35,7 @@ class Users extends React.Component {
         perform="users"
         yes={() => (
           <div id="users">
-            <Helmet>
-              <title>Users - Slovplantlist</title>
-            </Helmet>
+            <PageTitle title="Users - Slovplantlist" />
             <Grid id="page-heading">
               <h2>Manage users</h2>
             </Grid>

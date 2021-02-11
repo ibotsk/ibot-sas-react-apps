@@ -9,7 +9,8 @@ import {
   Button,
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
-import { Helmet } from 'react-helmet';
+
+import { PageTitle } from '@ibot/components';
 
 import PropTypes from 'prop-types';
 
@@ -91,9 +92,7 @@ class Login extends Component {
 
     return (
       <div id="login-page">
-        <Helmet>
-          <title>Login - Slovplantlist</title>
-        </Helmet>
+        <PageTitle title="Login - Slovplantlist" />
         <Grid>
           <Col xs={12} md={4} mdOffset={4}>
             <h2>Login</h2>

@@ -7,7 +7,6 @@ import {
   Checkbox, Button,
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Helmet } from 'react-helmet';
 
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
@@ -20,7 +19,9 @@ import AddableList from 'components/segments/AddableList';
 
 import { speciesFacade, genusFacade } from 'facades';
 
-import { LosName, LosNameList, TimestampCheck } from '@ibot/components';
+import {
+  LosName, LosNameList, PageTitle, TimestampCheck,
+} from '@ibot/components';
 import { format, species as speciesUtils } from '@ibot/utils';
 
 import { notifications, sorterUtils } from 'utils';
@@ -549,15 +550,12 @@ class SpeciesRecord extends Component {
     } = this.state;
     const { recordId } = this.props;
 
+    // eslint-disable-next-line max-len
+    const title = `${recordId ? speciesUtils.listOfSpeciesString(record) : 'New record'} - Slovplantlist`;
+
     return (
       <div id="species-detail">
-        <Helmet>
-          <title>
-            {recordId ? speciesUtils.listOfSpeciesString(record) : 'New record'}
-            {' '}
-            - Slovplantlist
-          </title>
-        </Helmet>
+        <PageTitle title={title} />
         <Grid id="functions-panel">
           <div id="functions">
             <Row>

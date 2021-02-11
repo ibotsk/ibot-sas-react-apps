@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import {
   Grid, Button, Glyphicon,
 } from 'react-bootstrap';
-import { Helmet } from 'react-helmet';
 
 import filterFactory, {
   textFilter, multiSelectFilter, Comparator,
@@ -16,6 +15,7 @@ import LoggedUserType from 'components/propTypes/loggedUser';
 
 import RemotePagination from 'components/segments/RemotePagination';
 import Can from 'components/segments/auth/Can';
+import { PageTitle } from '@ibot/components';
 
 import config from 'config/config';
 import { generaUtils } from '@ibot/utils';
@@ -211,9 +211,7 @@ const Genera = ({ user, accessToken }) => {
 
   return (
     <div id="genera">
-      <Helmet>
-        <title>Genera - Slovplantlist</title>
-      </Helmet>
+      <PageTitle title="Genera - Slovplantlist" />
       <Grid id="functions-panel">
         <div id="functions">
           <Can

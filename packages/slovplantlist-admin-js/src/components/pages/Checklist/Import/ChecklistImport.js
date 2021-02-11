@@ -3,11 +3,12 @@ import { useSelector } from 'react-redux';
 import {
   Button, Grid, Panel, ProgressBar, Col, Row,
 } from 'react-bootstrap';
-import { Helmet } from 'react-helmet';
 
 import { notifications } from 'utils';
 
 import { CSVReader } from 'react-papaparse';
+
+import { PageTitle } from '@ibot/components';
 
 import { importFacade } from 'facades';
 import importConfig from 'config/import';
@@ -78,9 +79,7 @@ const ChecklistImport = () => {
 
   return (
     <div>
-      <Helmet>
-        <title>Import checklist - Slovplantlist</title>
-      </Helmet>
+      <PageTitle title="Import checklist - Slovplantlist" />
       <Grid>
         <h2>Import checklist</h2>
         <p className="text-warning">

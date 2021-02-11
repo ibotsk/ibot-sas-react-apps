@@ -9,7 +9,10 @@ import { LinkContainer } from 'react-router-bootstrap';
 import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
-import { LosName, LosNameList, SynonymsList } from '@ibot/components';
+import {
+  LosName, LosNameList, PageTitle, SynonymsList,
+} from '@ibot/components';
+import { species as speciesUtils } from '@ibot/utils';
 
 import { speciesFacade } from 'facades';
 
@@ -114,8 +117,12 @@ const SpeciesRecordView = ({ recordId }) => {
     ntype, publication, vernacular, tribus,
   } = record;
   const type = config.mappings.losType[ntype];
+  // eslint-disable-next-line max-len
+  const title = `${speciesUtils.listOfSpeciesString(record)} - Slovplantlist`;
+
   return (
     <div id="species-detail">
+      <PageTitle title={title} />
       <Grid id="functions-panel">
         <div id="functions">
           <Row>

@@ -6,7 +6,6 @@ import {
   Button, Glyphicon,
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Helmet } from 'react-helmet';
 
 import filterFactory, {
   dateFilter, textFilter, multiSelectFilter, selectFilter,
@@ -18,7 +17,7 @@ import PropTypes from 'prop-types';
 import LoggedUserType from 'components/propTypes/loggedUser';
 
 import {
-  LosName, SelectTableColumnsModal,
+  LosName, PageTitle, SelectTableColumnsModal,
 } from '@ibot/components';
 
 import Can from 'components/segments/auth/Can';
@@ -311,9 +310,7 @@ const Checklist = ({ user, accessToken }) => {
   const paginationOptions = { page, sizePerPage, totalSize };
   return (
     <div id="checklist">
-      <Helmet>
-        <title>Checklist - Slovplantlist</title>
-      </Helmet>
+      <PageTitle title="Checklist - Slovplantlist" />
       <Grid id="functions-panel">
         <div id="functions">
           <Can
