@@ -59,6 +59,8 @@ const recordInitialValues = {
   idGenus: undefined,
   idNomenNovum: undefined,
   idReplaced: undefined,
+  idParentCombination: undefined,
+  idTaxonPosition: undefined,
   isBasionym: false,
   isIsonym: false,
   notes: '',
@@ -122,6 +124,8 @@ class SpeciesRecord extends Component {
       idBasionymSelected: [],
       idReplacedSelected: [],
       idNomenNovumSelected: [],
+      idParentCombinationSelected: [],
+      idTaxonPositionSelected: [],
       idGenusSelected: [],
 
       nomenclatoricSynonyms: [], // contains objects of synonym
@@ -142,8 +146,10 @@ class SpeciesRecord extends Component {
     const { recordId, accessToken } = this.props;
     if (recordId) {
       const {
-        speciesRecord, accepted, basionym, replaced,
-        nomenNovum, genus, familyApg, family,
+        speciesRecord, accepted,
+        genus, familyApg, family,
+        basionym, replaced, nomenNovum,
+        parentCombination, taxonPosition,
       } = await speciesFacade.getRecordById(recordId, accessToken);
 
       const {
@@ -161,6 +167,8 @@ class SpeciesRecord extends Component {
         idBasionymSelected: basionym || [],
         idReplacedSelected: replaced || [],
         idNomenNovumSelected: nomenNovum || [],
+        idParentCombinationSelected: parentCombination || [],
+        idTaxonPositionSelected: taxonPosition || [],
         idGenusSelected: genus || [],
         familyApg,
         family,
@@ -521,10 +529,9 @@ class SpeciesRecord extends Component {
       isLoading,
       familyApg, family, generaOptions, record,
       listOfSpecies,
+      accepted,
       nomenclatoricSynonyms, taxonomicSynonyms, invalidDesignations,
       misidentifications, otherSynonyms,
-      basionymFor, replacedFor, nomenNovumFor,
-      parentCombinationFor, taxonPositionFor,
       record: {
         id, ntype, genus, species, subsp, var: variety,
         subvar, forma, nothosubsp, nothoforma, proles, unranked, authors,
@@ -532,10 +539,11 @@ class SpeciesRecord extends Component {
         aggregate,
         checkedTimestamp, checkedBy,
       } = {},
-      idGenusSelected,
-      idBasionymSelected,
-      accepted,
+      basionymFor, replacedFor, nomenNovumFor,
+      parentCombinationFor, taxonPositionFor,
+      idGenusSelected, idBasionymSelected,
       idNomenNovumSelected, idReplacedSelected,
+      idParentCombinationSelected, idTaxonPositionSelected,
     } = this.state;
 
     return (
@@ -917,6 +925,44 @@ class SpeciesRecord extends Component {
                       selected={idNomenNovumSelected}
                       onChange={(selected) => this.handleChangeTypeaheadSingle(
                         selected, 'idNomenNovum',
+                      )}
+                      placeholder="Start by typing a species present
+                        in the database (case sensitive)"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="idParentCombination" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Parent combination
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AsyncTypeahead
+                      id="id-parent-combination-autocomplete"
+                      isLoading={isLoading}
+                      options={listOfSpecies}
+                      onSearch={this.handleSearchSpeciesAsyncTypeahead}
+                      selected={idParentCombinationSelected}
+                      onChange={(selected) => this.handleChangeTypeaheadSingle(
+                        selected, 'idParentCombination',
+                      )}
+                      placeholder="Start by typing a species present
+                        in the database (case sensitive)"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="idTaxonPosition" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Taxon position
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <AsyncTypeahead
+                      id="id-taxon-position-autocomplete"
+                      isLoading={isLoading}
+                      options={listOfSpecies}
+                      onSearch={this.handleSearchSpeciesAsyncTypeahead}
+                      selected={idTaxonPositionSelected}
+                      onChange={(selected) => this.handleChangeTypeaheadSingle(
+                        selected, 'idTaxonPosition',
                       )}
                       placeholder="Start by typing a species present
                         in the database (case sensitive)"
