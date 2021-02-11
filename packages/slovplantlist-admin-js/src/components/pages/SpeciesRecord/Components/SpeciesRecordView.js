@@ -71,6 +71,7 @@ const SpeciesRecordView = ({ recordId }) => {
           taxonomicSynonyms: _taxonomicSynonyms,
           invalidDesignations: _invalidDesignations,
           misidentifications: _misidentifications,
+          otherSynonyms: _otherSynonyms,
         } = await speciesFacade.getSynonyms(recordId, accessToken);
         const {
           basionymFor: _basionymFor,
@@ -94,6 +95,7 @@ const SpeciesRecordView = ({ recordId }) => {
         setTaxonomicSynonyms(_taxonomicSynonyms);
         setMisidentifications(_misidentifications);
         setInvalidDesignations(_invalidDesignations);
+        setOtherSynonyms(_otherSynonyms);
         setBasionymFor(_basionymFor);
         setReplacedFor(_replacedFor);
         setNomenNovumFor(_nomenNovumFor);
