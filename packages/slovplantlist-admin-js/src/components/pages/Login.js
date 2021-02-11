@@ -9,6 +9,7 @@ import {
   Button,
   Form, FormGroup, FormControl, ControlLabel,
 } from 'react-bootstrap';
+import { Helmet } from 'react-helmet';
 
 import PropTypes from 'prop-types';
 
@@ -90,6 +91,9 @@ class Login extends Component {
 
     return (
       <div id="login-page">
+        <Helmet>
+          <title>Login - Slovplantlist</title>
+        </Helmet>
         <Grid>
           <Col xs={12} md={4} mdOffset={4}>
             <h2>Login</h2>

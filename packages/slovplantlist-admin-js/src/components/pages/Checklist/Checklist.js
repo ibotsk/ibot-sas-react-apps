@@ -6,6 +6,7 @@ import {
   Button, Glyphicon,
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
+import { Helmet } from 'react-helmet';
 
 import filterFactory, {
   dateFilter, textFilter, multiSelectFilter, selectFilter,
@@ -310,6 +311,9 @@ const Checklist = ({ user, accessToken }) => {
   const paginationOptions = { page, sizePerPage, totalSize };
   return (
     <div id="checklist">
+      <Helmet>
+        <title>Checklist - Slovplantlist</title>
+      </Helmet>
       <Grid id="functions-panel">
         <div id="functions">
           <Can

@@ -6,6 +6,7 @@ import {
   Grid,
   Tabs, Tab,
 } from 'react-bootstrap';
+import { Helmet } from 'react-helmet';
 
 import LoggedUserType from 'components/propTypes/loggedUser';
 
@@ -34,6 +35,9 @@ class Users extends React.Component {
         perform="users"
         yes={() => (
           <div id="users">
+            <Helmet>
+              <title>Users - Slovplantlist</title>
+            </Helmet>
             <Grid id="page-heading">
               <h2>Manage users</h2>
             </Grid>

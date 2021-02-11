@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   Grid, Button, Glyphicon,
 } from 'react-bootstrap';
+import { Helmet } from 'react-helmet';
 
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
@@ -120,6 +121,9 @@ const FamiliesAPG = ({ user, accessToken }) => {
 
   return (
     <div id="families-apg">
+      <Helmet>
+        <title>Families APG - Slovplantlist</title>
+      </Helmet>
       <Grid id="functions-panel">
         <div id="functions">
           <Can

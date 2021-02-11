@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {
   Grid, Button, Glyphicon,
 } from 'react-bootstrap';
+import { Helmet } from 'react-helmet';
 
 import filterFactory, {
   textFilter, multiSelectFilter, Comparator,
@@ -210,6 +211,9 @@ const Genera = ({ user, accessToken }) => {
 
   return (
     <div id="genera">
+      <Helmet>
+        <title>Genera - Slovplantlist</title>
+      </Helmet>
       <Grid id="functions-panel">
         <div id="functions">
           <Can
