@@ -2,7 +2,7 @@ import { where as whereUtils } from '@ibot/utils';
 import { helperUtils, sorterUtils } from 'utils';
 import config from 'config/config';
 
-import { getRequest, putRequest } from './client';
+import { getRequest, putRequest, patchRequest } from './client';
 import common from './common/common';
 
 const {
@@ -226,6 +226,12 @@ async function saveSpeciesAndSynonyms({
   }, accessToken);
 }
 
+function patchSpecies(id, data, accessToken) {
+  return patchRequest(
+    nomenclaturesUri.getByIdUri, data, { id }, accessToken,
+  );
+}
+
 function createSynonym(idParent, idSynonym, syntype) {
   return {
     idParent: parseInt(idParent, 10),
@@ -244,5 +250,6 @@ export default {
   getForRelations,
   saveSpeciesAndSynonyms,
   saveSpecies,
+  patchSpecies,
   createSynonym,
 };

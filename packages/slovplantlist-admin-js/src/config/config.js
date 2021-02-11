@@ -121,14 +121,6 @@ export default {
         numType: 4,
         prefix: '–',
       },
-      parent: {
-        numType: 9,
-        prefix: '',
-      },
-      position: {
-        numType: 5,
-        prefix: '',
-      },
       none: {
         numType: 0,
         prefix: '',
@@ -140,7 +132,6 @@ export default {
       2: 'taxonomic',
       3: 'nomenclatoric',
       4: 'misidentification',
-      9: 'parent',
     },
     userRole: {
       admin: {
