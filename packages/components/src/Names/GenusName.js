@@ -2,10 +2,10 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-import { helperUtils } from 'utils';
+import { generaUtils } from '@ibot/utils';
 
 const GenusName = ({ data }) => (
-  <span>{helperUtils.genusString(data)}</span>
+  <span>{generaUtils.genusString(data)}</span>
 );
 
 export default GenusName;

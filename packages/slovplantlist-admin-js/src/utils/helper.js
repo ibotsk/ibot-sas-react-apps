@@ -73,14 +73,6 @@ function losToTypeaheadSelected(data) {
   }];
 }
 
-function genusString(genus) {
-  if (!genus) {
-    return undefined;
-  }
-  const { name, authors } = genus;
-  return [name, authors].filter((e) => e).map((e) => e.trim()).join(' ');
-}
-
 function makeWhere(filters) {
   const whereItems = [];
   const keys = Object.keys(filters).filter((k) => !!filters[k]);
@@ -152,7 +144,6 @@ function buildFilterOptionsFromKeys(keys) {
 
 export default {
   losToTypeaheadSelected,
-  genusString,
   makeWhere,
   makeOrder,
   buildFilterOptionsFromKeys,

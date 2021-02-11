@@ -15,7 +15,7 @@ import { TimestampCheck } from '@ibot/components';
 
 import AddableList from 'components/segments/AddableList';
 
-import { helperUtils, notifications, sorterUtils } from 'utils';
+import { notifications, sorterUtils } from 'utils';
 import { format, generaUtils } from '@ibot/utils';
 
 import config from 'config/config';
@@ -35,7 +35,7 @@ const {
 } = familiesFacade;
 
 const genusIdLabelFormat = (g) => (
-  { id: g.id, label: helperUtils.genusString(g) }
+  { id: g.id, label: generaUtils.genusString(g) }
 );
 const genusIdLabelAcceptedFormat = (g) => {
   const idLabel = genusIdLabelFormat(g);

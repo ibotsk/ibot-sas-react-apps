@@ -9,7 +9,7 @@ import {
 import PropTypes from 'prop-types';
 import { SpeciesType } from '@ibot/types';
 
-import LosName from '../Species/LosName';
+import LosName from '../Names/LosName';
 
 const constructSubNomenlatoric = (subNomenclatoricList) => {
   if (!subNomenclatoricList || subNomenclatoricList.length === 0) {
