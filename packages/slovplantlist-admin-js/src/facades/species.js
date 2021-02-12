@@ -32,12 +32,23 @@ async function getRecordById(id, accessToken) {
     speciesRecord['taxon-position'],
   );
 
-  const genus = [{
-    id: speciesRecord['genus-rel'].id,
-    label: speciesRecord['genus-rel'].name,
-  }];
-  const { name: familyApg } = speciesRecord['genus-rel']['family-apg'];
-  const { name: family } = speciesRecord['genus-rel'].family;
+  let genus;
+  let familyApg;
+  let family;
+  if (speciesRecord['genus-rel']) {
+    genus = [{
+      id: speciesRecord['genus-rel'].id,
+      label: speciesRecord['genus-rel'].name,
+    }];
+    const famAPG = speciesRecord['genus-rel']['family-apg'];
+    const fam = speciesRecord['genus-rel'].family.name;
+    if (famAPG) {
+      familyApg = famAPG.name;
+    }
+    if (fam) {
+      family = fam.name;
+    }
+  }
 
   delete speciesRecord.accepted;
   delete speciesRecord.basionym;
