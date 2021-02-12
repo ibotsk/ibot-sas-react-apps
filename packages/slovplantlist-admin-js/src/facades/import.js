@@ -176,7 +176,16 @@ async function importChecklistPrepare(
     }
 
     // regardless if species exists, we want to use ntype from imported data
-    const newNtype = ntype || losType.S.key; // row with empty ntype is synonym
+    let newNtype = ntype; // row with empty ntype is synonym
+    if (!newNtype) {
+      if (syntype === referenceSyntype.parent.syntypeCol) {
+        newNtype = referenceSyntype.parent.ntype;
+      } else if (syntype === referenceSyntype.position.syntypeCol) {
+        newNtype = referenceSyntype.position.ntype;
+      } else {
+        newNtype = losType.S.key;
+      }
+    }
     speciesForImport.ntype = newNtype;
 
     // get idGenus by name, if not found, add it to report
@@ -198,7 +207,7 @@ async function importChecklistPrepare(
 
     let newSyntype;
     let acceptedNameRowId;
-    if (newNtype === losType.S.key) {
+    if ([losType.S.key, losType.PC.key, losType.TP.key].includes(newNtype)) {
       newSyntype = syntype || '0';
       // add rowId of accepted name only if current row is synonym
       acceptedNameRowId = currentAccNameRowId;
@@ -235,6 +244,7 @@ async function importChecklistPrepare(
   }
 
   const dataToImportWithDuplicates = checkForDuplicateRows(dataToImport);
+  console.log(dataToImportWithDuplicates);
   return dataToImportWithDuplicates;
 }
 
@@ -296,35 +306,35 @@ async function importChecklist(data, accessToken, {
       synonymsByParent[id] = [];
     }
 
+    const idAcceptedName = acceptedNamesIds[acceptedNameRowId];
     if (ntype === losType.S.key) {
-      const idAcceptedName = acceptedNamesIds[acceptedNameRowId];
-
       if (legalSynonyms.includes(syntype)) {
         synonymsByParent[idAcceptedName] = await processSynonym(
           nomenclatureData, synonymsByParent[idAcceptedName],
           idAcceptedName, syntype,
           accessToken,
         );
-      } else {
-        // handle parent combination and taxon position
-        const parentAndPosition = acceptedToParentAndPostion.get(idAcceptedName)
-          || {};
-
-        let newVal = {};
-        if (syntype === referenceSyntype.parent) {
-          newVal = { idParentCombination: id };
-        }
-        if (syntype === referenceSyntype.position) {
-          newVal = { idTaxonPosition: id };
-        }
-        acceptedToParentAndPostion.set(
-          idAcceptedName,
-          {
-            ...parentAndPosition,
-            ...newVal,
-          },
-        );
       }
+    }
+    if (ntype === losType.PC.key || ntype === losType.TP.key) {
+      // handle parent combination and taxon position
+      const parentAndPosition = acceptedToParentAndPostion.get(idAcceptedName)
+        || {};
+
+      let newVal = {};
+      if (syntype === referenceSyntype.parent.syntypeCol) {
+        newVal = { idParentCombination: id };
+      }
+      if (syntype === referenceSyntype.position.syntypeCol) {
+        newVal = { idTaxonPosition: id };
+      }
+      acceptedToParentAndPostion.set(
+        idAcceptedName,
+        {
+          ...parentAndPosition,
+          ...newVal,
+        },
+      );
     }
   }
 

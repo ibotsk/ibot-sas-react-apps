@@ -74,6 +74,16 @@ export default {
         text: 'Unresolved',
         colour: '#bb9d00',
       },
+      PC: {
+        key: 'PC',
+        text: 'Parent combination',
+        colour: '#999',
+      },
+      TP: {
+        key: 'TP',
+        text: 'Taxon position',
+        colour: '#999',
+      },
     },
     genusType: {
       A: {

@@ -77,7 +77,9 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
   let name = [];
   const slResult = makeSl(species);
 
-  name.push(italic(genus));
+  if (genus) {
+    name.push(italic(genus));
+  }
   name.push(italic(slResult.s));
 
   if (slResult.hasSl) {

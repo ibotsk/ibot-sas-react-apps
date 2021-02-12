@@ -14,6 +14,7 @@ const {
   mappings: {
     synonymBySyntype,
     synonym: synonymConfig,
+    losType,
   },
 } = config;
 const {
@@ -31,7 +32,14 @@ const columns = [
   {
     dataField: 'ntype',
     text: 'Status',
-    formatter: (cell, row) => row.record.ntype,
+    formatter: (cell, row) => {
+      const type = losType[row.record.ntype] || {};
+      return (
+        <span style={{ color: type.colour || '#000' }}>
+          {row.record.ntype}
+        </span>
+      );
+    },
   },
   {
     dataField: 'syntype',
