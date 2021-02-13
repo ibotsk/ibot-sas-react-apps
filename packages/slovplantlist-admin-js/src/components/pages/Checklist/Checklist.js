@@ -61,6 +61,7 @@ const columns = (isAuthor) => [
     text: 'ID',
     filter: textFilter(),
     sort: true,
+    headerStyle: { width: '80px' },
   },
   {
     dataField: 'action',
@@ -96,6 +97,7 @@ const columns = (isAuthor) => [
     }),
     sort: true,
     hidden: false,
+    headerStyle: { width: '150px' },
   },
   {
     dataField: listOfSpeciesColumn,
@@ -146,7 +148,8 @@ const columns = (isAuthor) => [
       options: methodOptions(insertedMethodConfig),
     }),
     sort: true,
-    hidden: true,
+    hidden: false,
+    headerStyle: { width: '150px' },
   },
   {
     dataField: 'updatedBy',
@@ -162,7 +165,8 @@ const columns = (isAuthor) => [
       options: methodOptions(updatedMethodConfig),
     }),
     sort: true,
-    hidden: true,
+    hidden: false,
+    headerStyle: { width: '150px' },
   },
 ];
 
