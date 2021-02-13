@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import {
   Grid, Row, Col,
@@ -12,9 +12,6 @@ import filterFactory, {
   Comparator,
 } from 'react-bootstrap-table2-filter';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit';
-
-import PropTypes from 'prop-types';
-import LoggedUserType from 'components/propTypes/loggedUser';
 
 import {
   LosName, PageTitle, SelectTableColumnsModal,
@@ -247,7 +244,10 @@ const formatResult = (records, user) => records.map(({
   ),
 }));
 
-const Checklist = ({ user, accessToken }) => {
+const Checklist = () => {
+  const accessToken = useSelector((state) => state.authentication.accessToken);
+  const user = useSelector((state) => state.user);
+
   const {
     showModal, editId,
     handleShowModal, handleHideModal,
@@ -411,14 +411,4 @@ const Checklist = ({ user, accessToken }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-  user: state.user,
-});
-
-export default connect(mapStateToProps)(Checklist);
-
-Checklist.propTypes = {
-  user: LoggedUserType.type.isRequired,
-  accessToken: PropTypes.string.isRequired,
-};
+export default Checklist;
