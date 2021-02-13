@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import {
   Grid, Row, Col,
@@ -12,9 +12,6 @@ import filterFactory, {
   Comparator,
 } from 'react-bootstrap-table2-filter';
 import ToolkitProvider from 'react-bootstrap-table2-toolkit';
-
-import PropTypes from 'prop-types';
-import LoggedUserType from 'components/propTypes/loggedUser';
 
 import {
   LosName, PageTitle, SelectTableColumnsModal,
@@ -64,6 +61,7 @@ const columns = (isAuthor) => [
     text: 'ID',
     filter: textFilter(),
     sort: true,
+    headerStyle: { width: '80px' },
   },
   {
     dataField: 'action',
@@ -99,6 +97,7 @@ const columns = (isAuthor) => [
     }),
     sort: true,
     hidden: false,
+    headerStyle: { width: '150px' },
   },
   {
     dataField: listOfSpeciesColumn,
@@ -149,7 +148,8 @@ const columns = (isAuthor) => [
       options: methodOptions(insertedMethodConfig),
     }),
     sort: true,
-    hidden: true,
+    hidden: false,
+    headerStyle: { width: '150px' },
   },
   {
     dataField: 'updatedBy',
@@ -165,7 +165,8 @@ const columns = (isAuthor) => [
       options: methodOptions(updatedMethodConfig),
     }),
     sort: true,
-    hidden: true,
+    hidden: false,
+    headerStyle: { width: '150px' },
   },
 ];
 
@@ -247,7 +248,10 @@ const formatResult = (records, user) => records.map(({
   ),
 }));
 
-const Checklist = ({ user, accessToken }) => {
+const Checklist = () => {
+  const accessToken = useSelector((state) => state.authentication.accessToken);
+  const user = useSelector((state) => state.user);
+
   const {
     showModal, editId,
     handleShowModal, handleHideModal,
@@ -411,14 +415,4 @@ const Checklist = ({ user, accessToken }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-  user: state.user,
-});
-
-export default connect(mapStateToProps)(Checklist);
-
-Checklist.propTypes = {
-  user: LoggedUserType.type.isRequired,
-  accessToken: PropTypes.string.isRequired,
-};
+export default Checklist;

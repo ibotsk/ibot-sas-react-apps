@@ -111,8 +111,14 @@ export default {
     trimChars: ' „“"\'',
     legalSynonyms: ['0', '1', '2', '3', '4'],
     referenceSyntype: {
-      parent: 'R',
-      position: '5',
+      parent: {
+        syntypeCol: 'R',
+        ntype: 'PC',
+      },
+      position: {
+        syntypeCol: '5',
+        ntype: 'TP',
+      },
     },
   },
   mappings: {

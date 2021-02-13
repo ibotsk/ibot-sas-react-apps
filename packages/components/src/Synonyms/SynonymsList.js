@@ -2,7 +2,7 @@ import React from 'react';
 import { ListGroup } from 'react-bootstrap';
 
 import SynonymListItem from './SynonymListItem';
-import LosName from '../Species/LosName';
+import LosName from '../Names/LosName';
 
 const SynonymsList = ({ list, prefix, addition: Addition = undefined }) => {
   if (list && list.length) {

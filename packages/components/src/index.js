@@ -2,7 +2,7 @@ import React from 'react';
 
 export { default as BootstrapTable } from 'react-bootstrap-table-next';
 
-export * from './Species';
+export * from './Names';
 export * from './Synonyms';
 export * from './Common';
 

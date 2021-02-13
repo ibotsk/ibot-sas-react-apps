@@ -4,8 +4,7 @@ import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 import GenusType from 'components/propTypes/genus';
 
-import SynonymListItem from 'components/segments/SynonymListItem';
-import GenusName from 'components/segments/genera/GenusName';
+import { GenusName, SynonymListItem } from '@ibot/components';
 
 import config from 'config/config';
 
