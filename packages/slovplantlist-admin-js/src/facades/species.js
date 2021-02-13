@@ -41,7 +41,7 @@ async function getRecordById(id, accessToken) {
       label: speciesRecord['genus-rel'].name,
     }];
     const famAPG = speciesRecord['genus-rel']['family-apg'];
-    const fam = speciesRecord['genus-rel'].family.name;
+    const fam = speciesRecord['genus-rel'].family;
     if (famAPG) {
       familyApg = famAPG.name;
     }
