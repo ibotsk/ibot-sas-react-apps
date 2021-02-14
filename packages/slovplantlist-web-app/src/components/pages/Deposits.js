@@ -1,12 +1,8 @@
 import React from 'react';
-import Link from '@material-ui/core/Link';
+import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Title from './Title';
-
-function preventDefault(event) {
-  event.preventDefault();
-}
 
 const useStyles = makeStyles({
   depositContext: {
@@ -17,7 +13,7 @@ const useStyles = makeStyles({
 export default function Deposits() {
   const classes = useStyles();
   return (
-    <React.Fragment>
+    <>
       <Title>Recent Deposits</Title>
       <Typography component="p" variant="h4">
         $3,024.00
@@ -26,10 +22,13 @@ export default function Deposits() {
         on 15 March, 2019
       </Typography>
       <div>
-        <Link color="primary" href="#" onClick={preventDefault}>
+        <Button
+          color="primary"
+          onClick={() => {}}
+        >
           View balance
-        </Link>
+        </Button>
       </div>
-    </React.Fragment>
+    </>
   );
 }
