@@ -1,6 +1,6 @@
 {
   "name": "@ibot/components",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Made with create-react-library",
   "author": "mkempa",
@@ -28,8 +28,8 @@
     "deploy": "gh-pages -d example/build"
   },
   "dependencies": {
-    "@ibot/types": "^0.0.0",
-    "@ibot/utils": "^0.0.0",
+    "@ibot/types": "^0.1.0",
+    "@ibot/utils": "^0.1.0",
     "react-bootstrap-table-next": "^4.0.3",
     "react-helmet": "^6.1.0"
   },

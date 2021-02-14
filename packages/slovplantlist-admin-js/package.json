@@ -1,11 +1,11 @@
 {
   "name": "@ibot/slovplantlist-admin",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ibot/client": "^0.0.0",
-    "@ibot/components": "^0.0.0",
-    "@ibot/utils": "^0.0.0",
+    "@ibot/client": "^0.1.0",
+    "@ibot/components": "^0.1.0",
+    "@ibot/utils": "^0.1.0",
     "lodash.differencewith": "^4.5.0",
     "lodash.intersectionwith": "^4.4.0",
     "prop-types": "^15.6.2",
