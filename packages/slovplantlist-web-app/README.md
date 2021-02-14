@@ -1,0 +1,1 @@
+# Slovak Plants List - portal #
