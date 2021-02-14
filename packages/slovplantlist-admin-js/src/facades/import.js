@@ -244,7 +244,6 @@ async function importChecklistPrepare(
   }
 
   const dataToImportWithDuplicates = checkForDuplicateRows(dataToImport);
-  console.log(dataToImportWithDuplicates);
   return dataToImportWithDuplicates;
 }
 
