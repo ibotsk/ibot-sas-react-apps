@@ -1,9 +1,9 @@
 import React from 'react';
-import Home from './components/pages/Home/Home';
+import Base from './components/segments/Base/Base';
 
 function App() {
   return (
-    <Home />
+    <Base />
   );
 }
 
