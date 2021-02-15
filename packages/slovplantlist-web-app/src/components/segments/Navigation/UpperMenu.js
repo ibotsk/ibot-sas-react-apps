@@ -11,6 +11,10 @@ import {
 
 import clsx from 'clsx';
 
+import config from '../../../config';
+
+const { routes } = config;
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -79,7 +83,7 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
             className={classes.menuButton}
             color="inherit"
             variant="text"
-            href="#"
+            href={routes.scientificNames}
           >
             Scientific names
           </Button>
@@ -87,7 +91,7 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
             className={classes.menuButton}
             color="inherit"
             variant="text"
-            href="#"
+            href={routes.slovakNames}
           >
             Slovak names
           </Button>
