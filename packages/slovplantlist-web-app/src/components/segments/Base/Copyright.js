@@ -4,7 +4,7 @@ import { Typography, Link } from '@material-ui/core';
 const Copyright = () => (
   <Typography variant="body2" color="textSecondary" align="center">
     {'Copyright © '}
-    <Link color="inherit" href="https://material-ui.com/">
+    <Link color="inherit" href="/">
       Your Website
     </Link>
     {' '}
