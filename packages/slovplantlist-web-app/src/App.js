@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import {
+  BrowserRouter, Route, Switch,
+} from 'react-router-dom';
 
 import Base from './components/segments/Base/Base';
 import Home from './components/pages/Home/Home';
@@ -14,9 +16,13 @@ const { routes } = config;
 
 const Routing = () => (
   <Switch>
-    <Route exact path={routes.home} component={Home} />
-    <Route exact path={routes.scientificNames} component={ScientificNames} />
-    <Route exact path={routes.slovakNames} component={SlovakNames} />
+    <Route exact path={routes.home.route} component={Home} />
+    <Route
+      exact
+      path={routes.scientificNames.route}
+      component={ScientificNames}
+    />
+    <Route exact path={routes.slovakNames.route} component={SlovakNames} />
   </Switch>
 );
 

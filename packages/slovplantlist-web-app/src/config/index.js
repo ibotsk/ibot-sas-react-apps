@@ -1,7 +1,16 @@
 export default {
   routes: {
-    home: '/',
-    scientificNames: '/names/scientific',
-    slovakNames: '/names/slovak',
+    home: {
+      route: '/',
+      drawerOpened: false,
+    },
+    scientificNames: {
+      route: '/names/scientific',
+      drawerOpened: true,
+    },
+    slovakNames: {
+      route: '/names/slovak',
+      drawerOpened: true,
+    },
   },
 };

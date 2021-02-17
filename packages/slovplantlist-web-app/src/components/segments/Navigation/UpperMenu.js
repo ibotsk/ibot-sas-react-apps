@@ -10,6 +10,7 @@ import {
 } from '@material-ui/icons';
 
 import clsx from 'clsx';
+import PropTypes from 'prop-types';
 
 import config from '../../../config';
 
@@ -83,7 +84,7 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
             className={classes.menuButton}
             color="inherit"
             variant="text"
-            href={routes.scientificNames}
+            href={routes.scientificNames.route}
           >
             Scientific names
           </Button>
@@ -91,7 +92,7 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
             className={classes.menuButton}
             color="inherit"
             variant="text"
-            href={routes.slovakNames}
+            href={routes.slovakNames.route}
           >
             Slovak names
           </Button>
@@ -102,3 +103,8 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
 };
 
 export default UpperMenu;
+
+UpperMenu.propTypes = {
+  drawerOpen: PropTypes.bool.isRequired,
+  onDrawerOpen: PropTypes.func.isRequired,
+};

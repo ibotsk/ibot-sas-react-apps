@@ -3,17 +3,18 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Box, Typography, Toolbar, Divider,
-  List, ListItem, ListItemIcon, ListItemText,
-  IconButton, TextField, Collapse, Checkbox,
+  List, ListItem, IconButton,
 } from '@material-ui/core';
 
 import {
   Delete as DeleteIcon,
   Search as SearchIcon,
-  ExpandLess, ExpandMore,
 } from '@material-ui/icons';
 
 import PropTypes from 'prop-types';
+
+import ListItemCollapsible from './Components/ListItemCollapsible';
+import ListItemCheckbox from './Components/ListItemCheckbox';
 
 const statusOptions = [
   {
@@ -43,69 +44,11 @@ const useStyles = makeStyles((/* theme */) => ({
   },
 }));
 
-const ListItemTextField = ({
-  id, label, value, onChange,
-}) => (
-  <ListItem
-    dense
-  >
-    <TextField
-      id={id}
-      label={label}
-      value={value}
-      variant="outlined"
-      size="small"
-      onChange={onChange}
-    />
-  </ListItem>
-);
-
-const ListItemCollapsible = ({ label, children }) => {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <ListItem button onClick={() => setOpen(!open)}>
-        <ListItemText primary={label} />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItem>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {children}
-        </List>
-      </Collapse>
-    </>
-  );
-};
-
-const ListItemCheckbox = ({
-  id, label, checked, onClick,
-}) => (
-  <ListItem
-    role={undefined}
-    dense
-    button
-    onClick={() => onClick(id)}
-  >
-    <ListItemIcon>
-      <Checkbox
-        edge="start"
-        size="small"
-        checked={checked}
-        tabIndex={-1}
-        disableRipple
-        inputProps={{ 'aria-labelledby': `checkbox-list-label-${label}` }}
-      />
-    </ListItemIcon>
-    <ListItemText id={id} primary={label} />
-  </ListItem>
-);
-
-const Filter = ({ closed, onSearch }) => {
+const FilterTemplate = ({
+  closed, onSearch, onReset, children,
+}) => {
   const classes = useStyles();
 
-  const [genus, setGenus] = useState('');
-  const [species, setSpecies] = useState('');
-  const [infraspecific, setInfraspecific] = useState('');
   const [checkedStatus, setCheckedStatus] = useState([]);
   const [otherOptions, setOtherOptions] = useState([]);
 
@@ -136,20 +79,15 @@ const Filter = ({ closed, onSearch }) => {
 
   const handleSearch = () => {
     onSearch({
-      genus,
-      species,
-      infraspecific,
       checkedStatus,
+      otherOptions,
     });
   };
 
   const handleReset = () => {
-    setGenus('');
-    setSpecies('');
-    setInfraspecific('');
+    onReset();
     setCheckedStatus([]);
-    // notify parent
-    handleSearch();
+    setOtherOptions([]);
   };
 
   if (closed) {
@@ -179,27 +117,7 @@ const Filter = ({ closed, onSearch }) => {
               </IconButton>
             </div>
           </ListItem>
-          <ListItemTextField
-            id="genus"
-            key="genus"
-            label="Genus"
-            value={genus}
-            onChange={(e) => setGenus(e.target.value)}
-          />
-          <ListItemTextField
-            id="species"
-            key="species"
-            label="Species"
-            value={species}
-            onChange={(e) => setSpecies(e.target.value)}
-          />
-          <ListItemTextField
-            id="infraspecific"
-            key="infraspecific"
-            label="Infraspecific"
-            value={infraspecific}
-            onChange={(e) => setInfraspecific(e.target.value)}
-          />
+          {children}
           <ListItem dense>
             <div className={classes.toolbarButtons}>
               <IconButton
@@ -250,32 +168,15 @@ const Filter = ({ closed, onSearch }) => {
   );
 };
 
-export default Filter;
+export default FilterTemplate;
 
-ListItemTextField.propTypes = {
-  id: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
-
-ListItemCollapsible.propTypes = {
-  label: PropTypes.string.isRequired,
+FilterTemplate.propTypes = {
+  closed: PropTypes.bool.isRequired,
+  onSearch: PropTypes.func.isRequired,
+  onReset: PropTypes.func.isRequired,
   children: PropTypes.node,
 };
 
-ListItemCheckbox.propTypes = {
-  id: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  checked: PropTypes.bool.isRequired,
-  onClick: PropTypes.func.isRequired,
-};
-
-Filter.propTypes = {
-  closed: PropTypes.bool.isRequired,
-  onSearch: PropTypes.func.isRequired,
-};
-
-ListItemCollapsible.defaultProps = {
+FilterTemplate.defaultProps = {
   children: undefined,
 };

@@ -1,46 +1,25 @@
-import React from 'react';
-import clsx from 'clsx';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
 import Box from '@material-ui/core/Box';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import Container from '@material-ui/core/Container';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 import PropTypes from 'prop-types';
 
 import UpperMenu from '../Navigation/UpperMenu';
-import Filter from '../Filter/Filter';
 import Copyright from './Copyright';
+import LeftDrawer from './LeftDrawer';
+import FilterRouter from './FilterRouter';
 
-const drawerWidth = 240;
+import config from '../../../config';
+
+const { routes } = config;
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  drawerPaperClose: {
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    width: theme.spacing(7),
-    [theme.breakpoints.up('sm')]: {
-      width: theme.spacing(9),
-    },
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
@@ -52,18 +31,23 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
   },
-  toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
 }));
 
+const isDrawerOpened = (route) => {
+  const found = Object.keys(routes)
+    .find((r) => routes[r] && routes[r].route === route);
+  if (!found) {
+    return false;
+  }
+  return routes[found].drawerOpened;
+};
+
 const Base = ({ router: Router }) => {
+  const { pathname } = useLocation();
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+
+  const [open, setOpen] = useState(isDrawerOpened(pathname));
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -79,21 +63,17 @@ const Base = ({ router: Router }) => {
     <div className={classes.root}>
       <CssBaseline />
       <UpperMenu drawerOpen={open} onDrawerOpen={handleDrawerOpen} />
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-        }}
+      <LeftDrawer
         open={open}
+        onDrawerClose={handleDrawerClose}
+        onFilterSearch={handleSearch}
       >
-        <div className={classes.toolbarIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </div>
-        <Divider />
-        <Filter closed={!open} onSearch={handleSearch} />
-      </Drawer>
+        <FilterRouter
+          pathname={pathname}
+          closed={!open}
+          onSearch={handleSearch}
+        />
+      </LeftDrawer>
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
