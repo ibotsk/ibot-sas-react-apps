@@ -13,4 +13,7 @@ export default {
       drawerOpened: true,
     },
   },
+  pagination: {
+    rowsPerPageOptions: [10, 20, 40],
+  },
 };
