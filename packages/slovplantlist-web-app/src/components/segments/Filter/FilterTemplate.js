@@ -103,12 +103,12 @@ const FilterTemplate = ({
       <form noValidate autoComplete="off">
         <List>
           <ListItem>
-            <Typography variant="h6" color="primary">
+            <Typography variant="h6" color="secondary">
               Search
             </Typography>
             <div className={classes.toolbarButtons}>
               <IconButton
-                color="primary"
+                color="secondary"
                 edge="end"
                 variant="outlined"
                 onClick={handleReset}
@@ -121,7 +121,7 @@ const FilterTemplate = ({
           <ListItem dense>
             <div className={classes.toolbarButtons}>
               <IconButton
-                color="primary"
+                color="secondary"
                 edge="end"
                 variant="outlined"
                 onClick={handleSearch}

@@ -3,9 +3,11 @@ import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 
 import {
-  Drawer, IconButton, Divider,
+  Box, Drawer, IconButton, Divider,
 } from '@material-ui/core';
-import { ChevronLeft as ChevronLeftIcon } from '@material-ui/icons';
+import {
+  ChevronLeft as ChevronLeftIcon,
+} from '@material-ui/icons';
 
 import PropTypes from 'prop-types';
 
@@ -52,11 +54,15 @@ const LeftDrawer = ({ open, onDrawerClose, children }) => {
       }}
       open={open}
     >
-      <div className={classes.toolbarIcon}>
-        <IconButton onClick={onDrawerClose}>
+      <Box
+        bgcolor="secondary.main"
+        color="inherit"
+        className={classes.toolbarIcon}
+      >
+        <IconButton color="inherit" onClick={onDrawerClose}>
           <ChevronLeftIcon />
         </IconButton>
-      </div>
+      </Box>
       <Divider />
       {children}
     </Drawer>

@@ -4,6 +4,9 @@ import {
   BrowserRouter, Route, Switch,
 } from 'react-router-dom';
 
+import { ThemeProvider } from '@material-ui/core';
+import { createMuiTheme } from '@material-ui/core/styles';
+
 import Base from './components/segments/Base/Base';
 import Home from './components/pages/Home/Home';
 import ScientificNames from
@@ -11,8 +14,11 @@ import ScientificNames from
 import SlovakNames from './components/pages/SlovakNames/SlovakNames';
 
 import config from './config';
+import themeSetting from './config/theme';
 
 const { routes } = config;
+
+const theme = createMuiTheme(themeSetting);
 
 const Routing = () => (
   <Switch>
@@ -29,7 +35,9 @@ const Routing = () => (
 function App() {
   return (
     <BrowserRouter>
-      <Base router={Routing} />
+      <ThemeProvider theme={theme}>
+        <Base router={Routing} />
+      </ThemeProvider>
     </BrowserRouter>
   );
 }
