@@ -12,6 +12,7 @@ import Home from './components/pages/Home/Home';
 import ScientificNames from
   './components/pages/ScientificNames/ScientificNames';
 import SlovakNames from './components/pages/SlovakNames/SlovakNames';
+import NameDetail from './components/pages/NameDetail/NameDetail';
 
 import config from './config';
 import themeSetting from './config/theme';
@@ -29,6 +30,7 @@ const Routing = () => (
       component={ScientificNames}
     />
     <Route exact path={routes.slovakNames.route} component={SlovakNames} />
+    <Route path={routes.nameDetail.route} component={NameDetail} />
   </Switch>
 );
 

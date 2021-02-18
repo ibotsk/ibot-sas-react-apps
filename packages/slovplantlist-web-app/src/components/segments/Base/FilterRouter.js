@@ -18,6 +18,7 @@ const FilterRouter = ({ pathname, closed, onSearch }) => {
       return <FilterVernacular closed={closed} onSearch={onSearch} />;
     case routes.home.route:
     case routes.scientificNames.route:
+    case routes.nameDetail.route:
     default:
       return <FilterScientific closed={closed} onSearch={onSearch} />;
   }

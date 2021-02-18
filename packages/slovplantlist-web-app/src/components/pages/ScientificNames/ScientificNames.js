@@ -20,10 +20,11 @@ const columns = [
 
 /* temporary fetching */
 const rows = [...Array(70).keys()].map((i) => ({
-  id: i,
+  key: i,
+  id: 1,
   status: 'Accepted',
-  name: 'Lorem ipsum',
-  accepted: 'Lorem ipsum',
+  name: `${i} Lorem ipsum`,
+  accepted: `${i} Nulla pulvinar`,
 }));
 
 const getCount = () => rows.length;
@@ -34,7 +35,7 @@ const ScientificNames = () => (
     <Title>Scientific Names</Title>
     <ResultsTable
       columns={columns}
-      keyField="id"
+      keyField="key"
       getData={getData}
       getTotalCount={getCount}
     />

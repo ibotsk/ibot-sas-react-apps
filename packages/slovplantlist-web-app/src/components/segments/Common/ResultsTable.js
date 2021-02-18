@@ -1,5 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React, { useState } from 'react';
+import { generatePath } from 'react-router';
+import { useHistory } from 'react-router-dom';
 
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -13,7 +15,7 @@ import { hooks } from '@ibot/core';
 
 import config from '../../../config';
 
-const { pagination } = config;
+const { pagination, routes } = config;
 const defaultPage = 0;
 
 const useStyles = makeStyles({
@@ -27,9 +29,7 @@ const useStyles = makeStyles({
     fontWeight: 'bold',
   },
   row: {
-    hover: {
-      cursor: 'pointer',
-    },
+    textDecoration: 'none',
   },
 });
 
@@ -37,6 +37,7 @@ const ResultsTable = ({
   columns, keyField, getData, getTotalCount,
 }) => {
   const classes = useStyles();
+  const history = useHistory();
 
   const [page, setPage] = useState(defaultPage);
   const [rowsPerPage, setRowsPerPage] = useState(
@@ -53,6 +54,11 @@ const ResultsTable = ({
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(defaultPage);
+  };
+
+  const handleRowClick = (id) => {
+    const uri = generatePath(routes.nameDetail.route, { id });
+    return history.push(uri);
   };
 
   return (
@@ -76,6 +82,8 @@ const ResultsTable = ({
               <TableRow
                 hover
                 key={d[keyField]}
+                onClick={() => handleRowClick(d.id)}
+                className={classes.row}
               >
                 {columns.map(({ dataField }, i) => (
                   <TableCell
