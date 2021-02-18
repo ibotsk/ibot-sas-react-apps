@@ -1,4 +1,7 @@
 import React from 'react';
+
+import { Link as RouterLink } from 'react-router-dom';
+
 import {
   Box,
   AppBar, Toolbar, IconButton, Button,
@@ -39,6 +42,7 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginRight: 20,
+    textDecoration: 'none',
   },
   menuButtonGroup: {
     flexGrow: 1,
@@ -72,11 +76,12 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
         </IconButton>
         <Box display="flex" className={classes.menuButtonGroup}>
           <Typography
-            component="h1"
+            component={RouterLink}
             variant="h6"
             color="inherit"
             noWrap
             className={classes.title}
+            to={routes.home.route}
           >
             SlovPlantList
           </Typography>
@@ -84,7 +89,8 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
             className={classes.menuButton}
             color="inherit"
             variant="text"
-            href={routes.scientificNames.route}
+            component={RouterLink}
+            to={routes.scientificNames.route}
           >
             Scientific names
           </Button>
@@ -92,7 +98,8 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
             className={classes.menuButton}
             color="inherit"
             variant="text"
-            href={routes.slovakNames.route}
+            component={RouterLink}
+            to={routes.slovakNames.route}
           >
             Slovak names
           </Button>

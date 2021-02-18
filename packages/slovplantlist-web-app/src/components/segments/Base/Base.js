@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { matchPath } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -35,7 +36,11 @@ const useStyles = makeStyles((theme) => ({
 
 const isDrawerOpened = (route) => {
   const found = Object.keys(routes)
-    .find((r) => routes[r] && routes[r].route === route);
+    .find((r) => {
+      const match = matchPath(route, routes[r].route);
+      return match && match.isExact === true;
+    });
+
   if (!found) {
     return false;
   }
@@ -46,7 +51,12 @@ const Base = ({ router: Router }) => {
   const { pathname } = useLocation();
   const classes = useStyles();
 
-  const [open, setOpen] = useState(isDrawerOpened(pathname));
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const isOpen = isDrawerOpened(pathname);
+    setOpen(isOpen);
+  }, [pathname]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
