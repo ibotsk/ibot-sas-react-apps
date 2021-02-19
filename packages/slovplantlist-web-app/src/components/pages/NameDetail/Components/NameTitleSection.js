@@ -7,7 +7,9 @@ import {
 
 import { LosName } from '@ibot/components';
 
-const useStyles = makeStyles((theme) => ({
+import PropTypes from 'prop-types';
+
+const useStyles = makeStyles(() => ({
   titleContainer: {
     width: '100%',
     marginTop: -32,
@@ -59,3 +61,13 @@ const NameTitleSection = ({ name, status, publication }) => {
 };
 
 export default NameTitleSection;
+
+NameTitleSection.propTypes = {
+  name: PropTypes.object.isRequired,
+  status: PropTypes.string.isRequired,
+  publication: PropTypes.string,
+};
+
+NameTitleSection.defaultProps = {
+  publication: undefined,
+};

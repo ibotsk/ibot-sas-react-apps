@@ -54,6 +54,30 @@ export default {
       colour: '#999',
     },
   },
+  synonymType: {
+    0: 'other',
+    1: 'invalid',
+    2: 'taxonomic',
+    3: 'nomenclatoric',
+    4: 'misidentification',
+  },
+  synonymPrefix: {
+    nomenclatoric: {
+      value: '≡',
+    },
+    invalid: {
+      value: '–',
+    },
+    taxonomic: {
+      value: '=',
+    },
+    misidentification: {
+      value: '–',
+    },
+    other: {
+      value: '',
+    },
+  },
   pagination: {
     rowsPerPageOptions: [10, 20, 40],
   },

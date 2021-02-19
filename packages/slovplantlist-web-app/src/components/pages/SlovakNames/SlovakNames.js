@@ -16,7 +16,8 @@ const columns = [
 
 /* temporary fetching */
 const rows = [...Array(70).keys()].map((i) => ({
-  id: i,
+  key: i,
+  id: 1,
   vernacular: `Slovenske meno ${i}`,
   name: `Nomen scientific ${i}`,
 }));
@@ -29,7 +30,7 @@ const SlovakNames = () => (
     <Title>Slovak Names</Title>
     <ResultsTable
       columns={columns}
-      keyField="id"
+      keyField="key"
       getData={getData}
       getTotalCount={getCount}
     />

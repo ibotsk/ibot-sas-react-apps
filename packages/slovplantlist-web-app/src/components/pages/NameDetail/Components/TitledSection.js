@@ -3,10 +3,13 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Paper, Typography } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
+import PropTypes from 'prop-types';
+
+const useStyles = makeStyles(() => ({
   paper: {
-    minHeight: 200,
-    padding: '10px 15px',
+    minHeight: 20,
+    padding: '10px 0px',
+    marginBottom: 15,
   },
 }));
 
@@ -30,3 +33,12 @@ const TitledSection = ({ title, children }) => {
 };
 
 export default TitledSection;
+
+TitledSection.propTypes = {
+  title: PropTypes.string.isRequired,
+  children: PropTypes.node,
+};
+
+TitledSection.defaultProps = {
+  children: undefined,
+};

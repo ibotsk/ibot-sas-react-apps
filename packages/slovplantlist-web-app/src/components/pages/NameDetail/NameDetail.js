@@ -1,24 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Paper } from '@material-ui/core';
+import {
+  Container, Divider,
+  List, ListItem, ListItemText,
+} from '@material-ui/core';
 
 import TitledSection from './Components/TitledSection';
 import NameTitleSection from './Components/NameTitleSection';
+import SynonymList from './Components/SynonymList';
 
 import config from '../../../config';
 
 const { status } = config;
-
-const useStyles = makeStyles((theme) => ({
-  titleContainer: {
-    width: '100%',
-    marginTop: '-32px',
-  },
-  titlePaper: {
-    height: 200,
-  },
-}));
 
 const nameRecord = {
   ntype: 'A',
@@ -55,21 +48,57 @@ const nameRecord = {
   id: 1,
 };
 
+const makeSynonymList = (length, syntype) => [...Array(length)].map(() => ({
+  syntype,
+  name: 'Lorem ipsum',
+}));
+
+const getStatusText = (ntype) => (
+  status[ntype] ? status[ntype].text : ''
+);
+
 const NameDetail = () => {
-  const classes = useStyles();
-  const [record, setRecord] = useState(nameRecord);
+  const [record, setRecord] = useState({});
+  const [synonymsNomenclatoric, setSynonymsNomenclatoric] = useState([]);
+  const [synonymsTaxonomic, setSynonymsTaxonomic] = useState([]);
+
+  useEffect(() => {
+    setRecord(nameRecord);
+    setSynonymsNomenclatoric(makeSynonymList(2, 3));
+    setSynonymsTaxonomic(makeSynonymList(3, 2));
+  }, []);
 
   const { ntype, ...name } = record;
   return (
     <div>
       <NameTitleSection
         name={name}
-        status={status[ntype].text}
+        status={getStatusText(ntype)}
         publication={name.publication}
       />
       <Container maxWidth="md">
-        <TitledSection title="Section">
-          Some content
+        <TitledSection title="Accepted name(s)">
+          <List dense>
+            <ListItem>
+              <ListItemText
+                primary="Lorem ipsum"
+              />
+            </ListItem>
+            <ListItem>
+              <ListItemText
+                primary="Lorem ipsum"
+              />
+            </ListItem>
+          </List>
+        </TitledSection>
+        <TitledSection title="Synonyms">
+          <SynonymList
+            synonyms={synonymsNomenclatoric}
+          />
+          <Divider />
+          <SynonymList
+            synonyms={synonymsTaxonomic}
+          />
         </TitledSection>
       </Container>
     </div>
