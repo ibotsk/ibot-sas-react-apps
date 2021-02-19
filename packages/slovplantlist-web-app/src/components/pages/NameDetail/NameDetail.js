@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Container, Divider,
-  List, ListItem, ListItemText,
 } from '@material-ui/core';
 
 import TitledSection from './Components/TitledSection';
 import NameTitleSection from './Components/NameTitleSection';
 import SynonymList from './Components/SynonymList';
+import NameList from './Components/NameList';
 
 import config from '../../../config';
 
@@ -48,8 +48,17 @@ const nameRecord = {
   id: 1,
 };
 
-const makeSynonymList = (length, syntype) => [...Array(length)].map(() => ({
-  syntype,
+const makeSynonymList = (length, syntype, subsyns = 0) => (
+  [...Array(length).keys()]
+    .map(() => ({
+      syntype,
+      name: 'Lorem ipsum',
+      subsynonyms: [...Array(subsyns).keys()]
+        .map((i) => ({ id: i, name: 'Lorem ipsum' })),
+    }))
+);
+const makeNameList = (length) => [...Array(length).keys()].map((i) => ({
+  id: i,
   name: 'Lorem ipsum',
 }));
 
@@ -59,13 +68,15 @@ const getStatusText = (ntype) => (
 
 const NameDetail = () => {
   const [record, setRecord] = useState({});
+  const [accepted, setAccepted] = useState([]);
   const [synonymsNomenclatoric, setSynonymsNomenclatoric] = useState([]);
   const [synonymsTaxonomic, setSynonymsTaxonomic] = useState([]);
 
   useEffect(() => {
     setRecord(nameRecord);
+    setAccepted(makeNameList(2));
     setSynonymsNomenclatoric(makeSynonymList(2, 3));
-    setSynonymsTaxonomic(makeSynonymList(3, 2));
+    setSynonymsTaxonomic(makeSynonymList(3, 2, 3));
   }, []);
 
   const { ntype, ...name } = record;
@@ -78,18 +89,7 @@ const NameDetail = () => {
       />
       <Container maxWidth="md">
         <TitledSection title="Accepted name(s)">
-          <List dense>
-            <ListItem>
-              <ListItemText
-                primary="Lorem ipsum"
-              />
-            </ListItem>
-            <ListItem>
-              <ListItemText
-                primary="Lorem ipsum"
-              />
-            </ListItem>
-          </List>
+          <NameList list={accepted} />
         </TitledSection>
         <TitledSection title="Synonyms">
           <SynonymList
@@ -99,6 +99,12 @@ const NameDetail = () => {
           <SynonymList
             synonyms={synonymsTaxonomic}
           />
+        </TitledSection>
+        <TitledSection title="Some other section">
+          Content
+        </TitledSection>
+        <TitledSection title="Another section">
+          Other Content
         </TitledSection>
       </Container>
     </div>

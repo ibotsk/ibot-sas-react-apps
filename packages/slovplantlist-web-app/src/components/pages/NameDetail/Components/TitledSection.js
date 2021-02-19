@@ -5,10 +5,13 @@ import { Grid, Paper, Typography } from '@material-ui/core';
 
 import PropTypes from 'prop-types';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   paper: {
     minHeight: 20,
-    padding: '10px 0px',
+    paddingTop: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
+    paddingLeft: theme.spacing(3),
+    paddingRight: theme.spacing(3),
     marginBottom: 15,
   },
 }));

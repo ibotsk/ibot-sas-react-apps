@@ -3,7 +3,6 @@ import React from 'react';
 import {
   List, ListItem, ListItemText, ListItemIcon,
 } from '@material-ui/core';
-
 import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
@@ -17,23 +16,52 @@ const syntypeToPrefix = (type) => {
   return synonymPrefix[typeKey].value;
 };
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   synonymPrefix: {
     minWidth: 'auto',
     marginRight: 15,
   },
+  nested: {
+    paddingLeft: theme.spacing(4),
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
 }));
+
+const ListItemSynonymPrefix = ({ type }) => {
+  const classes = useStyles();
+
+  return (
+    <ListItemIcon className={classes.synonymPrefix}>
+      {syntypeToPrefix(type)}
+    </ListItemIcon>
+  );
+};
 
 const SynonymListItem = ({ type, name, subsynonyms = [] }) => {
   const classes = useStyles();
 
   return (
-    <ListItem>
-      <ListItemIcon className={classes.synonymPrefix}>
-        {syntypeToPrefix(type)}
-      </ListItemIcon>
-      <ListItemText primary={name} />
-    </ListItem>
+    <>
+      <ListItem disableGutters>
+        <ListItemSynonymPrefix type={type} />
+        <ListItemText primary={name} />
+      </ListItem>
+      {subsynonyms.length > 0 && (
+        <List dense component="div" disablePadding>
+          {subsynonyms.map(({ id, name: subsyn }) => (
+            <ListItem
+              key={id}
+              className={classes.nested}
+              disableGutters
+            >
+              <ListItemSynonymPrefix type={3} />
+              <ListItemText primary={subsyn} />
+            </ListItem>
+          ))}
+        </List>
+      )}
+    </>
   );
 };
 
@@ -72,4 +100,8 @@ SynonymListItem.propTypes = {
 
 SynonymListItem.defaultProps = {
   subsynonyms: [],
+};
+
+ListItemSynonymPrefix.propTypes = {
+  type: PropTypes.number.isRequired,
 };
