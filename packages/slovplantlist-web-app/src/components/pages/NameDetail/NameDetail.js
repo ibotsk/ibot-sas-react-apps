@@ -71,12 +71,17 @@ const NameDetail = () => {
   const [accepted, setAccepted] = useState([]);
   const [synonymsNomenclatoric, setSynonymsNomenclatoric] = useState([]);
   const [synonymsTaxonomic, setSynonymsTaxonomic] = useState([]);
+  const [genus, setGenus] = useState('');
+  const [familyAPG, setFamilyAPG] = useState('');
 
   useEffect(() => {
     setRecord(nameRecord);
     setAccepted(makeNameList(2));
     setSynonymsNomenclatoric(makeSynonymList(2, 3));
     setSynonymsTaxonomic(makeSynonymList(3, 2, 3));
+
+    setGenus('Lorem');
+    setFamilyAPG('Lorem');
   }, []);
 
   const { ntype, ...name } = record;
@@ -86,6 +91,8 @@ const NameDetail = () => {
         name={name}
         status={getStatusText(ntype)}
         publication={name.publication}
+        genus={genus}
+        familyAPG={familyAPG}
       />
       <Container maxWidth="md">
         <TitledSection title="Accepted name(s)">

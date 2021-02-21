@@ -55,7 +55,6 @@ const LeftDrawer = ({ open, onDrawerClose, children }) => {
       open={open}
     >
       <Box
-        bgcolor="secondary.main"
         color="inherit"
         className={classes.toolbarIcon}
       >
