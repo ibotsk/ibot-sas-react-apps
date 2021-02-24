@@ -1,7 +1,4 @@
-/* eslint-disable react/no-array-index-key */
-import React, { useState } from 'react';
-import { generatePath } from 'react-router';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
@@ -11,11 +8,9 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
 
-import { hooks } from '@ibot/core';
-
 import config from '../../../config';
 
-const { pagination, routes } = config;
+const { pagination: paginationConfig } = config;
 const defaultPage = 0;
 
 const useStyles = makeStyles({
@@ -34,32 +29,42 @@ const useStyles = makeStyles({
 });
 
 const ResultsTable = ({
-  columns, keyField, getData, getTotalCount,
+  columns, keyField,
+  data = [], totalSize = [], onTableChanged = () => {}, pagination = {},
 }) => {
   const classes = useStyles();
-  const history = useHistory();
-
-  const [page, setPage] = useState(defaultPage);
-  const [rowsPerPage, setRowsPerPage] = useState(
-    pagination.rowsPerPageOptions[0],
-  );
-  const {
-    data, totalSize,
-  } = hooks.useTableData(page, rowsPerPage, getTotalCount, getData);
 
   const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+    onTableChanged({
+      page: newPage,
+      rowsPerPage: pagination.rowsPerPage,
+    });
   };
 
   const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(defaultPage);
+    const newRowsPerPage = event.target.value;
+    onTableChanged({
+      page: defaultPage,
+      rowsPerPage: newRowsPerPage,
+    });
   };
 
-  const handleRowClick = (id) => {
-    const uri = generatePath(routes.nameDetail.route, { id });
-    return history.push(uri);
-  };
+  const { page, rowsPerPage } = pagination;
+
+  const dataToDisplay = data.map((d) => ({
+    key: d[keyField],
+    cols: columns.map(({
+      dataField,
+      formatter = (cell) => cell,
+      hidden = false,
+      align = 'left',
+    }) => ({
+      dataField,
+      value: formatter(d[dataField], d),
+      hidden,
+      align,
+    })),
+  }));
 
   return (
     <Paper className={classes.root}>
@@ -67,39 +72,52 @@ const ResultsTable = ({
         <Table stickyHeader aria-label="scientific names table">
           <TableHead className={classes.head}>
             <TableRow>
-              {columns.map(({ text }, i) => (
-                <TableCell
-                  key={i}
-                  align={i === 0 ? 'left' : 'right'}
-                >
-                  {text}
-                </TableCell>
-              ))}
+              {columns.map(({
+                dataField, text, hidden, align,
+              }) => {
+                if (hidden) {
+                  return undefined;
+                }
+                return (
+                  <TableCell
+                    key={dataField}
+                    align={align}
+                  >
+                    {text}
+                  </TableCell>
+                );
+              })}
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((d) => (
+            {dataToDisplay.map(({ key, cols }) => (
               <TableRow
                 hover
-                key={d[keyField]}
-                onClick={() => handleRowClick(d.id)}
+                key={key}
                 className={classes.row}
               >
-                {columns.map(({ dataField }, i) => (
-                  <TableCell
-                    key={i}
-                    align={i === 0 ? 'left' : 'right'}
-                  >
-                    {d[dataField]}
-                  </TableCell>
-                ))}
+                {cols.map(({
+                  dataField, value, hidden, align,
+                }) => {
+                  if (hidden) {
+                    return undefined;
+                  }
+                  return (
+                    <TableCell
+                      key={dataField}
+                      align={align}
+                    >
+                      {value}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 20, 40]}
+        rowsPerPageOptions={paginationConfig.rowsPerPageOptions}
         component="div"
         count={totalSize}
         rowsPerPage={rowsPerPage}
@@ -119,6 +137,17 @@ ResultsTable.propTypes = {
     text: PropTypes.string.isRequired,
   })).isRequired,
   keyField: PropTypes.string.isRequired,
-  getData: PropTypes.func.isRequired,
-  getTotalCount: PropTypes.func.isRequired,
+  data: PropTypes.arrayOf(PropTypes.object),
+  totalSize: PropTypes.number,
+  onTableChanged: PropTypes.func,
+  pagination: PropTypes.shape({
+    page: PropTypes.number.isRequired,
+    rowsPerPage: PropTypes.number.isRequired,
+  }),
+};
+ResultsTable.defaultProps = {
+  data: [],
+  totalSize: 0,
+  onTableChanged: () => {},
+  pagination: {},
 };

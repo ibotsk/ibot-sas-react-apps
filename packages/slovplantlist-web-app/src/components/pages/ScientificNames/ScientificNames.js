@@ -1,12 +1,31 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
+
+import PropTypes from 'prop-types';
+
+import { Typography } from '@material-ui/core';
+import { hooks } from '@ibot/core';
+import { LosName } from '@ibot/components';
 
 import Title from '../../segments/Common/Title';
 import ResultsTable from '../../segments/Common/ResultsTable';
 
+import { searchService } from '../../../services';
+import config from '../../../config';
+
+const { pagination: paginationConfig } = config;
+
 const columns = [
+  {
+    dataField: 'id',
+    text: 'ID',
+    hidden: true,
+  },
   {
     dataField: 'name',
     text: 'Name',
+    formatter: (cell, row) => (
+      <LosName data={row} format="italic" />
+    ),
   },
   {
     dataField: 'status',
@@ -15,31 +34,90 @@ const columns = [
   {
     dataField: 'accepted',
     text: 'Accepted name',
+    formatter: (cell, row) => {
+      if (!row.acceptedNames) {
+        return undefined;
+      }
+      return row.acceptedNames.map((an, i) => [
+        i > 0 && ', ',
+        <LosName key={an.id} data={an} format="italic" />,
+      ]);
+    },
+    align: 'right',
   },
 ];
 
-/* temporary fetching */
-const rows = [...Array(70).keys()].map((i) => ({
-  key: i,
-  id: 1,
-  status: 'Accepted',
-  name: `${i} Lorem ipsum`,
-  accepted: `${i} Nulla pulvinar`,
-}));
+const ScientificNames = ({
+  searchValues = {},
+}) => {
+  const {
+    genus, species, infraspecific, status,
+  } = searchValues;
 
-const getCount = () => rows.length;
-const getData = (limit, offset) => rows.slice(offset, offset + limit);
+  const [page, setPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(
+    paginationConfig.rowsPerPageOptions[0],
+  );
 
-const ScientificNames = () => (
-  <>
-    <Title>Scientific Names</Title>
-    <ResultsTable
-      columns={columns}
-      keyField="key"
-      getData={getData}
-      getTotalCount={getCount}
-    />
-  </>
-);
+  const getData = useMemo(() => (
+    (pg, rppg) => (
+      searchService.searchScientific(
+        genus, species, infraspecific, status, { page: pg, rowsPerPage: rppg },
+      )
+    )
+  ), [genus, species, infraspecific, status]);
+
+  const { data: results } = hooks.useData(
+    getData, page, rowsPerPage,
+  );
+
+  const handleTableChanged = ({ page: pg, rowsPerPage: rppg }) => {
+    setPage(pg + 1);
+    setRowsPerPage(rppg);
+  };
+
+  if (!results) {
+    return (
+      <>
+        <Title>Scientific Names</Title>
+        <Typography color="textSecondary" variant="h4" component="span">
+          Use search fields to display results
+        </Typography>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Title>Scientific Names</Title>
+      {results
+        && (
+          <ResultsTable
+            columns={columns}
+            keyField="id"
+            data={results.data}
+            totalSize={results.totalRecords}
+            onTableChanged={handleTableChanged}
+            pagination={{ page: page - 1, rowsPerPage }}
+          />
+        )
+      }
+
+    </>
+  );
+};
 
 export default ScientificNames;
+
+ScientificNames.propTypes = {
+  searchValues: PropTypes.shape({
+    genus: PropTypes.string,
+    species: PropTypes.string,
+    infraspecific: PropTypes.string,
+    status: PropTypes.string,
+  }),
+};
+
+ScientificNames.defaultProps = {
+  searchValues: {},
+};

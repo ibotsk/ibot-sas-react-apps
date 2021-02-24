@@ -52,6 +52,7 @@ const Base = ({ router: Router }) => {
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
+  const [searchValues, setSearchValues] = useState({});
 
   useEffect(() => {
     const isOpen = isDrawerOpened(pathname);
@@ -65,8 +66,8 @@ const Base = ({ router: Router }) => {
     setOpen(false);
   };
 
-  const handleSearch = (...values) => {
-    console.log(...values);
+  const handleSearch = (values) => {
+    setSearchValues(values);
   };
 
   return (
@@ -87,7 +88,7 @@ const Base = ({ router: Router }) => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Router />
+          <Router searchValues={searchValues} />
           <Box pt={4}>
             <Copyright />
           </Box>

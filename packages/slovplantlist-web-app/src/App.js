@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
 import {
@@ -21,13 +22,13 @@ const { routes } = config;
 
 const theme = createMuiTheme(themeSetting);
 
-const Routing = () => (
+const Routing = (routingProps) => (
   <Switch>
     <Route exact path={routes.home.route} component={Home} />
     <Route
       exact
       path={routes.scientificNames.route}
-      component={ScientificNames}
+      render={() => <ScientificNames {...routingProps} />}
     />
     <Route exact path={routes.slovakNames.route} component={SlovakNames} />
     <Route path={routes.nameDetail.route} component={NameDetail} />

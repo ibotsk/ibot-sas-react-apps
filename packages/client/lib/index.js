@@ -45,7 +45,7 @@ const addRequestInterceptor = (interceptor) => {
 
 function init({
   requestInterceptors = [],
-}) {
+} = {}) {
   requestInterceptors.forEach((interceptor) => (
     addRequestInterceptor(interceptor)
   ));
