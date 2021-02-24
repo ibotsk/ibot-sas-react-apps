@@ -79,7 +79,7 @@ const FilterTemplate = ({
 
   const handleSearch = () => {
     onSearch({
-      checkedStatus,
+      status: checkedStatus,
       otherOptions,
     });
   };

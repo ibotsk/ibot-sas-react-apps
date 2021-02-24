@@ -20,7 +20,7 @@ export default {
   status: {
     A: {
       key: 'A',
-      text: 'Accepted name',
+      text: 'Accepted',
       colour: '#57ab27',
     },
     PA: {

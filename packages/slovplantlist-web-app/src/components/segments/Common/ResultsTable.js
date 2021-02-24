@@ -24,13 +24,19 @@ const useStyles = makeStyles({
     fontWeight: 'bold',
   },
   row: {
-    textDecoration: 'none',
+    '& a': {
+      textDecoration: 'none',
+      color: 'inherit',
+    },
+    '& a:hover': {
+      textDecoration: 'underline',
+    },
   },
 });
 
 const ResultsTable = ({
   columns, keyField,
-  data = [], totalSize = [], onTableChanged = () => {}, pagination = {},
+  data = [], totalSize = [], onTableChanged = () => { }, pagination = {},
 }) => {
   const classes = useStyles();
 
@@ -148,6 +154,6 @@ ResultsTable.propTypes = {
 ResultsTable.defaultProps = {
   data: [],
   totalSize: 0,
-  onTableChanged: () => {},
+  onTableChanged: () => { },
   pagination: {},
 };

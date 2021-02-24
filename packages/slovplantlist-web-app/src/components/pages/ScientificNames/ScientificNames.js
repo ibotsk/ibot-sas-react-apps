@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { generatePath, Link as RouterLink } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 
@@ -12,7 +13,11 @@ import ResultsTable from '../../segments/Common/ResultsTable';
 import { searchService } from '../../../services';
 import config from '../../../config';
 
-const { pagination: paginationConfig } = config;
+const {
+  pagination: paginationConfig,
+  status: statusConfig,
+  routes: routesConfig,
+} = config;
 
 const columns = [
   {
@@ -24,12 +29,18 @@ const columns = [
     dataField: 'name',
     text: 'Name',
     formatter: (cell, row) => (
-      <LosName data={row} format="italic" />
+      <LosName
+        data={row}
+        format="italic"
+        component={RouterLink}
+        to={generatePath(routesConfig.nameDetail.route, { id: row.id })}
+      />
     ),
   },
   {
     dataField: 'status',
     text: 'Status',
+    formatter: (cell) => (statusConfig[cell] ? statusConfig[cell].text : cell),
   },
   {
     dataField: 'accepted',
@@ -40,7 +51,13 @@ const columns = [
       }
       return row.acceptedNames.map((an, i) => [
         i > 0 && ', ',
-        <LosName key={an.id} data={an} format="italic" />,
+        <LosName
+          key={an.id}
+          data={an}
+          format="italic"
+          component={RouterLink}
+          to={generatePath(routesConfig.nameDetail.route, { id: an.id })}
+        />,
       ]);
     },
     align: 'right',
