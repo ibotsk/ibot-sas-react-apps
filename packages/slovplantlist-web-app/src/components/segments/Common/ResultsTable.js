@@ -23,15 +23,7 @@ const useStyles = makeStyles({
   head: {
     fontWeight: 'bold',
   },
-  row: {
-    '& a': {
-      textDecoration: 'none',
-      color: 'inherit',
-    },
-    '& a:hover': {
-      textDecoration: 'underline',
-    },
-  },
+  row: {},
 });
 
 const ResultsTable = ({

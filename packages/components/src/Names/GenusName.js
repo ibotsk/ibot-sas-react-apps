@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 
 import { generaUtils } from '@ibot/utils';
 
-const GenusName = ({ data }) => (
-  <span>{generaUtils.genusString(data)}</span>
+const GenusName = ({ data, isAuthors = true }) => (
+  <span>{generaUtils.genusString(data, isAuthors)}</span>
 );
 
 export default GenusName;
@@ -15,8 +15,10 @@ GenusName.propTypes = {
     name: PropTypes.string.isRequired,
     authors: PropTypes.string,
   }),
+  isAuthors: PropTypes.bool,
 };
 
 GenusName.defaultProps = {
   data: undefined,
+  isAuthors: true,
 };

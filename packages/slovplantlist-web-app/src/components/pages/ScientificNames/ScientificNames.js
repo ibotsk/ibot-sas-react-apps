@@ -97,7 +97,7 @@ const ScientificNames = ({
     return (
       <>
         <Title>Scientific Names</Title>
-        <Typography color="textSecondary" variant="h4" component="span">
+        <Typography color="textSecondary" variant="h6" component="span">
           Use search fields to display results
         </Typography>
       </>
@@ -119,7 +119,6 @@ const ScientificNames = ({
           />
         )
       }
-
     </>
   );
 };
@@ -131,7 +130,7 @@ ScientificNames.propTypes = {
     genus: PropTypes.string,
     species: PropTypes.string,
     infraspecific: PropTypes.string,
-    status: PropTypes.string,
+    status: PropTypes.arrayOf(PropTypes.string),
   }),
 };
 

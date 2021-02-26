@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -5,9 +6,10 @@ import {
   Box, Breadcrumbs, Grid, Paper, Typography,
 } from '@material-ui/core';
 
-import { LosName } from '@ibot/components';
+import { GenusName, LosName } from '@ibot/components';
 
 import PropTypes from 'prop-types';
+import LabelValue from '../../../segments/Common/LabelValue';
 
 const useStyles = makeStyles((theme) => ({
   titleContainer: {
@@ -30,32 +32,23 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HigherTaxonChip = ({ label, value }) => (
-  <div>
-    <Typography component="span" variant="subtitle2">
-      {label}
-      :
-    </Typography>
-    {' '}
-    <Typography component="span" variant="subtitle1" color="textPrimary">
-      {value}
-    </Typography>
-  </div>
-);
-
-const HigherTaxa = ({ genus = '-', familyAPG = '-' }) => (
+const HigherTaxa = ({ genus, familyAPG = '-' }) => (
   <Breadcrumbs
     component="div"
     separator=">"
     aria-label="higher taxa"
   >
-    <HigherTaxonChip label="Family" value={familyAPG} />
-    <HigherTaxonChip label="Genus" value={genus} />
+    <LabelValue label="Family">
+      {familyAPG}
+    </LabelValue>
+    <LabelValue label="Genus">
+      <GenusName data={genus} />
+    </LabelValue>
   </Breadcrumbs>
 );
 
 const NameTitleSection = ({
-  name, status, publication, genus, familyAPG,
+  name, status, publication = '-', genus, familyAPG,
 }) => {
   const classes = useStyles();
 
@@ -85,7 +78,7 @@ const NameTitleSection = ({
               Published in:
             </Box>
             {' '}
-            {publication}
+            {publication || '-'}
           </Typography>
         </Paper>
       </Grid>
@@ -108,26 +101,21 @@ NameTitleSection.propTypes = {
   name: PropTypes.object.isRequired,
   status: PropTypes.string.isRequired,
   publication: PropTypes.string,
-  genus: PropTypes.string,
+  genus: PropTypes.object,
   familyAPG: PropTypes.string,
 };
 
 NameTitleSection.defaultProps = {
-  publication: undefined,
+  publication: '-',
   genus: undefined,
   familyAPG: undefined,
 };
 
-HigherTaxonChip.propTypes = {
-  label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-};
-
 HigherTaxa.propTypes = {
-  genus: PropTypes.string,
+  genus: PropTypes.object,
   familyAPG: PropTypes.string,
 };
 HigherTaxa.defaultProps = {
-  genus: '-',
+  genus: undefined,
   familyAPG: '-',
 };
