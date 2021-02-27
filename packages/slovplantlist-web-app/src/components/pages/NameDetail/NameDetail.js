@@ -13,7 +13,10 @@ import NameLabelValue from './Components/NameLabelValue';
 import NameDetailAccepted from './NameDetailAccepted';
 import NameDetailSynonym from './NameDetailSynonym';
 
-import { nomencatureService } from '../../../services';
+import {
+  nomencatureService,
+  genusService,
+} from '../../../services';
 import config from '../../../config';
 
 const {
@@ -70,16 +73,20 @@ const NameDetail = () => {
   const [synonymsNomenclatoric, setSynonymsNomenclatoric] = useState([]);
   const [synonymsTaxonomic, setSynonymsTaxonomic] = useState([]);
 
-  const [familyAPG, setFamilyAPG] = useState('');
+  const [familyAPG, setFamilyAPG] = useState();
 
   useEffect(() => {
     const fetch = async () => {
       const nomenRecord = await nomencatureService.getNomenclatureById(id);
+      const { genusReference } = nomenRecord || {};
+
+      const familyRecord = await genusService
+        .getFamilyApgOfGenus(genusReference);
 
       setRecord(nomenRecord);
       setSynonymsNomenclatoric(makeSynonymList(2, 3));
       setSynonymsTaxonomic(makeSynonymList(3, 2, 3));
-      setFamilyAPG('Lorem');
+      setFamilyAPG(familyRecord);
     };
     fetch();
   }, [id]);

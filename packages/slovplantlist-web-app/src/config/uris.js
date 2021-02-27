@@ -8,4 +8,7 @@ export default {
   nomenclatureSearch: {
     scientificUri: `${backendBase}/nomenclature-search/scientific`,
   },
+  genus: {
+    getFamilyApgOfGenusUri: `${backendBase}/genera/<%id%>/family-apg`,
+  },
 };

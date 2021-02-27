@@ -32,14 +32,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HigherTaxa = ({ genus, familyAPG = '-' }) => (
+const HigherTaxa = ({ genus, familyAPG }) => (
   <Breadcrumbs
     component="div"
     separator=">"
     aria-label="higher taxa"
   >
     <LabelValue label="Family">
-      {familyAPG}
+      {familyAPG ? familyAPG.name : '-'}
     </LabelValue>
     <LabelValue label="Genus">
       <GenusName data={genus} />
@@ -102,7 +102,7 @@ NameTitleSection.propTypes = {
   status: PropTypes.string.isRequired,
   publication: PropTypes.string,
   genus: PropTypes.object,
-  familyAPG: PropTypes.string,
+  familyAPG: PropTypes.object,
 };
 
 NameTitleSection.defaultProps = {
@@ -113,9 +113,9 @@ NameTitleSection.defaultProps = {
 
 HigherTaxa.propTypes = {
   genus: PropTypes.object,
-  familyAPG: PropTypes.string,
+  familyAPG: PropTypes.object,
 };
 HigherTaxa.defaultProps = {
   genus: undefined,
-  familyAPG: '-',
+  familyAPG: undefined,
 };
