@@ -23,25 +23,18 @@ const {
   status: statusConfig,
 } = config;
 
-const makeSynonymList = (length, syntype, subsyns = 0) => (
-  [...Array(length).keys()]
-    .map(() => ({
-      syntype,
-      name: 'Lorem ipsum',
-      subsynonyms: [...Array(subsyns).keys()]
-        .map((i) => ({ id: i, name: 'Lorem ipsum' })),
-    }))
-);
-
 const getStatusText = (ntype) => (
   statusConfig[ntype] ? statusConfig[ntype].text : ''
 );
 
 const NameDetailSpecificByStatus = ({ status, data = {} }) => {
   const {
+    acceptedNames,
     synonymsNomenclatoric,
     synonymsTaxonomic,
-    acceptedNames,
+    synonymsOthers,
+    invalidDesignations,
+    misidentifications,
   } = data;
 
   switch (status) {
@@ -51,6 +44,9 @@ const NameDetailSpecificByStatus = ({ status, data = {} }) => {
         <NameDetailAccepted
           synonymsNomenclatoric={synonymsNomenclatoric}
           synonymsTaxonomic={synonymsTaxonomic}
+          synonymsOthers={synonymsOthers}
+          invalidDesignations={invalidDesignations}
+          misidentifications={misidentifications}
         />
       );
     case statusConfig.S.key:
@@ -72,6 +68,9 @@ const NameDetail = () => {
 
   const [synonymsNomenclatoric, setSynonymsNomenclatoric] = useState([]);
   const [synonymsTaxonomic, setSynonymsTaxonomic] = useState([]);
+  const [synonymsOthers, setSynonymsOthers] = useState([]);
+  const [invalidDesignations, setInvalidDesignations] = useState([]);
+  const [misidentifications, setMisidentifications] = useState([]);
 
   const [familyAPG, setFamilyAPG] = useState();
 
@@ -83,10 +82,19 @@ const NameDetail = () => {
       const familyRecord = await genusService
         .getFamilyApgOfGenus(genusReference);
 
+      const synonyms = await nomencatureService.getSynonymsOfId(id);
+      const invalidDesigRecords = await nomencatureService
+        .getInvalidDesignationsOfId(id);
+      const misidentificationsRecords = await nomencatureService
+        .getMisidentificationsOfId(id);
+
       setRecord(nomenRecord);
-      setSynonymsNomenclatoric(makeSynonymList(2, 3));
-      setSynonymsTaxonomic(makeSynonymList(3, 2, 3));
       setFamilyAPG(familyRecord);
+      setSynonymsNomenclatoric(synonyms.nomenclatoricSynonyms);
+      setSynonymsTaxonomic(synonyms.taxonomicSynonyms);
+      setSynonymsOthers(synonyms.otherSynonyms);
+      setInvalidDesignations(invalidDesigRecords);
+      setMisidentifications(misidentificationsRecords);
     };
     fetch();
   }, [id]);
@@ -117,6 +125,11 @@ const NameDetail = () => {
           status={status}
           data={{
             acceptedNames,
+            synonymsNomenclatoric,
+            synonymsTaxonomic,
+            synonymsOthers,
+            invalidDesignations,
+            misidentifications,
           }}
         />
         <TitledSection title="Related names">
@@ -137,6 +150,9 @@ NameDetailSpecificByStatus.propTypes = {
     acceptedNames: PropTypes.arrayOf(PropTypes.object),
     synonymsNomenclatoric: PropTypes.arrayOf(PropTypes.object),
     synonymsTaxonomic: PropTypes.arrayOf(PropTypes.object),
+    synonymsOthers: PropTypes.arrayOf(PropTypes.object),
+    invalidDesignations: PropTypes.arrayOf(PropTypes.object),
+    misidentifications: PropTypes.arrayOf(PropTypes.object),
   }),
 };
 
