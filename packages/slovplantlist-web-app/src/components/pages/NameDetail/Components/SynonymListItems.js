@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 15,
   },
   nested: {
-    paddingLeft: theme.spacing(4),
+    paddingLeft: theme.spacing(3),
     paddingTop: 0,
     paddingBottom: 0,
   },
@@ -117,6 +117,7 @@ export const SynonymListItemTaxonomic = ({
             <List dense component="div" disablePadding>
               {subsynonyms.map((subsynonym) => (
                 <SynonymListItemTemplate
+                  key={subsynonym.id}
                   className={classes.nested}
                   name={subsynonym}
                   syntype={synonymsConfig.nomenclatoric.syntype}

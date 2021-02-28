@@ -11,13 +11,15 @@ const SynonymList = ({ syntype, synonyms = [], item: Item }) => {
   }
   return (
     <List dense>
-      {synonyms.map(({ synonym, misidentificationAuthor, subsynonyms }) => (
+      {synonyms.map(({
+        synonym, misidentificationAuthor,
+      }) => (
         <Item
           key={synonym.id}
           syntype={syntype}
           name={synonym}
           misidentificationAuthor={misidentificationAuthor}
-          subsynonyms={subsynonyms}
+          subsynonyms={synonym.subsynonymsNomenclatoric}
         />
       ))}
     </List>
