@@ -7,6 +7,7 @@ import { Divider } from '@material-ui/core';
 import TitledSection from './Components/TitledSection';
 import {
   SynonymListItemBasic,
+  SynonymListItemTaxonomic,
   SynonymListItemMisidentification,
 } from './Components/SynonymListItems';
 import SynonymList from './Components/SynonymList';
@@ -37,7 +38,7 @@ const NameDetailAccepted = ({
       <SynonymList
         syntype={synonymsConfig.taxonomic.syntype}
         synonyms={synonymsTaxonomic}
-        item={SynonymListItemBasic}
+        item={SynonymListItemTaxonomic}
       />
       {(synonymsTaxonomic.length > 0 && synonymsOthers.length > 0) && (
         <Divider />

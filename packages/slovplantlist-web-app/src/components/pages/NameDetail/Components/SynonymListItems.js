@@ -54,42 +54,28 @@ const ListItemSynonymPrefix = ({ type }) => {
 };
 
 const SynonymListItemTemplate = ({
-  syntype, name, subsynonyms = [],
+  className,
+  syntype,
+  name,
   nameAdditions: Additions,
-}) => {
-  const classes = useStyles();
-
-  return (
-    <>
-      <ListItem className={classes.root} disableGutters>
-        <Box>
-          <ListItemSynonymPrefix type={syntype} />
-          <LosName
-            data={name}
-            format="italic"
-            component={RouterLink}
-            to={generatePath(routes.nameDetail.route, { id: name.id })}
-          />
-        </Box>
-        {Additions && <Additions />}
-      </ListItem>
-      {subsynonyms.length > 0 && (
-        <List dense component="div" disablePadding>
-          {subsynonyms.map(({ id, name: subsyn }) => (
-            <ListItem
-              key={id}
-              className={classes.nested}
-              disableGutters
-            >
-              <ListItemSynonymPrefix type={3} />
-              <ListItemText primary={subsyn} />
-            </ListItem>
-          ))}
-        </List>
-      )}
-    </>
-  );
-};
+  neighborAdditions: NeighborAdditions,
+}) => (
+  <>
+    <ListItem className={className} disableGutters>
+      <Box>
+        <ListItemSynonymPrefix type={syntype} />
+        <LosName
+          data={name}
+          format="italic"
+          component={RouterLink}
+          to={generatePath(routes.nameDetail.route, { id: name.id })}
+        />
+      </Box>
+      {Additions && <Additions />}
+    </ListItem>
+    {NeighborAdditions && <NeighborAdditions />}
+  </>
+);
 
 export const SynonymListItemBasic = ({
   syntype, name,
@@ -104,6 +90,7 @@ export const SynonymListItemMisidentification = ({
 
   return (
     <SynonymListItemTemplate
+      className={classes.root}
       syntype={syntype}
       name={name}
       nameAdditions={() => (
@@ -116,17 +103,46 @@ export const SynonymListItemMisidentification = ({
   );
 };
 
+export const SynonymListItemTaxonomic = ({
+  syntype, name, subsynonyms = [],
+}) => {
+  const classes = useStyles();
+  return (
+    <SynonymListItemTemplate
+      syntype={syntype}
+      name={name}
+      neighborAdditions={() => (
+        <>
+          {subsynonyms.length > 0 && (
+            <List dense component="div" disablePadding>
+              {subsynonyms.map((subsynonym) => (
+                <SynonymListItemTemplate
+                  className={classes.nested}
+                  name={subsynonym}
+                  syntype={synonymsConfig.nomenclatoric.syntype}
+                />
+              ))}
+            </List>
+          )}
+        </>
+      )}
+    />
+  );
+};
+
 SynonymListItemTemplate.propTypes = {
+  className: PropTypes.string,
   syntype: PropTypes.number.isRequired,
   name: PropTypes.object,
-  subsynonyms: PropTypes.arrayOf(PropTypes.object),
   nameAdditions: PropTypes.func,
+  neighborAdditions: PropTypes.func,
 };
 
 SynonymListItemTemplate.defaultProps = {
+  className: undefined,
   name: undefined,
-  subsynonyms: [],
   nameAdditions: undefined,
+  neighborAdditions: undefined,
 };
 
 ListItemSynonymPrefix.propTypes = {
@@ -139,6 +155,16 @@ SynonymListItemBasic.propTypes = {
 };
 SynonymListItemBasic.defaultProps = {
   name: undefined,
+};
+
+SynonymListItemTaxonomic.propTypes = {
+  syntype: PropTypes.number.isRequired,
+  name: PropTypes.object,
+  subsynonyms: PropTypes.arrayOf(PropTypes.object),
+};
+SynonymListItemTaxonomic.defaultProps = {
+  name: undefined,
+  subsynonyms: [],
 };
 
 SynonymListItemMisidentification.propTypes = {
