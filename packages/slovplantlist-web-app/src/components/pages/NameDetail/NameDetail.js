@@ -2,13 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import PropTypes from 'prop-types';
-
-import { Container } from '@material-ui/core';
+import { Container, Divider } from '@material-ui/core';
 
 import NameTitleSection from './Components/NameTitleSection';
 import TitledSection from './Components/TitledSection';
 import NameLabelValue from './Components/NameLabelValue';
+import SynonymList from './Components/SynonymList';
+import {
+  SynonymListItemBasic,
+  SynonymListItemTaxonomic,
+} from './Components/SynonymListItems';
 
 import NameDetailAccepted from './NameDetailAccepted';
 import NameDetailSynonym from './NameDetailSynonym';
@@ -21,45 +24,12 @@ import config from '../../../config';
 
 const {
   status: statusConfig,
+  synonyms: synonymsConfig,
 } = config;
 
 const getStatusText = (ntype) => (
   statusConfig[ntype] ? statusConfig[ntype].text : ''
 );
-
-const NameDetailSpecificByStatus = ({ status, data = {} }) => {
-  const {
-    acceptedNames,
-    synonymsNomenclatoric,
-    synonymsTaxonomic,
-    synonymsOthers,
-    invalidDesignations,
-    misidentifications,
-  } = data;
-
-  switch (status) {
-    case statusConfig.A.key:
-    case statusConfig.PA.key:
-      return (
-        <NameDetailAccepted
-          synonymsNomenclatoric={synonymsNomenclatoric}
-          synonymsTaxonomic={synonymsTaxonomic}
-          synonymsOthers={synonymsOthers}
-          invalidDesignations={invalidDesignations}
-          misidentifications={misidentifications}
-        />
-      );
-    case statusConfig.S.key:
-    case statusConfig.DS.key:
-      return (
-        <NameDetailSynonym
-          acceptedNames={acceptedNames}
-        />
-      );
-    default:
-      return null;
-  }
-};
 
 const NameDetail = () => {
   const { id } = useParams();
@@ -121,17 +91,43 @@ const NameDetail = () => {
         familyAPG={familyAPG}
       />
       <Container maxWidth="md">
-        <NameDetailSpecificByStatus
-          status={status}
-          data={{
-            acceptedNames,
-            synonymsNomenclatoric,
-            synonymsTaxonomic,
-            synonymsOthers,
-            invalidDesignations,
-            misidentifications,
-          }}
-        />
+        {[statusConfig.S.key, statusConfig.DS.key].includes(status) && (
+          <NameDetailSynonym
+            acceptedNames={acceptedNames}
+          />
+        )}
+        <TitledSection title="Synonyms">
+          <SynonymList
+            syntype={synonymsConfig.nomenclatoric.syntype}
+            synonyms={synonymsNomenclatoric}
+            item={SynonymListItemBasic}
+          />
+          {(synonymsNomenclatoric.length > 0
+            && synonymsTaxonomic.length > 0)
+            && (
+              <Divider />
+            )
+          }
+          <SynonymList
+            syntype={synonymsConfig.taxonomic.syntype}
+            synonyms={synonymsTaxonomic}
+            item={SynonymListItemTaxonomic}
+          />
+          {(synonymsTaxonomic.length > 0 && synonymsOthers.length > 0) && (
+            <Divider />
+          )}
+          <SynonymList
+            syntype={synonymsConfig.other.syntype}
+            synonyms={synonymsOthers}
+            item={SynonymListItemBasic}
+          />
+        </TitledSection>
+        {[statusConfig.A.key, statusConfig.PA.key].includes(status) && (
+          <NameDetailAccepted
+            invalidDesignations={invalidDesignations}
+            misidentifications={misidentifications}
+          />
+        )}
         <TitledSection title="Related names">
           <NameLabelValue label="Basionym" data={basionym} />
           <NameLabelValue label="Nomen novum" data={nomenNovum} />
@@ -143,20 +139,3 @@ const NameDetail = () => {
 };
 
 export default NameDetail;
-
-NameDetailSpecificByStatus.propTypes = {
-  status: PropTypes.string,
-  data: PropTypes.shape({
-    acceptedNames: PropTypes.arrayOf(PropTypes.object),
-    synonymsNomenclatoric: PropTypes.arrayOf(PropTypes.object),
-    synonymsTaxonomic: PropTypes.arrayOf(PropTypes.object),
-    synonymsOthers: PropTypes.arrayOf(PropTypes.object),
-    invalidDesignations: PropTypes.arrayOf(PropTypes.object),
-    misidentifications: PropTypes.arrayOf(PropTypes.object),
-  }),
-};
-
-NameDetailSpecificByStatus.defaultProps = {
-  status: undefined,
-  data: {},
-};
