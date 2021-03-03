@@ -48,7 +48,7 @@ const HigherTaxa = ({ genus, familyAPG }) => (
 );
 
 const NameTitleSection = ({
-  name, status, publication = '-', genus, familyAPG,
+  name, status, publication = '-', genus, familyAPG, vernacular,
 }) => {
   const classes = useStyles();
 
@@ -91,6 +91,15 @@ const NameTitleSection = ({
           <HigherTaxa genus={genus} familyAPG={familyAPG} />
         </Paper>
       </Grid>
+      <Grid item xs={12}>
+        <Paper
+          elevation={0}
+          variant="outlined"
+          className={classes.higherTaxaPaper}
+        >
+          <LabelValue label="Slovak name">{vernacular || '-'}</LabelValue>
+        </Paper>
+      </Grid>
     </Grid>
   );
 };
@@ -103,12 +112,14 @@ NameTitleSection.propTypes = {
   publication: PropTypes.string,
   genus: PropTypes.object,
   familyAPG: PropTypes.object,
+  vernacular: PropTypes.string,
 };
 
 NameTitleSection.defaultProps = {
   publication: '-',
   genus: undefined,
   familyAPG: undefined,
+  vernacular: '-',
 };
 
 HigherTaxa.propTypes = {

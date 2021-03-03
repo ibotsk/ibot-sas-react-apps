@@ -108,6 +108,7 @@ const NameDetail = () => {
         publication={publication}
         genus={genusReference}
         familyAPG={familyAPG}
+        vernacular={name.vernacular}
       />
       <Container maxWidth="md">
         {[S, DS].includes(status) && (
