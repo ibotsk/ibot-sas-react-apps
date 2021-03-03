@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import { Container, Divider } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 import NameTitleSection from './Components/NameTitleSection';
 import TitledSection from './Components/TitledSection';
@@ -27,11 +28,29 @@ const {
   synonyms: synonymsConfig,
 } = config;
 
+const {
+  A: { key: A },
+  PA: { key: PA },
+  S: { key: S },
+  DS: { key: DS },
+  PC: { key: PC },
+  TP: { key: TP },
+} = statusConfig;
+
 const getStatusText = (ntype) => (
   statusConfig[ntype] ? statusConfig[ntype].text : ''
 );
 
+const useStyles = makeStyles((theme) => ({
+  nameDivider: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+}));
+
 const NameDetail = () => {
+  const classes = useStyles();
+
   const { id } = useParams();
 
   const [record, setRecord] = useState({});
@@ -91,12 +110,15 @@ const NameDetail = () => {
         familyAPG={familyAPG}
       />
       <Container maxWidth="md">
-        {[statusConfig.S.key, statusConfig.DS.key].includes(status) && (
+        {[S, DS].includes(status) && (
           <NameDetailSynonym
             acceptedNames={acceptedNames}
           />
         )}
-        <TitledSection title="Synonyms">
+        <TitledSection
+          title="Synonyms"
+          hideWhen={[PC, TP].includes(status)}
+        >
           <SynonymList
             syntype={synonymsConfig.nomenclatoric.syntype}
             synonyms={synonymsNomenclatoric}
@@ -122,13 +144,22 @@ const NameDetail = () => {
             item={SynonymListItemBasic}
           />
         </TitledSection>
-        {[statusConfig.A.key, statusConfig.PA.key].includes(status) && (
+        {[A, PA].includes(status) && (
           <NameDetailAccepted
             invalidDesignations={invalidDesignations}
             misidentifications={misidentifications}
           />
         )}
-        <TitledSection title="Related names">
+        <TitledSection
+          title="Related names"
+          hideWhen={[PC, TP].includes(status)}
+        >
+          <NameLabelValue
+            label="Parent combination notation"
+            data={parentCombination}
+          />
+          <NameLabelValue label="Taxon position" data={taxonPosition} />
+          <Divider className={classes.nameDivider} />
           <NameLabelValue label="Basionym" data={basionym} />
           <NameLabelValue label="Nomen novum" data={nomenNovum} />
           <NameLabelValue label="Replaced" data={replaced} />
