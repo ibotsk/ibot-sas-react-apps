@@ -50,7 +50,6 @@ const FilterTemplate = ({
   const classes = useStyles();
 
   const [checkedStatus, setCheckedStatus] = useState([]);
-  const [otherOptions, setOtherOptions] = useState([]);
 
   const handleCheckStatus = (value) => {
     const currentIndex = checkedStatus.indexOf(value);
@@ -64,37 +63,21 @@ const FilterTemplate = ({
 
     setCheckedStatus(newChecked);
   };
-  const handleCheckOtherOptions = (value) => {
-    const currentIndex = otherOptions.indexOf(value);
-    const newChecked = [...otherOptions];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setOtherOptions(newChecked);
-  };
 
   const handleSearch = () => {
     onSearch({
       status: checkedStatus,
-      otherOptions,
     });
   };
 
   const handleReset = () => {
     onReset();
     setCheckedStatus([]);
-    setOtherOptions([]);
   };
 
   if (closed) {
     return (
-      <Toolbar variant="dense">
-        <SearchIcon />
-      </Toolbar>
+      <Toolbar variant="dense" />
     );
   }
 
@@ -143,23 +126,6 @@ const FilterTemplate = ({
                 onClick={handleCheckStatus}
               />
             ))}
-          </ListItemCollapsible>
-          <Divider />
-          <ListItemCollapsible label="Some other options">
-            <ListItemCheckbox
-              id="1"
-              key="1"
-              label="Option 1"
-              checked={otherOptions.includes('1')}
-              onClick={handleCheckOtherOptions}
-            />
-            <ListItemCheckbox
-              id="2"
-              key="2"
-              label="Option 2"
-              checked={otherOptions.includes('2')}
-              onClick={handleCheckOtherOptions}
-            />
           </ListItemCollapsible>
           <Divider />
         </List>
