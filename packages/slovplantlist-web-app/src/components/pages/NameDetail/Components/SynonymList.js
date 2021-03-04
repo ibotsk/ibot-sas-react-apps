@@ -10,7 +10,7 @@ const SynonymList = ({ syntype, synonyms = [], item: Item }) => {
     return null;
   }
   return (
-    <List dense>
+    <List dense disablePadding>
       {synonyms.map(({
         synonym, misidentificationAuthor,
       }) => (

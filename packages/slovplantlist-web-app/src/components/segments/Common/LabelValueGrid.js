@@ -14,17 +14,19 @@ const useStyles = makeStyles(() => ({
 const LabelValue = ({
   label,
   children = undefined,
+  alignItems = 'center',
+  alignContent = 'center',
 }) => {
   const classes = useStyles();
   return (
     <Box color="text.secondary">
       <Grid
         container
-        alignContent="center"
-        alignItems="center"
+        alignContent={alignContent}
+        alignItems={alignItems}
         spacing={2}
       >
-        <Grid item sm={2} className={classes.label}>
+        <Grid item sm={3} className={classes.label}>
           <Typography
             component="span"
             variant="subtitle2"
@@ -35,7 +37,7 @@ const LabelValue = ({
             {' '}
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={10}>
+        <Grid item xs={12} sm={9}>
           <Typography
             component="span"
             variant="body2"
@@ -54,7 +56,11 @@ export default LabelValue;
 LabelValue.propTypes = {
   label: PropTypes.string.isRequired,
   children: PropTypes.node,
+  alignItems: PropTypes.string,
+  alignContent: PropTypes.string,
 };
 LabelValue.defaultProps = {
   children: undefined,
+  alignItems: 'center',
+  alignContent: 'center',
 };

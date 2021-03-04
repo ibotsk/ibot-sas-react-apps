@@ -7,8 +7,8 @@ import {
   List, ListItem,
 } from '@material-ui/core';
 
-const NameList = ({ list = [] }) => (
-  <List dense>
+const NameList = ({ list = [], className = undefined }) => (
+  <List className={className} dense disablePadding>
     {list.map(({ id, name }) => (
       <ListItem key={id} disableGutters>
         {name}
@@ -24,8 +24,10 @@ NameList.propTypes = {
     id: PropTypes.number.isRequired,
     name: PropTypes.object.isRequired,
   })),
+  className: PropTypes.string,
 };
 
 NameList.defaultProps = {
   list: [],
+  className: undefined,
 };

@@ -8,7 +8,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import NameTitleSection from './Components/NameTitleSection';
 import TitledSection from './Components/TitledSection';
 import NameLabelValue from './Components/NameLabelValue';
+import NameLabelList from './Components/NameLabelList';
 import SynonymList from './Components/SynonymList';
+
 import {
   SynonymListItemBasic,
   SynonymListItemTaxonomic,
@@ -63,6 +65,8 @@ const NameDetail = () => {
 
   const [familyAPG, setFamilyAPG] = useState();
 
+  const [forRelations, setForRelations] = useState({});
+
   useEffect(() => {
     const fetch = async () => {
       const nomenRecord = await nomencatureService.getNomenclatureById(id);
@@ -77,6 +81,9 @@ const NameDetail = () => {
       const misidentificationsRecords = await nomencatureService
         .getMisidentificationsOfId(id);
 
+      const forRelationsRecords = await nomencatureService
+        .getForRelationsOfId(id);
+
       setRecord(nomenRecord);
       setFamilyAPG(familyRecord);
       setSynonymsNomenclatoric(synonyms.nomenclatoricSynonyms);
@@ -84,6 +91,7 @@ const NameDetail = () => {
       setSynonymsOthers(synonyms.otherSynonyms);
       setInvalidDesignations(invalidDesigRecords);
       setMisidentifications(misidentificationsRecords);
+      setForRelations(forRelationsRecords);
     };
     fetch();
   }, [id]);
@@ -100,6 +108,15 @@ const NameDetail = () => {
     nomenNovum,
     ...name
   } = record;
+
+  const {
+    basionymFor,
+    nomenNovumFor,
+    replacedFor,
+    parentCombinationFor,
+    taxonPositionFor,
+  } = forRelations;
+
   return (
     <div>
       <NameTitleSection
@@ -164,6 +181,26 @@ const NameDetail = () => {
           <NameLabelValue label="Basionym" data={basionym} />
           <NameLabelValue label="Nomen novum" data={nomenNovum} />
           <NameLabelValue label="Replaced" data={replaced} />
+        </TitledSection>
+
+        <TitledSection
+          title="Is used as"
+        >
+          <NameLabelList
+            label="Parent combination for"
+            listOfNames={parentCombinationFor}
+          />
+          <Divider className={classes.nameDivider} />
+          <NameLabelList
+            label="Taxon position for"
+            listOfNames={taxonPositionFor}
+          />
+          <Divider className={classes.nameDivider} />
+          <NameLabelList label="Basionym for" listOfNames={basionymFor} />
+          <Divider className={classes.nameDivider} />
+          <NameLabelList label="Nomen novum for" listOfNames={nomenNovumFor} />
+          <Divider className={classes.nameDivider} />
+          <NameLabelList label="Replaced for" listOfNames={replacedFor} />
         </TitledSection>
       </Container>
     </div>

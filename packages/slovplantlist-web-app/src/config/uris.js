@@ -7,6 +7,7 @@ export default {
     getSynonymsOfIdUri: `${backendBase}/nomenclatures/<%id%>/synonyms?withSubsynonyms=true`,
     getInvalidDesignationsOfIdUri: `${backendBase}/nomenclatures/<%id%>/invalid-designations`,
     getMisidentificationsOfIdUri: `${backendBase}/nomenclatures/<%id%>/misidentifications`,
+    getForRelationsUri: `${backendBase}/nomenclatures/<%id%>/for-relations`,
   },
   nomenclatureSearch: {
     scientificUri: `${backendBase}/nomenclature-search/scientific`,
