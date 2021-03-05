@@ -13,7 +13,7 @@ import config from '../../../config';
 const { pagination: paginationConfig } = config;
 const defaultPage = 0;
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
   },
@@ -21,10 +21,13 @@ const useStyles = makeStyles({
     maxHeight: 600,
   },
   head: {
-    fontWeight: 'bold',
+    '& th': {
+      fontWeight: theme.typography.fontWeightBold,
+      backgroundColor: theme.palette.background.paper,
+    },
   },
   row: {},
-});
+}));
 
 const ResultsTable = ({
   columns, keyField,

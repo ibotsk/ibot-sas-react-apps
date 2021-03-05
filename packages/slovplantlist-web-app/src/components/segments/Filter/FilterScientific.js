@@ -5,6 +5,10 @@ import PropTypes from 'prop-types';
 import FilterTemplate from './FilterTemplate';
 import ListItemTextField from './Components/ListItemTextField';
 
+import config from '../../../config';
+
+const { routes } = config;
+
 const FilterScientific = ({
   closed, onSearch,
 }) => {
@@ -13,12 +17,15 @@ const FilterScientific = ({
   const [infraspecific, setInfraspecific] = useState('');
 
   const handleSearch = (templateValues) => (
-    onSearch({
-      ...templateValues,
-      genus,
-      species,
-      infraspecific,
-    })
+    onSearch(
+      {
+        ...templateValues,
+        genus,
+        species,
+        infraspecific,
+      },
+      routes.scientificNames.route,
+    )
   );
 
   const handleValidate = () => (

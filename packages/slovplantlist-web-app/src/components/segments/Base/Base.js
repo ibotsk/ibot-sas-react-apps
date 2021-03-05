@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { matchPath } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -56,6 +56,8 @@ const isDrawerOpened = (route) => {
 
 const Base = ({ router: Router }) => {
   const { pathname } = useLocation();
+  const history = useHistory();
+
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
@@ -73,8 +75,9 @@ const Base = ({ router: Router }) => {
     setOpen(false);
   };
 
-  const handleSearch = (values) => {
+  const handleSearch = (values, route) => {
     setSearchValues(values);
+    history.push(route);
   };
 
   return (
@@ -84,7 +87,6 @@ const Base = ({ router: Router }) => {
       <LeftDrawer
         open={open}
         onDrawerClose={handleDrawerClose}
-        onFilterSearch={handleSearch}
       >
         <FilterRouter
           pathname={pathname}

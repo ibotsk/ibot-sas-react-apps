@@ -107,7 +107,9 @@ const FilterTemplate = ({
     return true;
   };
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault();
+
     if (handleValidate()) {
       onSearch({
         status: checkedStatus,
@@ -156,10 +158,12 @@ const FilterTemplate = ({
           <ListItem dense>
             <div className={classes.toolbarButtons}>
               <IconButton
+                type="submit"
                 color="secondary"
                 edge="end"
                 variant="outlined"
                 onClick={handleSearch}
+                aria-label="Submit search"
               >
                 <SearchIcon />
               </IconButton>
