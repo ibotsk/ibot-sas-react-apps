@@ -8,10 +8,10 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { LosName } from '@ibot/components';
 
-import LabelValueGrid from '../../../segments/Common/LabelValueGrid';
-import NameList from './NameList';
+import LabelValueGrid from 'components/segments/Common/LabelValueGrid';
+import config from 'config';
 
-import config from '../../../../config';
+import NameList from './NameList';
 
 const {
   routes: routesConfig,

@@ -9,7 +9,7 @@ import {
 import { GenusName, LosName } from '@ibot/components';
 
 import PropTypes from 'prop-types';
-import LabelValue from '../../../segments/Common/LabelValue';
+import LabelValue from 'components/segments/Common/LabelValue';
 
 const useStyles = makeStyles((theme) => ({
   titleContainer: {

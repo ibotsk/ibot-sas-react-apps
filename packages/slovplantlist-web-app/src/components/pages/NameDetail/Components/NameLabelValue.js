@@ -6,9 +6,9 @@ import PropTypes from 'prop-types';
 
 import { LosName } from '@ibot/components';
 
-import LabelValueGrid from '../../../segments/Common/LabelValueGrid';
+import LabelValueGrid from 'components/segments/Common/LabelValueGrid';
 
-import config from '../../../../config';
+import config from 'config';
 
 const {
   routes: routesConfig,

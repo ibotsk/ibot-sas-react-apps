@@ -5,10 +5,10 @@ import PropTypes from 'prop-types';
 
 import { LosName } from '@ibot/components';
 
+import config from 'config';
+
 import TitledSection from './Components/TitledSection';
 import NameList from './Components/NameList';
-
-import config from '../../../config';
 
 const { routes: routesConfig } = config;
 

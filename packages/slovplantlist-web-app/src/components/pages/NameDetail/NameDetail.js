@@ -5,6 +5,12 @@ import { useParams } from 'react-router';
 import { Container, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+import {
+  nomencatureService,
+  genusService,
+} from 'services';
+import config from 'config';
+
 import NameTitleSection from './Components/NameTitleSection';
 import TitledSection from './Components/TitledSection';
 import NameLabelValue from './Components/NameLabelValue';
@@ -18,12 +24,6 @@ import {
 
 import NameDetailAccepted from './NameDetailAccepted';
 import NameDetailSynonym from './NameDetailSynonym';
-
-import {
-  nomencatureService,
-  genusService,
-} from '../../../services';
-import config from '../../../config';
 
 const {
   status: statusConfig,

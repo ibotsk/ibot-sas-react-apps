@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 
 import PropTypes from 'prop-types';
 
+import config from 'config';
+
 import FilterTemplate from './FilterTemplate';
 import ListItemTextField from './Components/ListItemTextField';
-
-import config from '../../../config';
 
 const { routes } = config;
 

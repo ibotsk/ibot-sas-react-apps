@@ -5,6 +5,12 @@ import { Table, TableBody, TableRow } from '@material-ui/core';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { makeStyles } from '@material-ui/core/styles';
 
+import config from 'config';
+
+const {
+  pagination: { rowsPerPageOptions },
+} = config;
+
 const useStyle = makeStyles(() => ({
   skeletonTable: {
     '& tr': {
@@ -19,7 +25,7 @@ const SkeletonTable = () => {
   return (
     <Table className={classes.skeletonTable}>
       <TableBody>
-        {[...Array(12)].map((_, i) => (
+        {[...Array(rowsPerPageOptions[0] + 2)].map((_, i) => (
           <TableRow key={i}>
             <Skeleton
               variant="rect"

@@ -2,14 +2,14 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
+import config from 'config';
+
 import TitledSection from './Components/TitledSection';
 import {
   SynonymListItemBasic,
   SynonymListItemMisidentification,
 } from './Components/SynonymListItems';
 import SynonymList from './Components/SynonymList';
-
-import config from '../../../config';
 
 const {
   synonyms: synonymsConfig,

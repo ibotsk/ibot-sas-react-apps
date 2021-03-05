@@ -8,12 +8,12 @@ import { Typography } from '@material-ui/core';
 import { hooks } from '@ibot/core';
 import { LosName } from '@ibot/components';
 
-import Title from '../../segments/Common/Title';
-import ResultsTable from '../../segments/Common/ResultsTable';
+import Title from 'components/segments/Common/Title';
+import ResultsTable from 'components/segments/Common/ResultsTable';
+import SkeletonTable from 'components/segments/Common/SkeletonTable';
 
-import { searchService } from '../../../services';
-import config from '../../../config';
-import SkeletonTable from '../../segments/Common/SkeletonTable';
+import { searchService } from 'services';
+import config from 'config';
 
 const {
   pagination: paginationConfig,

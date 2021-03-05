@@ -1,6 +1,6 @@
-import { postRequest } from './client';
+import urisConfig from 'config/uris';
 
-import urisConfig from '../config/uris';
+import { postRequest } from './client';
 
 const {
   nomenclatureSearch,

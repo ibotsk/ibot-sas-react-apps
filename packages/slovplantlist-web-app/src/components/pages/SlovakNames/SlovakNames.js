@@ -1,7 +1,7 @@
 import React from 'react';
 
-import Title from '../../segments/Common/Title';
-import ResultsTable from '../../segments/Common/ResultsTable';
+import Title from 'components/segments/Common/Title';
+import ResultsTable from 'components/segments/Common/ResultsTable';
 
 const columns = [
   {

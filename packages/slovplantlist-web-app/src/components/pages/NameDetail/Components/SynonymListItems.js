@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { LosName } from '@ibot/components';
 
-import config from '../../../../config';
+import config from 'config';
 
 const {
   synonymType,

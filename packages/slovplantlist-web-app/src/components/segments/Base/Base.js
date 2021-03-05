@@ -9,12 +9,12 @@ import Container from '@material-ui/core/Container';
 
 import PropTypes from 'prop-types';
 
-import UpperMenu from '../Navigation/UpperMenu';
+import UpperMenu from 'components/segments/Navigation/UpperMenu';
+import config from 'config';
+
 import Copyright from './Copyright';
 import LeftDrawer from './LeftDrawer';
 import FilterRouter from './FilterRouter';
-
-import config from '../../../config';
 
 const { routes } = config;
 

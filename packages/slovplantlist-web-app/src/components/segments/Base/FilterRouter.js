@@ -2,9 +2,10 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-import config from '../../../config';
-import FilterScientific from '../Filter/FilterScientific';
-import FilterVernacular from '../Filter/FilterVernacular';
+import FilterScientific from 'components/segments/Filter/FilterScientific';
+import FilterVernacular from 'components/segments/Filter/FilterVernacular';
+
+import config from 'config';
 
 const { routes } = config;
 

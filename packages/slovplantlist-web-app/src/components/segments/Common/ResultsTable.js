@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
 
-import config from '../../../config';
+import config from 'config';
 
 const { pagination: paginationConfig } = config;
 const defaultPage = 0;

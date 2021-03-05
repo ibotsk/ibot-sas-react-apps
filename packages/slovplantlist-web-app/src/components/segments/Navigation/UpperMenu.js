@@ -15,7 +15,7 @@ import {
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
-import config from '../../../config';
+import config from 'config';
 
 const { routes } = config;
 

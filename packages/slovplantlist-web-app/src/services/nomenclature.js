@@ -1,5 +1,6 @@
+import config from 'config/uris';
+
 import { getRequest } from './client';
-import config from '../config/uris';
 
 const { nomenclature } = config;
 
