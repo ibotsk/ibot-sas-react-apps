@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Typography } from '@material-ui/core';
 
 import { hooks } from '@ibot/core';
-import { LosName } from '@ibot/components';
+import { LosName, PageTitle } from '@ibot/components';
 
 import Title from 'components/segments/Common/Title';
 import ResultsTable from 'components/segments/Common/ResultsTable';
@@ -95,29 +95,21 @@ const ScientificNames = ({
     setRowsPerPage(rppg);
   };
 
-  if (!results && !isLoading) {
-    return (
-      <>
-        <Title>Scientific Names</Title>
+  return (
+    <>
+      <PageTitle
+        websiteTitle="Slovplantlist"
+        title="Search scientific names"
+      />
+      <Title>Scientific Names</Title>
+      {isLoading && (
+        <SkeletonTable />
+      )}
+      {!results && (
         <Typography color="textSecondary" variant="h6" component="span">
           Use search fields to display results
         </Typography>
-      </>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <>
-        <Title>Scientific Names</Title>
-        <SkeletonTable />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Title>Scientific Names</Title>
+      )}
       {results
         && (
           <ResultsTable

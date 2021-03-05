@@ -5,6 +5,9 @@ import { useParams } from 'react-router';
 import { Container, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+import { PageTitle } from '@ibot/components';
+import { species as speciesUtils } from '@ibot/utils';
+
 import {
   nomencatureService,
   genusService,
@@ -119,6 +122,10 @@ const NameDetail = () => {
 
   return (
     <div>
+      <PageTitle
+        websiteTitle="Slovplantlist"
+        title={speciesUtils.listOfSpeciesString(name)}
+      />
       <NameTitleSection
         name={name}
         status={getStatusText(status)}
