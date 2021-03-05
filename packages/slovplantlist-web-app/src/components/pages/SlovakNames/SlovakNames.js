@@ -1,39 +1,28 @@
 import React from 'react';
 
-import Title from '../../segments/Common/Title';
-import ResultsTable from '../../segments/Common/ResultsTable';
+import { PageTitle } from '@ibot/components';
 
-const columns = [
-  {
-    dataField: 'vernacular',
-    text: 'Slovak name',
-  },
-  {
-    dataField: 'name',
-    text: 'Scientific name',
-  },
-];
+import Title from 'components/segments/Common/Title';
+// import ResultsTable from 'components/segments/Common/ResultsTable';
 
-/* temporary fetching */
-const rows = [...Array(70).keys()].map((i) => ({
-  key: i,
-  id: 1,
-  vernacular: `Slovenske meno ${i}`,
-  name: `Nomen scientific ${i}`,
-}));
-
-const getCount = () => rows.length;
-const getData = (limit, offset) => rows.slice(offset, offset + limit);
+// const columns = [
+//   {
+//     dataField: 'vernacular',
+//     text: 'Slovak name',
+//   },
+//   {
+//     dataField: 'name',
+//     text: 'Scientific name',
+//   },
+// ];
 
 const SlovakNames = () => (
   <>
-    <Title>Slovak Names</Title>
-    <ResultsTable
-      columns={columns}
-      keyField="key"
-      getData={getData}
-      getTotalCount={getCount}
+    <PageTitle
+      websiteTitle="Slovplantlist"
+      title="Search slovak names"
     />
+    <Title>Slovak Names</Title>
   </>
 );
 

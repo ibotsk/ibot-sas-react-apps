@@ -1,16 +1,21 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 import PropTypes from 'prop-types';
 
-const PageTitle = ({ title }) => (
+const PageTitle = ({ websiteTitle, title }) => (
   <Helmet>
-    <title>{title}</title>
+    <title>{[websiteTitle, title].filter((e) => !!e).join(' - ')}</title>
   </Helmet>
 );
 
 export default PageTitle;
 
 PageTitle.propTypes = {
+  websiteTitle: PropTypes.string,
   title: PropTypes.string.isRequired,
+};
+
+PageTitle.defaultProps = {
+  websiteTitle: undefined,
 };

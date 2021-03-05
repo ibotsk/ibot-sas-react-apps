@@ -40,3 +40,34 @@ export function useTableData(
     isLoading,
   };
 }
+
+export function useData(
+  getData, page, rowsPerPage,
+) {
+  const [isLoading, setLoading] = useState(false);
+  const [data, setData] = useState();
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetch = async () => {
+      setLoading(true);
+
+      const records = await getData(page, rowsPerPage);
+
+      if (!cancelled) {
+        setData(records);
+        setLoading(false);
+      }
+    };
+
+    fetch();
+
+    return () => { cancelled = true; };
+  }, [getData, page, rowsPerPage]);
+
+  return {
+    data,
+    isLoading,
+  };
+}

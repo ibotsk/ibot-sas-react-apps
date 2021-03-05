@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
+import { HelmetProvider } from '@ibot/components';
+
 import store from 'services/store';
 
 import App from 'components/pages/App';
@@ -10,7 +12,9 @@ import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </Provider>,
   document.getElementById('root'),
 );

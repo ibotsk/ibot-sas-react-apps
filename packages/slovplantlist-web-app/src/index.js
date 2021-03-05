@@ -3,12 +3,16 @@ import ReactDOM from 'react-dom';
 
 import 'fontsource-roboto';
 
+import { HelmetProvider } from '@ibot/components';
+
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

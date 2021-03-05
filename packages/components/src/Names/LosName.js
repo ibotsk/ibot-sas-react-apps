@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 
 import PropTypes from 'prop-types';
@@ -11,7 +12,10 @@ const LosName = ({
   isPublication = false,
   isTribus = false,
   isAggregates = false,
-  uri = undefined,
+  uri = undefined, // left for backward compatibility
+  component: Component = 'span',
+  // all these props are passed to component
+  ...props
 }) => {
   if (!data) {
     return null;
@@ -31,9 +35,10 @@ const LosName = ({
     );
   }
   return (
-    <span>
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <Component {...props}>
       {los}
-    </span>
+    </Component>
   );
 };
 
@@ -46,6 +51,7 @@ LosName.propTypes = {
   isTribus: PropTypes.bool,
   isAggregates: PropTypes.bool,
   uri: PropTypes.string,
+  component: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
 LosName.defaultProps = {
@@ -55,4 +61,5 @@ LosName.defaultProps = {
   isTribus: false,
   isAggregates: false,
   uri: undefined,
+  component: 'span',
 };

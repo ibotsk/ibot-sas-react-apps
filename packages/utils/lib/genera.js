@@ -1,5 +1,9 @@
-function formatGenus(name, authors) {
-  return [name, authors].filter((e) => e).map((e) => e.trim()).join(' ');
+function formatGenus(name, authors, { isAuthor = true } = {}) {
+  const arr = [name];
+  if (isAuthor) {
+    arr.push(authors);
+  }
+  return arr.filter((e) => !!e).map((e) => e.trim()).join(' ');
 };
 
 function formatGeneraAcceptedNames(list) {
@@ -15,7 +19,7 @@ function formatGeneraAcceptedNames(list) {
   return namesArray;
 }
 
-function genusString(genus) {
+function genusString(genus, isAuthor = true) {
   if (!genus) {
     return undefined;
   }

@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 
 import PropTypes from 'prop-types';
 
+import config from 'config';
+
 import FilterTemplate from './FilterTemplate';
 import ListItemTextField from './Components/ListItemTextField';
+
+const { routes } = config;
 
 const FilterScientific = ({
   closed, onSearch,
@@ -13,13 +17,21 @@ const FilterScientific = ({
   const [infraspecific, setInfraspecific] = useState('');
 
   const handleSearch = (templateValues) => (
-    onSearch({
-      ...templateValues,
-      genus,
-      species,
-      infraspecific,
-    })
+    onSearch(
+      {
+        ...templateValues,
+        genus,
+        species,
+        infraspecific,
+      },
+      routes.scientificNames.route,
+    )
   );
+
+  const handleValidate = () => (
+    [genus, species, infraspecific].filter((e) => !!e).length
+  );
+
   const handleReset = () => {
     setGenus('');
     setSpecies('');
@@ -31,6 +43,7 @@ const FilterScientific = ({
       closed={closed}
       onSearch={handleSearch}
       onReset={handleReset}
+      onValidate={handleValidate}
     >
       <ListItemTextField
         id="genus"

@@ -16,8 +16,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const TitledSection = ({ title, children }) => {
+const TitledSection = ({
+  title, children, showWhen = true, hideWhen = false,
+}) => {
   const classes = useStyles();
+
+  // hideWhen overrides showWhen
+  if (!showWhen || hideWhen) {
+    return null;
+  }
 
   return (
     <Grid container justify="center">
@@ -40,8 +47,12 @@ export default TitledSection;
 TitledSection.propTypes = {
   title: PropTypes.string.isRequired,
   children: PropTypes.node,
+  showWhen: PropTypes.bool,
+  hideWhen: PropTypes.bool,
 };
 
 TitledSection.defaultProps = {
   children: undefined,
+  showWhen: true,
+  hideWhen: false,
 };

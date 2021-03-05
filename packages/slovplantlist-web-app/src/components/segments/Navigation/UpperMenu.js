@@ -9,13 +9,13 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  KeyboardArrowRight as KeyboardArrowRightIcon,
+  Search as SearchIcon,
 } from '@material-ui/icons';
 
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
-import config from '../../../config';
+import config from 'config';
 
 const { routes } = config;
 
@@ -41,14 +41,14 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   title: {
-    marginRight: 20,
+    marginRight: theme.spacing(3),
     textDecoration: 'none',
   },
   menuButtonGroup: {
     flexGrow: 1,
   },
   menuButton: {
-    marginRight: 20,
+    marginRight: theme.spacing(3),
   },
   menuButtonHidden: {
     display: 'none',
@@ -72,7 +72,7 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
           className={clsx(classes.menuButton,
             drawerOpen && classes.menuButtonHidden)}
         >
-          <KeyboardArrowRightIcon />
+          <SearchIcon />
         </IconButton>
         <Box display="flex" className={classes.menuButtonGroup}>
           <Typography
@@ -93,15 +93,6 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
             to={routes.scientificNames.route}
           >
             Scientific names
-          </Button>
-          <Button
-            className={classes.menuButton}
-            color="inherit"
-            variant="text"
-            component={RouterLink}
-            to={routes.slovakNames.route}
-          >
-            Slovak names
           </Button>
         </Box>
       </Toolbar>

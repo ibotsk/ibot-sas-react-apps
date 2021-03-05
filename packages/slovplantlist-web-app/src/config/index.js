@@ -20,7 +20,7 @@ export default {
   status: {
     A: {
       key: 'A',
-      text: 'Accepted name',
+      text: 'Accepted',
       colour: '#57ab27',
     },
     PA: {
@@ -61,21 +61,26 @@ export default {
     3: 'nomenclatoric',
     4: 'misidentification',
   },
-  synonymPrefix: {
+  synonyms: {
     nomenclatoric: {
-      value: '≡',
+      syntype: 3,
+      prefix: '≡',
     },
     invalid: {
-      value: '–',
+      syntype: 1,
+      prefix: '–',
     },
     taxonomic: {
-      value: '=',
+      syntype: 2,
+      prefix: '=',
     },
     misidentification: {
-      value: '–',
+      syntype: 4,
+      prefix: '–',
     },
     other: {
-      value: '',
+      syntype: 0,
+      prefix: '',
     },
   },
   pagination: {

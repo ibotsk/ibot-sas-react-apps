@@ -1,117 +1,213 @@
+/* eslint-disable react/forbid-prop-types */
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
+
+import { Container, Divider } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+
+import { PageTitle } from '@ibot/components';
+import { species as speciesUtils } from '@ibot/utils';
 
 import {
-  Container, Divider,
-} from '@material-ui/core';
+  nomencatureService,
+  genusService,
+} from 'services';
+import config from 'config';
 
-import TitledSection from './Components/TitledSection';
 import NameTitleSection from './Components/NameTitleSection';
+import TitledSection from './Components/TitledSection';
+import NameLabelValue from './Components/NameLabelValue';
+import NameLabelList from './Components/NameLabelList';
 import SynonymList from './Components/SynonymList';
-import NameList from './Components/NameList';
 
-import config from '../../../config';
+import {
+  SynonymListItemBasic,
+  SynonymListItemTaxonomic,
+} from './Components/SynonymListItems';
 
-const { status } = config;
+import NameDetailAccepted from './NameDetailAccepted';
+import NameDetailSynonym from './NameDetailSynonym';
 
-const nameRecord = {
-  ntype: 'A',
-  hybrid: false,
-  genus: 'Lorem',
-  species: 'ipsum',
-  subsp: 'ipsum',
-  var: null,
-  subvar: null,
-  forma: null,
-  nothosubsp: null,
-  nothoforma: null,
-  proles: null,
-  unranked: null,
-  authors: 'Dolor.',
-  genusH: null,
-  speciesH: null,
-  subspH: null,
-  varH: null,
-  subvarH: null,
-  formaH: null,
-  nothosubspH: null,
-  nothoformaH: null,
-  authorsH: null,
-  publication: 'Curabitur ornare condimentum est',
-  tribus: null,
-  vernacular: 'Slovenske meno',
-  ntypeOrder: 1,
-  isIsonym: false,
-  isBasionym: false,
-  notes: null,
-  aggregate: null,
-  subaggregate: null,
-  id: 1,
-};
+const {
+  status: statusConfig,
+  synonyms: synonymsConfig,
+} = config;
 
-const makeSynonymList = (length, syntype, subsyns = 0) => (
-  [...Array(length).keys()]
-    .map(() => ({
-      syntype,
-      name: 'Lorem ipsum',
-      subsynonyms: [...Array(subsyns).keys()]
-        .map((i) => ({ id: i, name: 'Lorem ipsum' })),
-    }))
-);
-const makeNameList = (length) => [...Array(length).keys()].map((i) => ({
-  id: i,
-  name: 'Lorem ipsum',
-}));
+const {
+  A: { key: A },
+  PA: { key: PA },
+  S: { key: S },
+  DS: { key: DS },
+  PC: { key: PC },
+  TP: { key: TP },
+} = statusConfig;
 
 const getStatusText = (ntype) => (
-  status[ntype] ? status[ntype].text : ''
+  statusConfig[ntype] ? statusConfig[ntype].text : ''
 );
 
+const useStyles = makeStyles((theme) => ({
+  nameDivider: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+}));
+
 const NameDetail = () => {
+  const classes = useStyles();
+
+  const { id } = useParams();
+
   const [record, setRecord] = useState({});
-  const [accepted, setAccepted] = useState([]);
+
   const [synonymsNomenclatoric, setSynonymsNomenclatoric] = useState([]);
   const [synonymsTaxonomic, setSynonymsTaxonomic] = useState([]);
-  const [genus, setGenus] = useState('');
-  const [familyAPG, setFamilyAPG] = useState('');
+  const [synonymsOthers, setSynonymsOthers] = useState([]);
+  const [invalidDesignations, setInvalidDesignations] = useState([]);
+  const [misidentifications, setMisidentifications] = useState([]);
+
+  const [familyAPG, setFamilyAPG] = useState();
+
+  const [forRelations, setForRelations] = useState({});
 
   useEffect(() => {
-    setRecord(nameRecord);
-    setAccepted(makeNameList(2));
-    setSynonymsNomenclatoric(makeSynonymList(2, 3));
-    setSynonymsTaxonomic(makeSynonymList(3, 2, 3));
+    const fetch = async () => {
+      const nomenRecord = await nomencatureService.getNomenclatureById(id);
+      const { genusReference } = nomenRecord || {};
 
-    setGenus('Lorem');
-    setFamilyAPG('Lorem');
-  }, []);
+      const familyRecord = await genusService
+        .getFamilyApgOfGenus(genusReference);
 
-  const { ntype, ...name } = record;
+      const synonyms = await nomencatureService.getSynonymsOfId(id);
+      const invalidDesigRecords = await nomencatureService
+        .getInvalidDesignationsOfId(id);
+      const misidentificationsRecords = await nomencatureService
+        .getMisidentificationsOfId(id);
+
+      const forRelationsRecords = await nomencatureService
+        .getForRelationsOfId(id);
+
+      setRecord(nomenRecord);
+      setFamilyAPG(familyRecord);
+      setSynonymsNomenclatoric(synonyms.nomenclatoricSynonyms);
+      setSynonymsTaxonomic(synonyms.taxonomicSynonyms);
+      setSynonymsOthers(synonyms.otherSynonyms);
+      setInvalidDesignations(invalidDesigRecords);
+      setMisidentifications(misidentificationsRecords);
+      setForRelations(forRelationsRecords);
+    };
+    fetch();
+  }, [id]);
+
+  const {
+    status,
+    publication,
+    acceptedNames,
+    genusReference,
+    parentCombination,
+    taxonPosition,
+    basionym,
+    replaced,
+    nomenNovum,
+    ...name
+  } = record;
+
+  const {
+    basionymFor,
+    nomenNovumFor,
+    replacedFor,
+    parentCombinationFor,
+    taxonPositionFor,
+  } = forRelations;
+
   return (
     <div>
+      <PageTitle
+        websiteTitle="Slovplantlist"
+        title={speciesUtils.listOfSpeciesString(name)}
+      />
       <NameTitleSection
         name={name}
-        status={getStatusText(ntype)}
-        publication={name.publication}
-        genus={genus}
+        status={getStatusText(status)}
+        publication={publication}
+        genus={genusReference}
         familyAPG={familyAPG}
+        vernacular={name.vernacular}
       />
       <Container maxWidth="md">
-        <TitledSection title="Accepted name(s)">
-          <NameList list={accepted} />
-        </TitledSection>
-        <TitledSection title="Synonyms">
+        {[S, DS].includes(status) && (
+          <NameDetailSynonym
+            acceptedNames={acceptedNames}
+          />
+        )}
+        <TitledSection
+          title="Synonyms"
+          hideWhen={[PC, TP].includes(status)}
+        >
           <SynonymList
+            syntype={synonymsConfig.nomenclatoric.syntype}
             synonyms={synonymsNomenclatoric}
+            item={SynonymListItemBasic}
           />
-          <Divider />
+          {(synonymsNomenclatoric.length > 0
+            && synonymsTaxonomic.length > 0)
+            && (
+              <Divider />
+            )
+          }
           <SynonymList
+            syntype={synonymsConfig.taxonomic.syntype}
             synonyms={synonymsTaxonomic}
+            item={SynonymListItemTaxonomic}
+          />
+          {(synonymsTaxonomic.length > 0 && synonymsOthers.length > 0) && (
+            <Divider />
+          )}
+          <SynonymList
+            syntype={synonymsConfig.other.syntype}
+            synonyms={synonymsOthers}
+            item={SynonymListItemBasic}
           />
         </TitledSection>
-        <TitledSection title="Some other section">
-          Content
+        {[A, PA].includes(status) && (
+          <NameDetailAccepted
+            invalidDesignations={invalidDesignations}
+            misidentifications={misidentifications}
+          />
+        )}
+        <TitledSection
+          title="Related names"
+          hideWhen={[PC, TP].includes(status)}
+        >
+          <NameLabelValue
+            label="Parent combination notation"
+            data={parentCombination}
+          />
+          <NameLabelValue label="Taxon position" data={taxonPosition} />
+          <Divider className={classes.nameDivider} />
+          <NameLabelValue label="Basionym" data={basionym} />
+          <NameLabelValue label="Nomen novum" data={nomenNovum} />
+          <NameLabelValue label="Replaced" data={replaced} />
         </TitledSection>
-        <TitledSection title="Another section">
-          Other Content
+
+        <TitledSection
+          title="Is used as"
+        >
+          <NameLabelList
+            label="Parent combination for"
+            listOfNames={parentCombinationFor}
+          />
+          <Divider className={classes.nameDivider} />
+          <NameLabelList
+            label="Taxon position for"
+            listOfNames={taxonPositionFor}
+          />
+          <Divider className={classes.nameDivider} />
+          <NameLabelList label="Basionym for" listOfNames={basionymFor} />
+          <Divider className={classes.nameDivider} />
+          <NameLabelList label="Nomen novum for" listOfNames={nomenNovumFor} />
+          <Divider className={classes.nameDivider} />
+          <NameLabelList label="Replaced for" listOfNames={replacedFor} />
         </TitledSection>
       </Container>
     </div>

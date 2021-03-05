@@ -1,107 +1,42 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
-
-import {
-  List, ListItem, ListItemText, ListItemIcon,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
 
-import config from '../../../../config';
+import { List } from '@material-ui/core';
 
-const { synonymType, synonymPrefix } = config;
-
-const syntypeToPrefix = (type) => {
-  const typeKey = synonymType[type];
-  return synonymPrefix[typeKey].value;
-};
-
-const useStyles = makeStyles((theme) => ({
-  synonymPrefix: {
-    minWidth: 'auto',
-    marginRight: 15,
-  },
-  nested: {
-    paddingLeft: theme.spacing(4),
-    paddingTop: 0,
-    paddingBottom: 0,
-  },
-}));
-
-const ListItemSynonymPrefix = ({ type }) => {
-  const classes = useStyles();
-
+const SynonymList = ({ syntype, synonyms = [], item: Item }) => {
+  if (synonyms.length === 0) {
+    return null;
+  }
   return (
-    <ListItemIcon className={classes.synonymPrefix}>
-      {syntypeToPrefix(type)}
-    </ListItemIcon>
+    <List dense disablePadding>
+      {synonyms.map(({
+        synonym, misidentificationAuthor,
+      }) => (
+        <Item
+          key={synonym.id}
+          syntype={syntype}
+          name={synonym}
+          misidentificationAuthor={misidentificationAuthor}
+          subsynonyms={synonym.subsynonymsNomenclatoric}
+        />
+      ))}
+    </List>
   );
 };
-
-const SynonymListItem = ({ type, name, subsynonyms = [] }) => {
-  const classes = useStyles();
-
-  return (
-    <>
-      <ListItem disableGutters>
-        <ListItemSynonymPrefix type={type} />
-        <ListItemText primary={name} />
-      </ListItem>
-      {subsynonyms.length > 0 && (
-        <List dense component="div" disablePadding>
-          {subsynonyms.map(({ id, name: subsyn }) => (
-            <ListItem
-              key={id}
-              className={classes.nested}
-              disableGutters
-            >
-              <ListItemSynonymPrefix type={3} />
-              <ListItemText primary={subsyn} />
-            </ListItem>
-          ))}
-        </List>
-      )}
-    </>
-  );
-};
-
-const SynonymList = ({ synonyms = [] }) => (
-  <List dense>
-    {synonyms.map(({ syntype, name, subsynonyms }, i) => (
-      <SynonymListItem
-        key={i}
-        type={syntype}
-        name={name}
-        subsynonyms={subsynonyms}
-      />
-    ))}
-  </List>
-);
 
 export default SynonymList;
 
 SynonymList.propTypes = {
+  syntype: PropTypes.number.isRequired,
   synonyms: PropTypes.arrayOf(PropTypes.shape({
-    syntype: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired, // TODO: change this to object or los name
+    synonym: PropTypes.object,
     subsynonyms: PropTypes.arrayOf(PropTypes.object),
   })),
+  item: PropTypes.func.isRequired,
 };
 
 SynonymList.defaultProps = {
   synonyms: [],
-};
-
-SynonymListItem.propTypes = {
-  type: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
-  subsynonyms: PropTypes.arrayOf(PropTypes.object),
-};
-
-SynonymListItem.defaultProps = {
-  subsynonyms: [],
-};
-
-ListItemSynonymPrefix.propTypes = {
-  type: PropTypes.number.isRequired,
 };

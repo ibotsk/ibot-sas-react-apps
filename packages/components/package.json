@@ -31,7 +31,7 @@
     "@ibot/types": "^0.1.0",
     "@ibot/utils": "^0.1.0",
     "react-bootstrap-table-next": "^4.0.3",
-    "react-helmet": "^6.1.0"
+    "react-helmet-async": "^1.0.9"
   },
   "peerDependencies": {
     "prop-types": "^15.6.0",

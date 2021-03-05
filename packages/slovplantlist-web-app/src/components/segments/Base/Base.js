@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import { matchPath } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -9,12 +9,12 @@ import Container from '@material-ui/core/Container';
 
 import PropTypes from 'prop-types';
 
-import UpperMenu from '../Navigation/UpperMenu';
+import UpperMenu from 'components/segments/Navigation/UpperMenu';
+import config from 'config';
+
 import Copyright from './Copyright';
 import LeftDrawer from './LeftDrawer';
 import FilterRouter from './FilterRouter';
-
-import config from '../../../config';
 
 const { routes } = config;
 
@@ -31,6 +31,13 @@ const useStyles = makeStyles((theme) => ({
   container: {
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
+    '& a': {
+      textDecoration: 'none',
+      color: 'inherit',
+    },
+    '& a:hover': {
+      textDecoration: 'underline',
+    },
   },
 }));
 
@@ -49,9 +56,12 @@ const isDrawerOpened = (route) => {
 
 const Base = ({ router: Router }) => {
   const { pathname } = useLocation();
+  const history = useHistory();
+
   const classes = useStyles();
 
   const [open, setOpen] = useState(false);
+  const [searchValues, setSearchValues] = useState({});
 
   useEffect(() => {
     const isOpen = isDrawerOpened(pathname);
@@ -65,8 +75,9 @@ const Base = ({ router: Router }) => {
     setOpen(false);
   };
 
-  const handleSearch = (...values) => {
-    console.log(...values);
+  const handleSearch = (values, route) => {
+    setSearchValues(values);
+    history.push(route);
   };
 
   return (
@@ -76,7 +87,6 @@ const Base = ({ router: Router }) => {
       <LeftDrawer
         open={open}
         onDrawerClose={handleDrawerClose}
-        onFilterSearch={handleSearch}
       >
         <FilterRouter
           pathname={pathname}
@@ -87,7 +97,7 @@ const Base = ({ router: Router }) => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <Router />
+          <Router searchValues={searchValues} />
           <Box pt={4}>
             <Copyright />
           </Box>
