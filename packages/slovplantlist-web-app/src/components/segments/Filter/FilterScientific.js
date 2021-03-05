@@ -20,6 +20,11 @@ const FilterScientific = ({
       infraspecific,
     })
   );
+
+  const handleValidate = () => (
+    [genus, species, infraspecific].filter((e) => !!e).length
+  );
+
   const handleReset = () => {
     setGenus('');
     setSpecies('');
@@ -31,6 +36,7 @@ const FilterScientific = ({
       closed={closed}
       onSearch={handleSearch}
       onReset={handleReset}
+      onValidate={handleValidate}
     >
       <ListItemTextField
         id="genus"

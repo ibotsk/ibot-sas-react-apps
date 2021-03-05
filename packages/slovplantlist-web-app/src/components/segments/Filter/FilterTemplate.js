@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import {
   Box, Typography, Toolbar, Divider,
   List, ListItem, IconButton,
+  ClickAwayListener, Tooltip,
 } from '@material-ui/core';
 
 import {
@@ -35,21 +36,53 @@ const statusOptions = [
   },
 ];
 
-const useStyles = makeStyles((/* theme */) => ({
+const useStyles = makeStyles((theme) => ({
   toolbarButtons: {
     marginLeft: 'auto',
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    justifyContent: 'space-between',
+  },
+  validationMessage: {
+    color: theme.palette.warning.main,
   },
   lastTextField: {
     paddingBottom: 10,
   },
 }));
 
+const WarningMessage = withStyles((theme) => ({
+  root: {
+    color: theme.palette.warning.main,
+  },
+}))(Typography);
+
+const ValidationMessage = ({ open, onClose }) => {
+  if (!open) {
+    return null;
+  }
+  return (
+    <ClickAwayListener onClickAway={onClose}>
+      <WarningMessage
+        variant="body2"
+        component="span"
+      >
+        Please provide a value
+        <br />
+        or check a Status below
+      </WarningMessage>
+    </ClickAwayListener>
+  );
+};
+
 const FilterTemplate = ({
-  closed, onSearch, onReset, children,
+  closed, onSearch, onReset, onValidate, children,
 }) => {
   const classes = useStyles();
 
   const [checkedStatus, setCheckedStatus] = useState([]);
+  const [validationMessageOpen, setValidationMessageOpen] = useState(false);
 
   const handleCheckStatus = (value) => {
     const currentIndex = checkedStatus.indexOf(value);
@@ -64,10 +97,24 @@ const FilterTemplate = ({
     setCheckedStatus(newChecked);
   };
 
+  const handleValidate = () => {
+    if (!onValidate) {
+      return true;
+    }
+    if (!onValidate()) {
+      return !!(checkedStatus.length); // if children fields are invalid, then at least one status must be checked
+    }
+    return true;
+  };
+
   const handleSearch = () => {
-    onSearch({
-      status: checkedStatus,
-    });
+    if (handleValidate()) {
+      onSearch({
+        status: checkedStatus,
+      });
+    } else {
+      setValidationMessageOpen(true);
+    }
   };
 
   const handleReset = () => {
@@ -90,14 +137,19 @@ const FilterTemplate = ({
               Search
             </Typography>
             <div className={classes.toolbarButtons}>
-              <IconButton
-                color="secondary"
-                edge="end"
-                variant="outlined"
-                onClick={handleReset}
+              <Tooltip
+                title="Clear search fields. Does not clear search results"
               >
-                <DeleteIcon />
-              </IconButton>
+                <IconButton
+                  color="secondary"
+                  edge="end"
+                  variant="outlined"
+                  onClick={handleReset}
+                  aria-label="Clear search fields"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
             </div>
           </ListItem>
           {children}
@@ -111,6 +163,12 @@ const FilterTemplate = ({
               >
                 <SearchIcon />
               </IconButton>
+              <Box>
+                <ValidationMessage
+                  open={validationMessageOpen}
+                  onClose={() => setValidationMessageOpen(false)}
+                />
+              </Box>
             </div>
           </ListItem>
         </List>
@@ -140,9 +198,16 @@ FilterTemplate.propTypes = {
   closed: PropTypes.bool.isRequired,
   onSearch: PropTypes.func.isRequired,
   onReset: PropTypes.func.isRequired,
+  onValidate: PropTypes.func,
   children: PropTypes.node,
 };
 
 FilterTemplate.defaultProps = {
+  onValidate: undefined,
   children: undefined,
+};
+
+ValidationMessage.propTypes = {
+  open: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
