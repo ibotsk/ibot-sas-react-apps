@@ -4,6 +4,7 @@ import { generatePath, Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import { Typography } from '@material-ui/core';
+
 import { hooks } from '@ibot/core';
 import { LosName } from '@ibot/components';
 
@@ -12,6 +13,7 @@ import ResultsTable from '../../segments/Common/ResultsTable';
 
 import { searchService } from '../../../services';
 import config from '../../../config';
+import SkeletonTable from '../../segments/Common/SkeletonTable';
 
 const {
   pagination: paginationConfig,
@@ -84,7 +86,7 @@ const ScientificNames = ({
     )
   ), [genus, species, infraspecific, status]);
 
-  const { data: results } = hooks.useData(
+  const { data: results, isLoading } = hooks.useData(
     getData, page, rowsPerPage,
   );
 
@@ -93,13 +95,22 @@ const ScientificNames = ({
     setRowsPerPage(rppg);
   };
 
-  if (!results) {
+  if (!results && !isLoading) {
     return (
       <>
         <Title>Scientific Names</Title>
         <Typography color="textSecondary" variant="h6" component="span">
           Use search fields to display results
         </Typography>
+      </>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <>
+        <Title>Scientific Names</Title>
+        <SkeletonTable />
       </>
     );
   }
