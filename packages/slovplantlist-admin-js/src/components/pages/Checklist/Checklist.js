@@ -38,6 +38,7 @@ const {
     ownership: ownershipColumn,
     insertedMethod: insertedMethodConfig,
     updatedMethod: updatedMethodConfig,
+    checkedTimestampOptions,
   },
   mappings,
 } = config;
@@ -75,6 +76,9 @@ const columns = (isAuthor) => [
     ) : (
       <Glyphicon glyph="remove" className="red" />
     )),
+    filter: selectFilter({
+      options: checkedTimestampOptions,
+    }),
     align: 'center',
     hidden: false,
   },

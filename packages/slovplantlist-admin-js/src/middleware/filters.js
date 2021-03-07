@@ -1,5 +1,5 @@
 import config from 'config/config';
-import { FILTER_TYPES } from 'react-bootstrap-table2-filter';
+import { FILTER_TYPES, Comparator } from 'react-bootstrap-table2-filter';
 
 const { constants } = config;
 
@@ -10,7 +10,7 @@ const makeOwnershipRegexp = (value) => (
 export function listOfSpeciesFilterHandler(context, next) {
   const { filters } = context;
 
-  const listOfSpeciesKey = config.constants.listOfSpeciesColumn;
+  const listOfSpeciesKey = constants.listOfSpeciesColumn;
   const fields = config.nomenclature.filter[listOfSpeciesKey];
   const curatedFilters = {};
 
@@ -36,7 +36,7 @@ export function listOfSpeciesFilterHandler(context, next) {
 export function ownershipFilterHandler(context, next) {
   const { filters, params: { ownerId } } = context;
 
-  const ownershipKey = config.constants.ownership;
+  const ownershipKey = constants.ownership;
   const ownershipMapping = config.mappings.ownership;
   const filterContent = filters[ownershipKey];
   const regexp = makeOwnershipRegexp(ownerId);
@@ -111,5 +111,31 @@ export function dateFilterHandler(context, next) {
     ...filters,
     ...dateFilters,
   };
+  next();
+}
+
+export function checkedRecordFilterHandler(context, next) {
+  const { filters } = context;
+
+  const checkedKey = constants.checkedTimestampColumn;
+  const filterContent = filters[checkedKey];
+
+  let newContent;
+  if (filterContent) {
+    const { filterVal } = filterContent;
+
+    newContent = {
+      ...filterContent,
+      filterVal: null,
+      comparator: filterVal === 'checked' // checked is when timestamp is not null
+        ? Comparator.NE
+        : Comparator.EQ,
+    };
+  }
+  context.filters = {
+    ...filters,
+    [checkedKey]: newContent,
+  };
+
   next();
 }

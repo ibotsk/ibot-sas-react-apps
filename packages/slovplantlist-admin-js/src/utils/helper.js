@@ -42,7 +42,7 @@ const resolveByComparator = (comparator, key, value) => {
 const filterToWhereItem = (filter, key) => {
   let conjug = or;
   let { filterVal } = filter;
-  if (filterVal.and) {
+  if (filterVal && filterVal.and) {
     conjug = and;
     filterVal = filterVal.and;
   }

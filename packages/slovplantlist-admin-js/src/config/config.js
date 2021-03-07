@@ -10,6 +10,11 @@ export default {
       start: '(\\,|^)',
       end: '(\\,|$)',
     },
+    checkedTimestampColumn: 'checkedTimestamp',
+    checkedTimestampOptions: {
+      checked: 'CHECKED',
+      notChecked: 'NOT CHECKED',
+    },
     userRealm: 'slovplantlist',
     userPrincipalType: 'user',
     insertedMethod: {
