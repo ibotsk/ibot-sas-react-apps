@@ -25,12 +25,16 @@ function emptyToNull(obj) {
   );
 }
 
-function replaceNonBreakingSpaces(obj) {
-  return Object.keys(obj).reduce(
+function replaceNonBreakingSpaces(value) {
+  if (typeof value === 'string') {
+    return value.replace(nonRegularWhitespacesRegex, '');
+  }
+
+  return Object.keys(value).reduce(
     (prev, curr) => {
-      const val = obj[curr];
+      const val = value[curr];
       const newVal = typeof val === 'string'
-        ? val.replaceAll(nonRegularWhitespacesRegexObj, '') : val;
+        ? val.replace(nonRegularWhitespacesRegexObj, '') : val;
       return {
         ...prev,
         [curr]: newVal,

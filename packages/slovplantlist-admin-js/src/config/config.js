@@ -5,7 +5,7 @@ export default {
 
   constants: {
     listOfSpeciesColumn: 'listOfSpecies',
-    ownership: 'owner_ids',
+    ownership: 'ownerIds',
     ownershipRegexp: {
       start: '(\\,|^)',
       end: '(\\,|$)',

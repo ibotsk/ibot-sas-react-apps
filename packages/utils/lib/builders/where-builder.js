@@ -19,19 +19,13 @@ export class WhereBuilder {
   }
 }
 
-const NONBREAKING_WHITESPACE = '%C2%A0';
-const REGULAR_WHITESPACE = '%20';
-const replaceNonBreakingSpace = (val) => (
-  val.replaceAll(NONBREAKING_WHITESPACE, REGULAR_WHITESPACE)
-);
-
 const resolveEncode = (val, { encodeUri, escapeQuotes }) => {
   if (!val) {
     return val;
   }
   const escaped = escapeQuotes ? misc.escapeDoubleQuotes(val) : val;
   const encoded = encodeUri ? encodeURIComponent(escaped) : escaped;
-  return replaceNonBreakingSpace(encoded);
+  return misc.replaceNonBreakingSpaces(encoded);
 };
 
 /**
