@@ -5,7 +5,7 @@ import { helperUtils, filterUtils } from 'utils';
 
 import config from 'config/config';
 
-import filterManager from './filters/manager';
+import filterManager from 'handlers/manager';
 
 const { pagination: { sizePerPageList } } = config;
 const sizePerPageDefault = sizePerPageList[0].value;
