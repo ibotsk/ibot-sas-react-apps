@@ -88,15 +88,21 @@ export function dateFilterHandler(context, next) {
     filters[k].filterType === FILTER_TYPES.DATE
   ));
 
+  // WARNING: equality on dateTime does not work without time
+  // not even LIKE '%2021-01-24%' because backend assumes it is 00:00:00 of local time and transforms it to GTM '2021-01-23T23:00:00'
   dateFilterKeys.forEach((k) => {
     const { filterVal: { comparator, date } } = filters[k];
     let filt;
     if (comparator && date) {
-      filt = {
-        ...filters[k],
-        comparator,
-        filterVal: new Date(date).toISOString(),
-      };
+      const d = new Date(date);
+      if (d.getFullYear() >= 1000) {
+        const iso = d.toISOString();
+        filt = {
+          ...filters[k],
+          comparator,
+          filterVal: iso.substr(0, iso.indexOf('T')), // date filter input has only date, so we get rid of time
+        };
+      }
     }
 
     dateFilters[k] = filt;
