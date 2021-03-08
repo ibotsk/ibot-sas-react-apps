@@ -15,6 +15,8 @@ import PropTypes from 'prop-types';
 
 import config from 'config/config';
 
+import SpinnerOverlay from './SpinnerOverlay';
+
 const { pagination: paginationConfig } = config;
 
 const customTotal = (from, to, size) => (
@@ -52,6 +54,8 @@ const TotalAndPaginator = ({ paginationProps }) => (
   </Row>
 );
 
+// WARNING: table overlay doesn't work
+
 const RemotePagination = ({
   remote,
   striped,
@@ -62,6 +66,7 @@ const RemotePagination = ({
   keyField,
   data,
   columns,
+  loading,
   rowEvents,
   rowClasses,
   onTableChange,
@@ -70,7 +75,7 @@ const RemotePagination = ({
   filter,
   defaultSorted,
 }) => (
-  <div>
+  <>
     <PaginationProvider
       pagination={
         paginationFactory({
@@ -110,11 +115,12 @@ const RemotePagination = ({
               {...paginationTableProps}
             />
             <TotalAndPaginator paginationProps={paginationProps} />
+            <SpinnerOverlay show={loading} />
           </div>
         )
       }
     </PaginationProvider>
-  </div>
+  </>
 );
 
 export default RemotePagination;
