@@ -38,6 +38,7 @@ const {
     ownership: ownershipColumn,
     insertedMethod: insertedMethodConfig,
     updatedMethod: updatedMethodConfig,
+    checkedTimestampOptions,
   },
   mappings,
 } = config;
@@ -75,6 +76,9 @@ const columns = (isAuthor) => [
     ) : (
       <Glyphicon glyph="remove" className="red" />
     )),
+    filter: selectFilter({
+      options: checkedTimestampOptions,
+    }),
     align: 'center',
     hidden: false,
   },
@@ -267,7 +271,7 @@ const Checklist = () => {
     page, sizePerPage, where, order, setValues,
   } = commonHooks.useTableChange(ownerId, 1);
 
-  const { data, totalSize } = commonHooks.useTableData(
+  const { data, totalSize, isLoading } = commonHooks.useTableData(
     getCountUri, getAllUri, accessToken, where, page,
     sizePerPage, order, showModal,
   );
@@ -377,7 +381,7 @@ const Checklist = () => {
           columns={tableColumns}
         >
           {({ baseProps, columnToggleProps }) => (
-            <div>
+            <>
               <RemotePagination
                 hover
                 striped
@@ -386,6 +390,7 @@ const Checklist = () => {
                 keyField={baseProps.keyField}
                 data={baseProps.data}
                 columns={baseProps.columns}
+                loading={isLoading}
                 defaultSorted={defaultSorted}
                 filter={filterFactory()}
                 onTableChange={onTableChange}
@@ -402,7 +407,7 @@ const Checklist = () => {
                   onColumnToggle: handleColumnToggle,
                 }}
               />
-            </div>
+            </>
           )}
         </ToolkitProvider>
       </Grid>

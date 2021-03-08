@@ -20,7 +20,7 @@ const resolveByComparator = (comparator, key, value) => {
     case 'LIKE':
       return likep(key, value);
     case 'REGEXP':
-      return regexp(key, value);
+      return regexp(key, value, { encodeUri: false });
     case 'NEQ':
     case '!=':
       return neq(key, value);
@@ -42,7 +42,7 @@ const resolveByComparator = (comparator, key, value) => {
 const filterToWhereItem = (filter, key) => {
   let conjug = or;
   let { filterVal } = filter;
-  if (filterVal.and) {
+  if (filterVal && filterVal.and) {
     conjug = and;
     filterVal = filterVal.and;
   }
@@ -110,37 +110,6 @@ function buildFilterOptionsFromKeys(keys) {
   });
   return obj;
 }
-
-/**
- * If filter key is in config.nomenclature.filter then modify that filter such as new
- * filterVal = [{ field, value }] where field is for every value from the config nad value is original filterVal.
- * @param {*} filters
- */
-// const curateSearchFilters = filters => {
-//     let curatedFilters = { ...filters };
-//     const keys = Object.keys(filters);
-//     for (const key of keys) { //listofspecies
-//         const fields = config.nomenclature.filter[key]; // genus, species, ...
-//         if (fields) {
-//             const filterContent = curatedFilters[key]; // filterType, filterVal, caseSensitive, comparator
-//             const filterVal = filterContent.filterVal;
-//             if (typeof filterVal === "string") { // avoid redoing mapping on values that are already in { field, value }
-//                 const newFilterValue = fields.map(f => ({ field: f, value: filterVal }));
-//                 filterContent.filterVal = newFilterValue;
-//                 curatedFilters[key] = filterContent;
-//             }
-//         }
-//     }
-//     return curatedFilters;
-// }
-
-// const curateSortFields = sortField => {
-//     const fields = config.nomenclature.filter[sortField];
-//     if (fields) {
-//         return fields;
-//     }
-//     return sortField;
-// }
 
 export default {
   losToTypeaheadSelected,

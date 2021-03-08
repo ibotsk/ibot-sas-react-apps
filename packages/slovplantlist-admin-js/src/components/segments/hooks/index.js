@@ -5,6 +5,8 @@ import { helperUtils, filterUtils } from 'utils';
 
 import config from 'config/config';
 
+import filterManager from 'handlers/manager';
+
 const { pagination: { sizePerPageList } } = config;
 const sizePerPageDefault = sizePerPageList[0].value;
 
@@ -65,17 +67,19 @@ function useTableChange(
   const [where, setWhere] = useState(undefined);
   const [order, setOrder] = useState(undefined);
 
-  const setValues = ({
+  const setValues = async ({
     page: pageNew,
     sizePerPage: sizePerPageNew,
     filters,
     sortField,
     sortOrder,
   }) => {
-    const curatedFilters = filterUtils.handleSpecialSearchFilters(
-      filters, { ownerId },
-    );
-    const newWhere = helperUtils.makeWhere(curatedFilters);
+    const handledFilters = await filterManager.makeFilters({
+      filters,
+      params: { ownerId },
+    });
+
+    const newWhere = helperUtils.makeWhere(handledFilters);
 
     const curatedSortField = filterUtils.curateSortFields(sortField);
     const newOrder = helperUtils.makeOrder(curatedSortField, sortOrder);

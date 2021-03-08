@@ -5,10 +5,15 @@ export default {
 
   constants: {
     listOfSpeciesColumn: 'listOfSpecies',
-    ownership: 'owner_ids',
+    ownership: 'ownerIds',
     ownershipRegexp: {
       start: '(\\,|^)',
       end: '(\\,|$)',
+    },
+    checkedTimestampColumn: 'checkedTimestamp',
+    checkedTimestampOptions: {
+      checked: 'CHECKED',
+      notChecked: 'NOT CHECKED',
     },
     userRealm: 'slovplantlist',
     userPrincipalType: 'user',
