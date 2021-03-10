@@ -9,6 +9,7 @@ COPY yarn.lock .
 
 COPY packages/client ./packages/client
 COPY packages/components ./packages/components
+COPY packages/core ./packages/core
 COPY packages/types ./packages/types
 COPY packages/utils ./packages/utils
 COPY packages/slovplantlist-admin-js ./packages/slovplantlist-admin-js
