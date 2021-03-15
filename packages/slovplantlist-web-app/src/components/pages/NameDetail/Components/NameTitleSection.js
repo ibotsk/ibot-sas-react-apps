@@ -15,7 +15,6 @@ const useStyles = makeStyles((theme) => ({
   titleContainer: {
     width: '100%',
     marginTop: -32,
-    marginBottom: 30,
   },
   titleItem: {
     padding: theme.spacing(2),

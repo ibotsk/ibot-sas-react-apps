@@ -1,8 +1,7 @@
-/* eslint-disable react/forbid-prop-types */
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Container, Divider } from '@material-ui/core';
+import { Container, Tabs, Tab } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { PageTitle } from '@ibot/components';
@@ -14,41 +13,22 @@ import {
 } from 'services';
 import config from 'config';
 
+import TabPanel from 'components/segments/Common/TabPanel';
 import NameTitleSection from './Components/NameTitleSection';
-import TitledSection from './Components/TitledSection';
-import NameLabelValue from './Components/NameLabelValue';
-import NameLabelList from './Components/NameLabelList';
-import SynonymList from './Components/SynonymList';
 
-import {
-  SynonymListItemBasic,
-  SynonymListItemTaxonomic,
-} from './Components/SynonymListItems';
-
-import NameDetailAccepted from './NameDetailAccepted';
-import NameDetailSynonym from './NameDetailSynonym';
+import NameDetailOverview from './NameDetailOverview';
+import NameDetailStatus from './NameDetailStatus';
 
 const {
   status: statusConfig,
-  synonyms: synonymsConfig,
 } = config;
-
-const {
-  A: { key: A },
-  PA: { key: PA },
-  S: { key: S },
-  DS: { key: DS },
-  PC: { key: PC },
-  TP: { key: TP },
-} = statusConfig;
 
 const getStatusText = (ntype) => (
   statusConfig[ntype] ? statusConfig[ntype].text : ''
 );
 
 const useStyles = makeStyles((theme) => ({
-  nameDivider: {
-    marginTop: theme.spacing(2),
+  tabs: {
     marginBottom: theme.spacing(2),
   },
 }));
@@ -57,6 +37,7 @@ const NameDetail = () => {
   const classes = useStyles();
 
   const { id } = useParams();
+  const [activeTab, setActiveTab] = useState(0);
 
   const [record, setRecord] = useState({});
 
@@ -109,19 +90,12 @@ const NameDetail = () => {
     basionym,
     replaced,
     nomenNovum,
+    nomenStatus,
     ...name
   } = record;
 
-  const {
-    basionymFor,
-    nomenNovumFor,
-    replacedFor,
-    parentCombinationFor,
-    taxonPositionFor,
-  } = forRelations;
-
   return (
-    <div>
+    <>
       <PageTitle
         websiteTitle="Slovplantlist"
         title={speciesUtils.listOfSpeciesString(name)}
@@ -135,82 +109,43 @@ const NameDetail = () => {
         vernacular={name.vernacular}
       />
       <Container maxWidth="md">
-        {[S, DS].includes(status) && (
-          <NameDetailSynonym
-            acceptedNames={acceptedNames}
-          />
-        )}
-        <TitledSection
-          title="Synonyms"
-          hideWhen={[PC, TP].includes(status)}
+        <Tabs
+          className={classes.tabs}
+          value={activeTab}
+          indicatorColor="primary"
+          textColor="primary"
+          onChange={(e, newTab) => setActiveTab(newTab)}
+          aria-label="Name details tabs"
         >
-          <SynonymList
-            syntype={synonymsConfig.nomenclatoric.syntype}
-            synonyms={synonymsNomenclatoric}
-            item={SynonymListItemBasic}
-          />
-          {(synonymsNomenclatoric.length > 0
-            && synonymsTaxonomic.length > 0)
-            && (
-              <Divider />
-            )
-          }
-          <SynonymList
-            syntype={synonymsConfig.taxonomic.syntype}
-            synonyms={synonymsTaxonomic}
-            item={SynonymListItemTaxonomic}
-          />
-          {(synonymsTaxonomic.length > 0 && synonymsOthers.length > 0) && (
-            <Divider />
-          )}
-          <SynonymList
-            syntype={synonymsConfig.other.syntype}
-            synonyms={synonymsOthers}
-            item={SynonymListItemBasic}
-          />
-        </TitledSection>
-        {[A, PA].includes(status) && (
-          <NameDetailAccepted
+          <Tab label="Overview" />
+          <Tab label="Name status" />
+        </Tabs>
+        <TabPanel value={activeTab} index={0}>
+          <NameDetailOverview
+            status={status}
+            acceptedNames={acceptedNames}
+            synonyms={{
+              synonymsNomenclatoric,
+              synonymsTaxonomic,
+              synonymsOthers,
+            }}
             invalidDesignations={invalidDesignations}
             misidentifications={misidentifications}
+            relatives={{
+              parentCombination,
+              taxonPosition,
+              basionym,
+              nomenNovum,
+              replaced,
+            }}
+            forRelations={forRelations}
           />
-        )}
-        <TitledSection
-          title="Related names"
-          hideWhen={[PC, TP].includes(status)}
-        >
-          <NameLabelValue
-            label="Parent combination notation"
-            data={parentCombination}
-          />
-          <NameLabelValue label="Taxon position" data={taxonPosition} />
-          <Divider className={classes.nameDivider} />
-          <NameLabelValue label="Basionym" data={basionym} />
-          <NameLabelValue label="Nomen novum" data={nomenNovum} />
-          <NameLabelValue label="Replaced" data={replaced} />
-        </TitledSection>
-
-        <TitledSection
-          title="Is used as"
-        >
-          <NameLabelList
-            label="Parent combination for"
-            listOfNames={parentCombinationFor}
-          />
-          <Divider className={classes.nameDivider} />
-          <NameLabelList
-            label="Taxon position for"
-            listOfNames={taxonPositionFor}
-          />
-          <Divider className={classes.nameDivider} />
-          <NameLabelList label="Basionym for" listOfNames={basionymFor} />
-          <Divider className={classes.nameDivider} />
-          <NameLabelList label="Nomen novum for" listOfNames={nomenNovumFor} />
-          <Divider className={classes.nameDivider} />
-          <NameLabelList label="Replaced for" listOfNames={replacedFor} />
-        </TitledSection>
+        </TabPanel>
+        <TabPanel value={activeTab} index={1}>
+          <NameDetailStatus data={nomenStatus} />
+        </TabPanel>
       </Container>
-    </div>
+    </>
   );
 };
 
