@@ -29,7 +29,7 @@ const getStatusText = (ntype) => (
 
 const useStyles = makeStyles((theme) => ({
   tabs: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(4),
   },
 }));
 
