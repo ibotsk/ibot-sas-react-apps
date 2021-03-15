@@ -3,14 +3,14 @@ const backendBase = process.env.REACT_APP_BACKEND;
 
 export default {
   nomenclature: {
-    getByIdUri: `${backendBase}/nomenclatures/<%id%>`,
-    getSynonymsOfIdUri: `${backendBase}/nomenclatures/<%id%>/synonyms?withSubsynonyms=true`,
-    getInvalidDesignationsOfIdUri: `${backendBase}/nomenclatures/<%id%>/invalid-designations`,
-    getMisidentificationsOfIdUri: `${backendBase}/nomenclatures/<%id%>/misidentifications`,
-    getForRelationsUri: `${backendBase}/nomenclatures/<%id%>/for-relations`,
+    getByIdUri: `${backendBase}/names/<%id%>`,
+    getSynonymsOfIdUri: `${backendBase}/names/<%id%>/synonyms?withSubsynonyms=true`,
+    getInvalidDesignationsOfIdUri: `${backendBase}/names/<%id%>/invalid-designations`,
+    getMisidentificationsOfIdUri: `${backendBase}/names/<%id%>/misidentifications`,
+    getForRelationsUri: `${backendBase}/names/<%id%>/for-relations`,
   },
   nomenclatureSearch: {
-    scientificUri: `${backendBase}/nomenclature-search/scientific`,
+    scientificUri: `${backendBase}/name-search/scientific`,
   },
   genus: {
     getFamilyApgOfGenusUri: `${backendBase}/genera/<%id%>/family-apg`,
