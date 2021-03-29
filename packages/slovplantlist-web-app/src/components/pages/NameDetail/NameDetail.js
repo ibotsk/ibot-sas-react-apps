@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Container, Divider } from '@material-ui/core';
+import { Box, Container, Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { PageTitle } from '@ibot/components';
@@ -47,6 +47,12 @@ const getStatusText = (ntype) => (
 );
 
 const useStyles = makeStyles((theme) => ({
+  root: {
+    '& a': {
+      textDecoration: 'none',
+      color: 'inherit',
+    },
+  },
   nameDivider: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
@@ -121,7 +127,7 @@ const NameDetail = () => {
   } = forRelations;
 
   return (
-    <div>
+    <Box className={classes.root}>
       <PageTitle
         websiteTitle="Slovplantlist"
         title={speciesUtils.listOfSpeciesString(name)}
@@ -210,7 +216,7 @@ const NameDetail = () => {
           <NameLabelList label="Replaced for" listOfNames={replacedFor} />
         </TitledSection>
       </Container>
-    </div>
+    </Box>
   );
 };
 
