@@ -16,6 +16,13 @@ const defaultPage = 0;
 const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
+    '& a': {
+      textDecoration: 'none',
+      color: 'inherit',
+    },
+    '& a:hover': {
+      textDecoration: 'underline',
+    },
   },
   container: {
     maxHeight: 600,
