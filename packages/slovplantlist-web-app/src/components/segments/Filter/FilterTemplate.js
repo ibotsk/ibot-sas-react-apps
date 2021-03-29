@@ -12,6 +12,8 @@ import {
   Search as SearchIcon,
 } from '@material-ui/icons';
 
+import { useTranslation } from 'react-i18next';
+
 import PropTypes from 'prop-types';
 
 import ListItemCollapsible from './Components/ListItemCollapsible';
@@ -80,6 +82,7 @@ const FilterTemplate = ({
   closed, onSearch, onReset, onValidate, children,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const [checkedStatus, setCheckedStatus] = useState([]);
   const [validationMessageOpen, setValidationMessageOpen] = useState(false);
@@ -136,7 +139,7 @@ const FilterTemplate = ({
         <List>
           <ListItem>
             <Typography variant="h6" color="secondary">
-              Search
+              {t('Search')}
             </Typography>
             <div className={classes.toolbarButtons}>
               <Tooltip
