@@ -17,6 +17,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const LinkHome = (props) => (
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  <Link color="secondary" target="_blank" rel="noopener" {...props} />
+);
+
 const Home = () => {
   const classes = useStyles();
   return (
@@ -38,12 +43,11 @@ const Home = () => {
             diversity of vascular plants in Slovakia in the form of an overview
             of their accepted names and synonyms, in accordance with the valid
             international code of botanical nomenclature (
-            <Link
+            <LinkHome
               href="https://www.iapt-taxon.org/nomen/main.php"
-              color="secondary"
             >
               Turland et al. 2018
-            </Link>
+            </LinkHome>
             ). It includes all families, genera, species and infraspecific taxa
             that have been recorded in the territory ofthe Slovak Republic so
             far. In addition to spontaneous, native and non-native taxa, it
@@ -54,62 +58,55 @@ const Home = () => {
             the Slovak national nomenclature of the vascular plants, revised
             and approved by the Nomenclature Commission of
             {' '}
-            <Link
+            <LinkHome
               href="http://sbs.sav.sk/SBS1/supplements.html"
-              color="secondary"
             >
               the Slovak Botanical  Society at the Slovak Academy of Sciences
-            </Link>
+            </LinkHome>
             {' '}
             with the application of the latest principles (
-            <Link
+            <LinkHome
               // eslint-disable-next-line max-len
               href="http://sbs.sav.sk/SBS1/bulletins/docs/supplement/BSBS-2017-roc39-supplement1.pdf"
-              color="secondary"
             >
               Kliment et al. 2017
-            </Link>
+            </LinkHome>
             ). In addition to the
             correct scientific and national names and their synonyms, each
             taxon is also associated with information on its origin and invasion
             status (
-            <Link
+            <LinkHome
               href="http://dass.sav.sk/"
-              color="secondary"
             >
               Medvecká et al. 2012
-            </Link>
+            </LinkHome>
             ), endemism (
-            <Link
+            <LinkHome
               href="http://sbs.sav.sk/SBS1/supplements.html"
-              color="secondary"
             >
               Kliment 1999
-            </Link>
+            </LinkHome>
             ,
             {' '}
-            <Link
+            <LinkHome
               href="http://www.preslia.cz/P161Kliment.pdf"
-              color="secondary"
             >
               Kliment et al. 2016
-            </Link>
+            </LinkHome>
             ), red-list category of threat (
-            <Link
+            <LinkHome
               // eslint-disable-next-line max-len
               href="https://www.researchgate.net/publication/273058603_Red_list_of_ferns_and_flowering_plants_of_Slovakia_5th_edition_October_2014"
-              color="secondary"
             >
               Eliáš et al. 2015
-            </Link>
+            </LinkHome>
             ) and legislative protection (
-            <Link
+            <LinkHome
               // eslint-disable-next-line max-len
               href="http://www.sopsr.sk/files/24_2003_vyhlaska_OPaK_od_01_01_2015.pdf"
-              color="secondary"
             >
               Vyhláška 24/2003
-            </Link>
+            </LinkHome>
             ).
           </Typography>
           <Typography paragraph variant="body2">
@@ -200,15 +197,15 @@ const Home = () => {
           <Typography paragraph variant="body2">
             This website is built using a JavaScript library
             {' '}
-            <Link href="https://reactjs.org/" color="secondary">
+            <LinkHome href="https://reactjs.org/">
               React
-            </Link>
+            </LinkHome>
             {' '}
             (v16.14) and
             {' '}
-            <Link href="https://material-ui.com/" color="secondary">
+            <LinkHome href="https://material-ui.com/">
               Material-UI
-            </Link>
+            </LinkHome>
             {' '}
             (v4.11) - a React UI framework. It is deployed as a docker container
             on the server.
@@ -220,9 +217,9 @@ const Home = () => {
             responsible for fetching of the data from the database. It is
             a NodeJs and TypeScript microservice that integrates
             {' '}
-            <Link href="https://loopback.io/" color="secondary">
+            <LinkHome href="https://loopback.io/">
               Loopback 4
-            </Link>
+            </LinkHome>
             {' '}
             framework. This application is also deployed as a docker container
             on the server.
