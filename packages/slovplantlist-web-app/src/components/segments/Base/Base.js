@@ -4,7 +4,6 @@ import { matchPath } from 'react-router';
 import { makeStyles } from '@material-ui/core/styles';
 
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Box from '@material-ui/core/Box';
 import Container from '@material-ui/core/Container';
 
 import PropTypes from 'prop-types';
@@ -12,9 +11,9 @@ import PropTypes from 'prop-types';
 import UpperMenu from 'components/segments/Navigation/UpperMenu';
 import config from 'config';
 
-import Copyright from './Copyright';
 import LeftDrawer from './LeftDrawer';
 import FilterRouter from './FilterRouter';
+import Footer from './Footer';
 
 const { routes } = config;
 
@@ -29,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: 'auto',
   },
   container: {
+    minHeight: 'calc(100vh - 100px)',
     paddingTop: theme.spacing(4),
     paddingBottom: theme.spacing(4),
     '& a:hover': {
@@ -94,10 +94,8 @@ const Base = ({ router: Router }) => {
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
           <Router searchValues={searchValues} />
-          <Box pt={4}>
-            <Copyright />
-          </Box>
         </Container>
+        <Footer />
       </main>
     </div>
   );
