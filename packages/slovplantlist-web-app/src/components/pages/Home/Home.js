@@ -193,6 +193,40 @@ const Home = () => {
             the Slovak Republic and the Slovak Academy of Sciences (the project
             VEGA 2/0137/17).
           </Typography>
+
+          <Typography variant="h6" component="h2">
+            Technical solution
+          </Typography>
+          <Typography paragraph variant="body2">
+            This website is built using a JavaScript library
+            {' '}
+            <Link href="https://reactjs.org/" color="secondary">
+              React
+            </Link>
+            {' '}
+            (v16.14) and
+            {' '}
+            <Link href="https://material-ui.com/" color="secondary">
+              Material-UI
+            </Link>
+            {' '}
+            (v4.11) - a React UI framework. It is deployed as a docker container
+            on the server.
+            <br />
+            The data are stored in the MySQL database. The MySQL server is of
+            version 5.7 and it is deployed as a docker container on the server.
+            <br />
+            Between the website and the database lies component that is
+            responsible for fetching of the data from the database. It is
+            a NodeJs and TypeScript microservice that integrates
+            {' '}
+            <Link href="https://loopback.io/" color="secondary">
+              Loopback 4
+            </Link>
+            {' '}
+            framework. This application is also deployed as a docker container
+            on the server.
+          </Typography>
         </Paper>
       </Box>
     </>
