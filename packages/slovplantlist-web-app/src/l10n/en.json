@@ -35,8 +35,8 @@
     "synonym": "Synonym",
     "doubtful": "Doubtful synonym",
     "unresolved": "Unresolved",
-    "combination": "Parent combination notation",
-    "position": "Taxon position notation"
+    "combination": "Parent combination",
+    "position": "Taxon position"
   },
   "tooltips": {
     "clear search fields": "Clear search fields. Does not clear search results"

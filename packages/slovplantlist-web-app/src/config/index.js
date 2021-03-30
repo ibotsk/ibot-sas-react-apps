@@ -93,4 +93,18 @@ export default {
   pagination: {
     rowsPerPageOptions: [10, 20, 40],
   },
+  i18n: {
+    options: {
+      SK: {
+        key: 'sk',
+        abbr: 'SK',
+        label: 'Slovensky',
+      },
+      EN: {
+        key: 'en',
+        abbr: 'EN',
+        label: 'English',
+      },
+    },
+  },
 };

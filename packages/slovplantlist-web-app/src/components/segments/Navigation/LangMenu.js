@@ -6,6 +6,10 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 import { useTranslation } from 'react-i18next';
 
+import config from 'config';
+
+const { i18n: { options: languageOptions } } = config;
+
 const LangMenu = () => {
   const { i18n } = useTranslation();
 
@@ -34,7 +38,7 @@ const LangMenu = () => {
         startIcon={<LanguageIcon />}
         endIcon={<KeyboardArrowDownIcon />}
       >
-        SK
+        {i18n.languages[0]}
       </Button>
       <Menu
         id="language-menu"
@@ -43,12 +47,16 @@ const LangMenu = () => {
         open={!!anchorEl}
         onClose={handleClose}
       >
-        <MenuItem onClick={() => handleChangeLanguage('sk')}>
-          Slovensky
-        </MenuItem>
-        <MenuItem onClick={() => handleChangeLanguage('en')}>
-          English
-        </MenuItem>
+        {
+          Object.keys(languageOptions).map((opt) => (
+            <MenuItem
+              key={languageOptions[opt].key}
+              onClick={() => handleChangeLanguage(languageOptions[opt].key)}
+            >
+              {languageOptions[opt].label}
+            </MenuItem>
+          ))
+        }
       </Menu>
     </>
   );

@@ -44,7 +44,11 @@ const columns = (t) => [
   {
     dataField: 'status',
     text: 'Status',
-    formatter: (cell) => (statusConfig[cell] ? statusConfig[cell].text : cell),
+    formatter: (cell) => (
+      statusConfig[cell]
+        ? t(statusConfig[cell].i18nKey)
+        : cell
+    ),
   },
   {
     dataField: 'accepted',
