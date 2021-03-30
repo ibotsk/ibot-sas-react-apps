@@ -7,6 +7,8 @@ import {
   Divider, Grid, Typography,
 } from '@material-ui/core';
 
+import { useTranslation } from 'react-i18next';
+
 import Copyright from './Copyright';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,6 +42,7 @@ const ListItemTextFooter = (props) => (
 );
 
 const Footer = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   return (
@@ -54,7 +57,7 @@ const Footer = () => {
         <Container maxWidth="lg">
           <Typography variant="overline">
             <Box fontSize={14} fontWeight="fontWeightBold">
-              Useful Databases worldwide
+              {t('Useful Databases worldwide')}
             </Box>
           </Typography>
           <Grid container className={classes.linksContainer} spacing={2}>
@@ -65,31 +68,29 @@ const Footer = () => {
                 component="ul"
                 aria-label="useful databases"
               >
-                <ListItemLink href="http://dataflos.sav.sk">
+                <ListItemLink href={t('databases.dataflos.url')}>
                   <ListItemTextFooter
-                    primary="Dataflos – Databáza flóry Slovenska"
+                    primary={t('databases.dataflos.text')}
                   />
                 </ListItemLink>
-                <ListItemLink href="https://www.chromosomes.sav.sk">
+                <ListItemLink href={t('databases.chromosomes.url')}>
                   <ListItemTextFooter
-                    primary="Karyological database of the ferns
-                  and flowering plants of Slovakia"
+                    primary={t('databases.chromosomes.text')}
                   />
                 </ListItemLink>
-                <ListItemLink href="http://dass.sav.sk/en/">
+                <ListItemLink href={t('databases.dass.url')}>
                   <ListItemTextFooter
-                    primary="Database of non-native plant species of Slovakia"
+                    primary={t('databases.dass.text')}
                   />
                 </ListItemLink>
-                <ListItemLink href="https://ibot.sav.sk/cdf/index_en.html">
+                <ListItemLink href={t('databases.cdf.url')}>
                   <ListItemTextFooter
-                    primary="CDF – Central database of phytocenological relevés"
+                    primary={t('databases.cdf.text')}
                   />
                 </ListItemLink>
-                <ListItemLink href="https://pladias.cz/en/">
+                <ListItemLink href={t('databases.pladias.url')}>
                   <ListItemTextFooter
-                    primary="PLADIAS – Database of the Czech Flora and
-                    Vegetation"
+                    primary={t('databases.pladias.text')}
                   />
                 </ListItemLink>
               </List>
@@ -101,24 +102,24 @@ const Footer = () => {
                 component="ul"
                 aria-label="useful databases"
               >
-                <ListItemLink href="https://www.emplantbase.org/home.html">
+                <ListItemLink href={t('databases.euromed.url')}>
                   <ListItemTextFooter
-                    primary="Euro+Med PlantBase"
+                    primary={t('databases.euromed.text')}
                   />
                 </ListItemLink>
-                <ListItemLink href="https://www.ipni.org/">
+                <ListItemLink href={t('databases.ipni.url')}>
                   <ListItemTextFooter
-                    primary="International Plant Name Index (IPNI)"
+                    primary={t('databases.ipni.text')}
                   />
                 </ListItemLink>
-                <ListItemLink href="http://powo.science.kew.org/">
+                <ListItemLink href={t('databases.powo.url')}>
                   <ListItemTextFooter
-                    primary="Plants of the World online"
+                    primary={t('databases.powo.text')}
                   />
                 </ListItemLink>
-                <ListItemLink href="https://www.tropicos.org/home">
+                <ListItemLink href={t('databases.tropicos.url')}>
                   <ListItemTextFooter
-                    primary="Tropicos"
+                    primary={t('databases.tropicos.text')}
                   />
                 </ListItemLink>
               </List>

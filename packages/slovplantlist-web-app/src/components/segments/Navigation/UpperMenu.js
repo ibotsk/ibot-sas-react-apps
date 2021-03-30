@@ -12,10 +12,13 @@ import {
   Search as SearchIcon,
 } from '@material-ui/icons';
 
+import { useTranslation } from 'react-i18next';
+
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 
 import config from 'config';
+import LangMenu from './LangMenu';
 
 const { routes } = config;
 
@@ -56,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   return (
@@ -92,9 +96,10 @@ const UpperMenu = ({ drawerOpen, onDrawerOpen }) => {
             component={RouterLink}
             to={routes.scientificNames.route}
           >
-            Scientific names
+            {t('Scientific names')}
           </Button>
         </Box>
+        <LangMenu />
       </Toolbar>
     </AppBar>
   );

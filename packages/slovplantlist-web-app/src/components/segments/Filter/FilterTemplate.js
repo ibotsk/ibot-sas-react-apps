@@ -12,29 +12,22 @@ import {
   Search as SearchIcon,
 } from '@material-ui/icons';
 
+import { useTranslation } from 'react-i18next';
+
 import PropTypes from 'prop-types';
+
+import config from 'config';
 
 import ListItemCollapsible from './Components/ListItemCollapsible';
 import ListItemCheckbox from './Components/ListItemCheckbox';
 
-const statusOptions = [
-  {
-    key: 'A',
-    value: 'Accepted',
-  },
-  {
-    key: 'S',
-    value: 'Synonym',
-  },
-  {
-    key: 'PC',
-    value: 'Parent combination',
-  },
-  {
-    key: 'TP',
-    value: 'Taxon position',
-  },
-];
+const { status } = config;
+
+const statusOptions = [status.A, status.S, status.PC, status.TP]
+  .map(({ key, i18nKey }) => ({
+    key,
+    value: i18nKey,
+  }));
 
 const useStyles = makeStyles((theme) => ({
   toolbarButtons: {
@@ -80,6 +73,7 @@ const FilterTemplate = ({
   closed, onSearch, onReset, onValidate, children,
 }) => {
   const classes = useStyles();
+  const { t } = useTranslation();
 
   const [checkedStatus, setCheckedStatus] = useState([]);
   const [validationMessageOpen, setValidationMessageOpen] = useState(false);
@@ -136,11 +130,11 @@ const FilterTemplate = ({
         <List>
           <ListItem>
             <Typography variant="h6" color="secondary">
-              Search
+              {t('Search')}
             </Typography>
             <div className={classes.toolbarButtons}>
               <Tooltip
-                title="Clear search fields. Does not clear search results"
+                title={t('tooltips.clear')}
               >
                 <IconButton
                   color="secondary"
@@ -183,7 +177,7 @@ const FilterTemplate = ({
               <ListItemCheckbox
                 id={key}
                 key={key}
-                label={value}
+                label={t(value)}
                 checked={checkedStatus.includes(key)}
                 onClick={handleCheckStatus}
               />

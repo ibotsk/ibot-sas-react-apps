@@ -1,0 +1,101 @@
+{
+  "Search": "Hľadať",
+  "Search scientific names": "Hľadať odborné mená",
+  "Search slovak names": "Hľadať slovenské mená",
+  "Use search fields": "Zadajte hodnoty do vyhľadávania",
+  "Scientific names": "Odborné mená",
+  "Scientific names page title": "Odborné mená",
+  "Slovak names page title": "Slovenské mená",
+  "Name": "Meno",
+  "Family": "Čeľaď",
+  "Genus": "Rod",
+  "Species": "Druh",
+  "Infraspecific": "Infrašpecifický epitet",
+  "Published in": "Publikované v",
+  "Synonyms": "Synonymá",
+  "Related names": "Príbuzné mená",
+  "Parent combination notation": "Rodičovská kombinácia",
+  "Taxon position": "Pozícia taxónu",
+  "Basionym": "Bazionym",
+  "Nomen novum": "Nomen novum",
+  "Replaced": "Náhradné meno",
+  "Is used as": "Meno použité v",
+  "Parent combination for": "Rodičovská kombinácia pre",
+  "Taxon position for": "Pozícia taxónu pre",
+  "Basionym for": "Bazionym pre",
+  "Nomen novum for": "Nomen novum pre",
+  "Replaced for": "Náhradné meno pre",
+  "Invalid designations": "Neplatné mená",
+  "Misidentifications": "Zle určené mená",
+  "Accepted name": "Akceptované mená",
+  "Vernacular": "Slovenské meno",
+  "status": {
+    "accepted": "Akceptované",
+    "provisionally": "Predbežne akceptované",
+    "synonym": "Synonymum",
+    "doubtful": "Pochybné synonymum",
+    "unresolved": "Nevyriešené",
+    "combination": "Rodičovská kombinácia",
+    "position": "Zápis pozície taxónu"
+  },
+  "tooltips": {
+    "clear": "Vyčistiť vyhľadávacie polia. Nevymaže výsledky vyhľadávania"
+  },
+  "table": {
+    "rowsPerPage": "Riadkov na stránke"
+  },
+  "home": {
+    "title": "SlovPlantList – databáza mien cievnatých rastlín Slovenska",
+    "description": "Databáza prezentuje výsledky najnovšej revízie diverzity cievnatých rastlín Slovenska vo forme prehľadu ich akceptovaných mien a synoným, v súlade s platným medzinárodným kódom botanickej nomenklatúry (<1>Turland et al. 2018</1>). Zahŕňa všetky čeľade, rody, druhy a vnútrodruhové taxóny, ktoré boli doteraz zaznamenané na území Slovenskej republiky. Popri spontánne sa vyskytujúcich, pôvodných i nepôvodných taxónoch, prináša zároveň prehľad o častejšie pestovaných druhoch. Webová podoba tohto referenčného zoznamu umožňuje jeho priebežnú aktualizáciu. Zohľadňuje najnovšie poznatky taxonómie, chorológie a nomenklatúry a predstavuje tiež slovenské menoslovie cievnatých rastlín, revidované a schválené Nomenklatorickou komisiou <4>Slovenskej botanickej spoločnosti pri SAV</4> s uplatnením najnovších zásad (<7>Kliment et al. 2017</7>). Popri správnom vedeckom a slovenskom mene a synonymách je ku každému taxónu priradená tiež informácia o jeho pôvodnosti a statuse inváznosti (<9>Medvecká et al. 2012</9>), endemizme (<11>Kliment 1999</11>, <14>Kliment et al. 2016</14>), prípadnom statuse ohrozenosti (<16>Eliáš et al. 2015</16>) a legislatívnej ochrane (<18>Vyhláška 24/2003</18>).",
+    "authors": "Autori databázy",
+    "institution": {
+      "ibot": "Botanický ústav, Centrum biológie rastlín a biodiverzity, Slovenská akadémia vied, Dúbravská cesta 9, 845 23  Bratislava",
+      "bguk": "Botanická záhrada Univerzity Komenského v Bratislave, pracovisko Blatnica, 038 15 Blatnica 315"
+    },
+    "dbsource": "Hlavný zdroj databázy",
+    "dbsourceTitle": "",
+    "generaAuthorship": "Autorstvo dosiaľ nepublikovaných spracovaní niektorých taxonomicky komplikovaných rodov",
+    "vega": "Vznik databázy podporila Vedecká grantová agentúra Ministerstva školstva, vedy, výskumu a športu Slovenskej republiky a Slovenskej akadémie vied (projekt VEGA 2/0137/17).",
+    "techSolutionTitle": "Technické riešenie",
+    "techSolutionDescription": "Táto webstránka bola vytvorená pomocou JavaScriptovej knižnice <2>React</2> (v16.14) a <6>Material-UI</6> (v4.11) - čo je React UI framework. Stránka je nasadená na serveri ako tzv. docker kontajner.<9/> Dáta sú uložené v MySQL databáze. MySQL server je verzie 5.7 a je nasadený na serveri ako docker kontajner.<11/>Medzi webstránkou a databázou sa nachádza komponent, ktorý je zodpovedný za čítanie dát z databázy. Táto aplikácia je implementovaná v NodeJS a TypeScript a využíva framework <14>Loopback 4</14>. Rovnako je na serveri nasadená ako docker kontajner."
+  },
+  "Useful Databases worldwide": "Užitočné databázy",
+  "databases": {
+    "dataflos": {
+      "url": "http://dataflos.sav.sk",
+      "text": "Dataflos – Databáza flóry Slovenska"
+    },
+    "chromosomes": {
+      "url": "https://www.chromosomes.sav.sk",
+      "text": "Karyologická databáza papraďorastov a semenných rastlín Slovenska"
+    },
+    "dass": {
+      "url": "http://dass.sav.sk/",
+      "text": "Databáza nepôvodných druhov rastlín Slovenska"
+    },
+    "cdf": {
+      "url": "https://ibot.sav.sk/cdf/",
+      "text": "CDF – Centrálna databáza fytocenologických zápisov na Slovensku"
+    },
+    "pladias": {
+      "url": "https://pladias.cz/",
+      "text": "PLADIAS – Databáze české flóry a vegetace"
+    },
+    "euromed": {
+      "url": "https://www.emplantbase.org/home.html",
+      "text": "Euro+Med PlantBase"
+    },
+    "ipni": {
+      "url": "https://www.ipni.org/",
+      "text": "International Plant Name Index (IPNI)"
+    },
+    "powo": {
+      "url": "http://powo.science.kew.org/",
+      "text": "Plants of the World online"
+    },
+    "tropicos": {
+      "url": "https://www.tropicos.org/home",
+      "text": "Tropicos"
+    }
+  }
+}

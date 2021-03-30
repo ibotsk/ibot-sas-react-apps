@@ -8,6 +8,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { PageTitle } from '@ibot/components';
 import { species as speciesUtils } from '@ibot/utils';
 
+import { useTranslation } from 'react-i18next';
+
 import {
   nomencatureService,
   genusService,
@@ -43,7 +45,7 @@ const {
 } = statusConfig;
 
 const getStatusText = (ntype) => (
-  statusConfig[ntype] ? statusConfig[ntype].text : ''
+  statusConfig[ntype] ? statusConfig[ntype].i18nKey : ''
 );
 
 const useStyles = makeStyles((theme) => ({
@@ -60,6 +62,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NameDetail = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   const { id } = useParams();
@@ -134,7 +137,7 @@ const NameDetail = () => {
       />
       <NameTitleSection
         name={name}
-        status={getStatusText(status)}
+        status={t(getStatusText(status))}
         publication={publication}
         genus={genusReference}
         familyAPG={familyAPG}
@@ -147,7 +150,7 @@ const NameDetail = () => {
           />
         )}
         <TitledSection
-          title="Synonyms"
+          title={t('Synonyms')}
           hideWhen={[PC, TP].includes(status)}
         >
           <SynonymList
@@ -182,38 +185,41 @@ const NameDetail = () => {
           />
         )}
         <TitledSection
-          title="Related names"
+          title={t('Related names')}
           hideWhen={[PC, TP].includes(status)}
         >
           <NameLabelValue
-            label="Parent combination notation"
+            label={t('Parent combination notation')}
             data={parentCombination}
           />
-          <NameLabelValue label="Taxon position" data={taxonPosition} />
+          <NameLabelValue label={t('Taxon position')} data={taxonPosition} />
           <Divider className={classes.nameDivider} />
-          <NameLabelValue label="Basionym" data={basionym} />
-          <NameLabelValue label="Nomen novum" data={nomenNovum} />
-          <NameLabelValue label="Replaced" data={replaced} />
+          <NameLabelValue label={t('Basionym')} data={basionym} />
+          <NameLabelValue label={t('Nomen novum')} data={nomenNovum} />
+          <NameLabelValue label={t('Replaced')} data={replaced} />
         </TitledSection>
 
         <TitledSection
-          title="Is used as"
+          title={t('Is used as')}
         >
           <NameLabelList
-            label="Parent combination for"
+            label={t('Parent combination for')}
             listOfNames={parentCombinationFor}
           />
           <Divider className={classes.nameDivider} />
           <NameLabelList
-            label="Taxon position for"
+            label={t('Taxon position for')}
             listOfNames={taxonPositionFor}
           />
           <Divider className={classes.nameDivider} />
-          <NameLabelList label="Basionym for" listOfNames={basionymFor} />
+          <NameLabelList label={t('Basionym for')} listOfNames={basionymFor} />
           <Divider className={classes.nameDivider} />
-          <NameLabelList label="Nomen novum for" listOfNames={nomenNovumFor} />
+          <NameLabelList
+            label={t('Nomen novum for')}
+            listOfNames={nomenNovumFor}
+          />
           <Divider className={classes.nameDivider} />
-          <NameLabelList label="Replaced for" listOfNames={replacedFor} />
+          <NameLabelList label={t('Replaced for')} listOfNames={replacedFor} />
         </TitledSection>
       </Container>
     </Box>

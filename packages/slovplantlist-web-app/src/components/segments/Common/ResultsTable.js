@@ -9,6 +9,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 import config from 'config';
+import { useTranslation } from 'react-i18next';
 
 const { pagination: paginationConfig } = config;
 const defaultPage = 0;
@@ -40,6 +41,7 @@ const ResultsTable = ({
   columns, keyField,
   data = [], totalSize = [], onTableChanged = () => { }, pagination = {},
 }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   const handleChangePage = (event, newPage) => {
@@ -130,6 +132,8 @@ const ResultsTable = ({
         count={totalSize}
         rowsPerPage={rowsPerPage}
         page={page}
+        labelRowsPerPage={t('table.rowsPerPage',
+          { defaultValue: 'Rows per page' })}
         onChangePage={handleChangePage}
         onChangeRowsPerPage={handleChangeRowsPerPage}
       />
