@@ -108,12 +108,14 @@ const ScientificNames = ({
       {isLoading && (
         <SkeletonTable />
       )}
-      {!results && (
-        <Typography color="textSecondary" variant="h6" component="span">
-          {t('Use search fields')}
-        </Typography>
-      )}
-      {results
+      {!results && !isLoading
+        && (
+          <Typography color="textSecondary" variant="h6" component="span">
+            {t('Use search fields')}
+          </Typography>
+        )
+      }
+      {results && !isLoading
         && (
           <ResultsTable
             columns={columns(t)}
