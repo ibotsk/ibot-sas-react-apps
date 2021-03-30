@@ -2,6 +2,8 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
+import { useTranslation } from 'react-i18next';
+
 import config from 'config';
 
 import TitledSection from './Components/TitledSection';
@@ -18,28 +20,31 @@ const {
 const NameDetailAccepted = ({
   invalidDesignations = [],
   misidentifications = [],
-}) => (
-  <>
-    {invalidDesignations.length > 0 && (
-      <TitledSection title="Invalid designations">
-        <SynonymList
-          syntype={synonymsConfig.invalid.syntype}
-          synonyms={invalidDesignations}
-          item={SynonymListItemBasic}
-        />
-      </TitledSection>
-    )}
-    {misidentifications.length > 0 && (
-      <TitledSection title="Misidentifications">
-        <SynonymList
-          syntype={synonymsConfig.misidentification.syntype}
-          synonyms={misidentifications}
-          item={SynonymListItemMisidentification}
-        />
-      </TitledSection>
-    )}
-  </>
-);
+}) => {
+  const { t } = useTranslation();
+  return (
+    <>
+      {invalidDesignations.length > 0 && (
+        <TitledSection title={t('Invalid designations')}>
+          <SynonymList
+            syntype={synonymsConfig.invalid.syntype}
+            synonyms={invalidDesignations}
+            item={SynonymListItemBasic}
+          />
+        </TitledSection>
+      )}
+      {misidentifications.length > 0 && (
+        <TitledSection title={t('Misidentifications')}>
+          <SynonymList
+            syntype={synonymsConfig.misidentification.syntype}
+            synonyms={misidentifications}
+            item={SynonymListItemMisidentification}
+          />
+        </TitledSection>
+      )}
+    </>
+  );
+};
 
 export default NameDetailAccepted;
 

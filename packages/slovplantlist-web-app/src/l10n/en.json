@@ -1,4 +1,86 @@
 {
   "Search": "Search",
-  "Scientific names": "Scientific names"
+  "Search scientific names": "Search scientific names",
+  "Search slovak names": "Search slovak names",
+  "Use search fields": "Use search fields to display results",
+  "Scientific names": "Scientific names",
+  "Scientific names page title": "Scientific Names",
+  "Slovak names page title": "Slovak Names",
+  "Name": "Name",
+  "Family": "Family",
+  "Genus": "Genus",
+  "Species": "Species",
+  "Infraspecific": "Infraspecific",
+  "Published in": "Published in",
+  "Synonyms": "Synonyms",
+  "Related names": "Related names",
+  "Parent combination notation": "Parent combination notation",
+  "Taxon position": "Taxon position",
+  "Basionym": "Basionym",
+  "Nomen novum": "Nomen novum",
+  "Replaced": "Replaced",
+  "Is used as": "Is used as",
+  "Parent combination for": "Parent combination for",
+  "Taxon position for": "Taxon position for",
+  "Basionym for": "Basionym for",
+  "Nomen novum for": "Nomen novum for",
+  "Replaced for": "Replaced for",
+  "Invalid designations": "Invalid designations",
+  "Misidentifications": "Misidentifications",
+  "Accepted name": "Accepted names",
+  "Vernacular": "Slovak name",
+  "status": {
+    "accepted": "Accepted",
+    "provisionally": "Provisionally accepted",
+    "synonym": "Synonym",
+    "doubtful": "Doubtful synonym",
+    "unresolved": "Unresolved",
+    "combination": "Parent combination notation",
+    "position": "Taxon position notation"
+  },
+  "tooltips": {
+    "clear search fields": "Clear search fields. Does not clear search results"
+  },
+  "table": {
+    "rowsPerPage": "Rows per page"
+  },
+  "Useful Databases worldwide": "Useful Databases worldwide",
+  "databases": {
+    "dataflos": {
+      "url": "http://dataflos.sav.sk",
+      "text": "Dataflos – Databáza flóry Slovenska"
+    },
+    "chromosomes": {
+      "url": "https://www.chromosomes.sav.sk/main/index.php?lang=en",
+      "text": "Karyological database of the ferns and flowering plants of Slovakia"
+    },
+    "dass": {
+      "url": "http://dass.sav.sk/en/",
+      "text": "Database of non-native plant species of Slovakia"
+    },
+    "cdf": {
+      "url": "https://ibot.sav.sk/cdf/index_en.html",
+      "text": "CDF – Central database of phytocenological relevés"
+    },
+    "pladias": {
+      "url": "https://pladias.cz/en/",
+      "text": "PLADIAS – Database of the Czech Flora and Vegetation"
+    },
+    "euromed": {
+      "url": "https://www.emplantbase.org/home.html",
+      "text": "Euro+Med PlantBase"
+    },
+    "ipni": {
+      "url": "https://www.ipni.org/",
+      "text": "International Plant Name Index (IPNI)"
+    },
+    "powo": {
+      "url": "http://powo.science.kew.org/",
+      "text": "Plants of the World online"
+    },
+    "tropicos": {
+      "url": "https://www.tropicos.org/home",
+      "text": "Tropicos"
+    }
+  }
 }

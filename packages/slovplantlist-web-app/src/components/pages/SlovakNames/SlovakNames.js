@@ -2,6 +2,8 @@ import React from 'react';
 
 import { PageTitle } from '@ibot/components';
 
+import { useTranslation } from 'react-i18next';
+
 import Title from 'components/segments/Common/Title';
 // import ResultsTable from 'components/segments/Common/ResultsTable';
 
@@ -16,14 +18,17 @@ import Title from 'components/segments/Common/Title';
 //   },
 // ];
 
-const SlovakNames = () => (
-  <>
-    <PageTitle
-      websiteTitle="Slovplantlist"
-      title="Search slovak names"
-    />
-    <Title>Slovak Names</Title>
-  </>
-);
+const SlovakNames = () => {
+  const { t } = useTranslation();
+  return (
+    <>
+      <PageTitle
+        websiteTitle="Slovplantlist"
+        title={t('Search slovak names')}
+      />
+      <Title>Slovak Names</Title>
+    </>
+  );
+};
 
 export default SlovakNames;

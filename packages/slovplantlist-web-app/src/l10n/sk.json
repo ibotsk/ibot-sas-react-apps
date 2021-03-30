@@ -1,4 +1,86 @@
 {
   "Search": "Hľadať",
-  "Scientific names": "Vedecké mená"
+  "Search scientific names": "Hľadať odborné mená",
+  "Search slovak names": "Hľadať slovenské mená",
+  "Use search fields": "Zadajte hodnoty do vyhľadávania",
+  "Scientific names": "Odborné mená",
+  "Scientific names page title": "Odborné mená",
+  "Slovak names page title": "Slovenské mená",
+  "Name": "Meno",
+  "Family": "Čeľaď",
+  "Genus": "Rod",
+  "Species": "Druh",
+  "Infraspecific": "Infrašpecifický epitet",
+  "Published in": "Publikované v",
+  "Synonyms": "Synonymá",
+  "Related names": "Príbuzné mená",
+  "Parent combination notation": "Rodičovská kombinácia",
+  "Taxon position": "Pozícia taxónu",
+  "Basionym": "Bazionym",
+  "Nomen novum": "Nomen novum",
+  "Replaced": "Náhradné meno",
+  "Is used as": "Meno použité v",
+  "Parent combination for": "Rodičovská kombinácia pre",
+  "Taxon position for": "Pozícia taxónu pre",
+  "Basionym for": "Bazionym pre",
+  "Nomen novum for": "Nomen novum pre",
+  "Replaced for": "Náhradné meno pre",
+  "Invalid designations": "Neplatné mená",
+  "Misidentifications": "Zle určené mená",
+  "Accepted name": "Akceptované mená",
+  "Vernacular": "Slovenské meno",
+  "status": {
+    "accepted": "Akceptované",
+    "provisionally": "Predbežne akceptované",
+    "synonym": "Synonymum",
+    "doubtful": "Pochybné synonymum",
+    "unresolved": "Nevyriešené",
+    "combination": "Rodičovská kombinácia",
+    "position": "Zápis pozície taxónu"
+  },
+  "tooltips": {
+    "clear": "Vyčistiť vyhľadávacie polia. Nevymaže výsledky vyhľadávania"
+  },
+  "table": {
+    "rowsPerPage": "Riadkov na stránke"
+  },
+  "Useful Databases worldwide": "Užitočné databázy",
+  "databases": {
+    "dataflos": {
+      "url": "http://dataflos.sav.sk",
+      "text": "Dataflos – Databáza flóry Slovenska"
+    },
+    "chromosomes": {
+      "url": "https://www.chromosomes.sav.sk",
+      "text": "Karyologická databáza papraďorastov a semenných rastlín Slovenska"
+    },
+    "dass": {
+      "url": "http://dass.sav.sk/",
+      "text": "Databáza nepôvodných druhov rastlín Slovenska"
+    },
+    "cdf": {
+      "url": "https://ibot.sav.sk/cdf/",
+      "text": "CDF – Centrálna databáza fytocenologických zápisov na Slovensku"
+    },
+    "pladias": {
+      "url": "https://pladias.cz/",
+      "text": "PLADIAS – Databáze české flóry a vegetace"
+    },
+    "euromed": {
+      "url": "https://www.emplantbase.org/home.html",
+      "text": "Euro+Med PlantBase"
+    },
+    "ipni": {
+      "url": "https://www.ipni.org/",
+      "text": "International Plant Name Index (IPNI)"
+    },
+    "powo": {
+      "url": "http://powo.science.kew.org/",
+      "text": "Plants of the World online"
+    },
+    "tropicos": {
+      "url": "https://www.tropicos.org/home",
+      "text": "Tropicos"
+    }
+  }
 }

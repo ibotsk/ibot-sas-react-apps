@@ -8,6 +8,8 @@ import { Typography } from '@material-ui/core';
 import { hooks } from '@ibot/core';
 import { LosName, PageTitle } from '@ibot/components';
 
+import { useTranslation } from 'react-i18next';
+
 import Title from 'components/segments/Common/Title';
 import ResultsTable from 'components/segments/Common/ResultsTable';
 import SkeletonTable from 'components/segments/Common/SkeletonTable';
@@ -21,7 +23,7 @@ const {
   routes: routesConfig,
 } = config;
 
-const columns = [
+const columns = (t) => [
   {
     dataField: 'id',
     text: 'ID',
@@ -29,7 +31,7 @@ const columns = [
   },
   {
     dataField: 'name',
-    text: 'Name',
+    text: t('Name'),
     formatter: (cell, row) => (
       <LosName
         data={row}
@@ -46,7 +48,7 @@ const columns = [
   },
   {
     dataField: 'accepted',
-    text: 'Accepted name',
+    text: t('Accepted name'),
     formatter: (cell, row) => {
       if (!row.acceptedNames) {
         return undefined;
@@ -69,6 +71,7 @@ const columns = [
 const ScientificNames = ({
   searchValues = {},
 }) => {
+  const { t } = useTranslation();
   const {
     genus, species, infraspecific, status,
   } = searchValues;
@@ -99,21 +102,21 @@ const ScientificNames = ({
     <>
       <PageTitle
         websiteTitle="Slovplantlist"
-        title="Search scientific names"
+        title={t('Search scientific names')}
       />
-      <Title>Scientific Names</Title>
+      <Title>{t('Scientific names page title')}</Title>
       {isLoading && (
         <SkeletonTable />
       )}
       {!results && (
         <Typography color="textSecondary" variant="h6" component="span">
-          Use search fields to display results
+          {t('Use search fields')}
         </Typography>
       )}
       {results
         && (
           <ResultsTable
-            columns={columns}
+            columns={columns(t)}
             keyField="id"
             data={results.data}
             totalSize={results.totalRecords}

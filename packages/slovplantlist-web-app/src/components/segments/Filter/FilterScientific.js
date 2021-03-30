@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 import PropTypes from 'prop-types';
 
 import config from 'config';
@@ -12,6 +14,7 @@ const { routes } = config;
 const FilterScientific = ({
   closed, onSearch,
 }) => {
+  const { t } = useTranslation();
   const [genus, setGenus] = useState('');
   const [species, setSpecies] = useState('');
   const [infraspecific, setInfraspecific] = useState('');
@@ -48,21 +51,21 @@ const FilterScientific = ({
       <ListItemTextField
         id="genus"
         key="genus"
-        label="Genus"
+        label={t('Genus')}
         value={genus}
         onChange={(e) => setGenus(e.target.value)}
       />
       <ListItemTextField
         id="species"
         key="species"
-        label="Species"
+        label={t('Species')}
         value={species}
         onChange={(e) => setSpecies(e.target.value)}
       />
       <ListItemTextField
         id="infraspecific"
         key="infraspecific"
-        label="Infraspecific"
+        label={t('Infraspecific')}
         value={infraspecific}
         onChange={(e) => setInfraspecific(e.target.value)}
       />
