@@ -1,4 +1,4 @@
-FROM tiangolo/node-frontend:10 as build-stage
+FROM node:10-slim as build-stage
 
 WORKDIR /usr/src/app
 
