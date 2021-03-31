@@ -63,7 +63,7 @@ const Home = () => {
               and approved by the Nomenclature Commission of
               {' '}
               <LinkHome
-                href="http://sbs.sav.sk/SBS1/supplements.html"
+                href="http://sbs.sav.sk"
               >
                 the Slovak Botanical Society at the Slovak Academy of Sciences
               </LinkHome>
@@ -178,7 +178,11 @@ const Home = () => {
             {' '}
             <i>Callitriche</i>
             {' '}
-            – J. Prančl; Taraxacum – J. Štěpánek, B.
+            – J. Prančl;
+            {' '}
+            <i>Taraxacum</i>
+            {' '}
+            – J. Štěpánek, B.
             Trávníček, R. J. Vašut;
             {' '}
             <i>Hieracium</i>
