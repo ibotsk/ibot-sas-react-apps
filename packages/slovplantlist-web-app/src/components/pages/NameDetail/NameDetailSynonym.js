@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 
 import { LosName } from '@ibot/components';
 
+import { useTranslation } from 'react-i18next';
+
 import config from 'config';
 
 import TitledSection from './Components/TitledSection';
@@ -15,6 +17,8 @@ const { routes: routesConfig } = config;
 const NameDetailSynonym = ({
   acceptedNames = [],
 }) => {
+  const { t } = useTranslation();
+
   const acceptedNamesLos = acceptedNames.map((name) => ({
     id: name.id,
     name: (
@@ -28,7 +32,7 @@ const NameDetailSynonym = ({
   }));
   return (
     <>
-      <TitledSection title="Accepted name(s)">
+      <TitledSection title={t('Accepted name')}>
         <NameList list={acceptedNamesLos} />
       </TitledSection>
     </>

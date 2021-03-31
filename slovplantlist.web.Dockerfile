@@ -1,4 +1,4 @@
-FROM tiangolo/node-frontend:10 as build-stage
+FROM node:10-slim as build-stage
 
 WORKDIR /usr/src/app
 
@@ -18,11 +18,17 @@ RUN yarn --cwd packages/slovplantlist-web-app run build
 
 FROM nginx:1.12-alpine
 COPY --from=build-stage /usr/src/app/packages/slovplantlist-web-app/build /usr/share/nginx/html
-COPY --from=build-stage /nginx.conf /etc/nginx/conf.d/default.conf
-COPY ./nginx.conf /etc/nginx/extra-conf.d/nginx-proxy.conf
+COPY ./nginx-config/default.conf /etc/nginx/conf.d/default.conf
+COPY ./nginx-config/extra /etc/nginx/extra-conf.d
 
 ARG BACKEND_URL
-RUN sed -i "s/{backendurl}/http:\/\/${BACKEND_URL}/g" /etc/nginx/extra-conf.d/nginx-proxy.conf
+ARG SSL_CRT_FILE
+ARG SSL_KEY_FILE
+ARG SSL_PROXY_CRT_FILE
+ARG SSL_PROXY_KEY_FILE
+
+RUN sed -i "s/{ssl_crt_file}/${SSL_CRT_FILE}/g; s/{ssl_key_file}/${SSL_KEY_FILE}/g" /etc/nginx/conf.d/default.conf && \
+    sed -i "s/{backendurl}/${BACKEND_URL}/g; s/{ssl_proxy_crt_file}/${SSL_PROXY_CRT_FILE}/g; s/{ssl_proxy_key_file}/${SSL_PROXY_KEY_FILE}/g" /etc/nginx/extra-conf.d/nginx-proxy.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

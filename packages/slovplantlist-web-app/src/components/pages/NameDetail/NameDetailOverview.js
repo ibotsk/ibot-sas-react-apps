@@ -6,6 +6,8 @@ import PropTypes from 'prop-types';
 import { Divider } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
+import { useTranslation } from 'react-i18next';
+
 import config from 'config';
 
 import TitledSection from './Components/TitledSection';
@@ -48,6 +50,7 @@ const NameDetailOverview = ({
   invalidDesignations = [], misidentifications = [],
   relatives = {}, forRelations = {},
 }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   const {
@@ -78,7 +81,7 @@ const NameDetailOverview = ({
         />
       )}
       <TitledSection
-        title="Synonyms"
+        title={t('Synonyms')}
         hideWhen={[PC, TP].includes(status)}
       >
         <SynonymList
@@ -113,38 +116,41 @@ const NameDetailOverview = ({
         />
       )}
       <TitledSection
-        title="Related names"
+        title={t('Related names')}
         hideWhen={[PC, TP].includes(status)}
       >
         <NameLabelValue
-          label="Parent combination notation"
+          label={t('Parent combination notation')}
           data={parentCombination}
         />
-        <NameLabelValue label="Taxon position" data={taxonPosition} />
+        <NameLabelValue label={t('Taxon position')} data={taxonPosition} />
         <Divider className={classes.nameDivider} />
-        <NameLabelValue label="Basionym" data={basionym} />
-        <NameLabelValue label="Nomen novum" data={nomenNovum} />
-        <NameLabelValue label="Replaced" data={replaced} />
+        <NameLabelValue label={t('Basionym')} data={basionym} />
+        <NameLabelValue label={t('Nomen novum')} data={nomenNovum} />
+        <NameLabelValue label={t('Replaced')} data={replaced} />
       </TitledSection>
 
       <TitledSection
-        title="Is used as"
+        title={t('Is used as')}
       >
         <NameLabelList
-          label="Parent combination for"
+          label={t('Parent combination for')}
           listOfNames={parentCombinationFor}
         />
         <Divider className={classes.nameDivider} />
         <NameLabelList
-          label="Taxon position for"
+          label={t('Taxon position for')}
           listOfNames={taxonPositionFor}
         />
         <Divider className={classes.nameDivider} />
-        <NameLabelList label="Basionym for" listOfNames={basionymFor} />
+        <NameLabelList label={t('Basionym for')} listOfNames={basionymFor} />
         <Divider className={classes.nameDivider} />
-        <NameLabelList label="Nomen novum for" listOfNames={nomenNovumFor} />
+        <NameLabelList
+          label={t('Nomen novum for')}
+          listOfNames={nomenNovumFor}
+        />
         <Divider className={classes.nameDivider} />
-        <NameLabelList label="Replaced for" listOfNames={replacedFor} />
+        <NameLabelList label={t('Replaced for')} listOfNames={replacedFor} />
       </TitledSection>
     </>
   );

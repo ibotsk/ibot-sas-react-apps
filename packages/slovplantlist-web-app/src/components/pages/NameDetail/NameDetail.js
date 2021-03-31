@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
-import { Container, Tabs, Tab } from '@material-ui/core';
+import {
+  Box, Container, Tabs, Tab,
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { PageTitle } from '@ibot/components';
 import { species as speciesUtils } from '@ibot/utils';
+
+import { useTranslation } from 'react-i18next';
 
 import {
   nomencatureService,
@@ -24,16 +28,27 @@ const {
 } = config;
 
 const getStatusText = (ntype) => (
-  statusConfig[ntype] ? statusConfig[ntype].text : ''
+  statusConfig[ntype] ? statusConfig[ntype].i18nKey : ''
 );
 
 const useStyles = makeStyles((theme) => ({
   tabs: {
     marginBottom: theme.spacing(4),
   },
+  root: {
+    '& a': {
+      textDecoration: 'none',
+      color: 'inherit',
+    },
+  },
+  nameDivider: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
 }));
 
 const NameDetail = () => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   const { id } = useParams();
@@ -95,14 +110,14 @@ const NameDetail = () => {
   } = record;
 
   return (
-    <>
+    <Box className={classes.root}>
       <PageTitle
         websiteTitle="Slovplantlist"
         title={speciesUtils.listOfSpeciesString(name)}
       />
       <NameTitleSection
         name={name}
-        status={getStatusText(status)}
+        status={t(getStatusText(status))}
         publication={publication}
         genus={genusReference}
         familyAPG={familyAPG}
@@ -145,7 +160,7 @@ const NameDetail = () => {
           <NameDetailStatus data={nomenStatus} />
         </TabPanel>
       </Container>
-    </>
+    </Box>
   );
 };
 

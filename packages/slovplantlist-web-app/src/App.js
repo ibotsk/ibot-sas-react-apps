@@ -6,7 +6,9 @@ import {
 } from 'react-router-dom';
 
 import { ThemeProvider } from '@material-ui/core';
-import { createMuiTheme } from '@material-ui/core/styles';
+import {
+  unstable_createMuiStrictModeTheme as createMuiTheme,
+} from '@material-ui/core/styles';
 
 import Base from './components/segments/Base/Base';
 import Home from './components/pages/Home/Home';

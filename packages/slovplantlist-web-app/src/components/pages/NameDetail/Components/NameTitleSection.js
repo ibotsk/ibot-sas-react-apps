@@ -8,6 +8,8 @@ import {
 
 import { GenusName, LosName } from '@ibot/components';
 
+import { useTranslation } from 'react-i18next';
+
 import PropTypes from 'prop-types';
 import LabelValue from 'components/segments/Common/LabelValue';
 
@@ -31,24 +33,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const HigherTaxa = ({ genus, familyAPG }) => (
-  <Breadcrumbs
-    component="div"
-    separator=">"
-    aria-label="higher taxa"
-  >
-    <LabelValue label="Family">
-      {familyAPG ? familyAPG.name : '-'}
-    </LabelValue>
-    <LabelValue label="Genus">
-      <GenusName data={genus} />
-    </LabelValue>
-  </Breadcrumbs>
-);
+const HigherTaxa = ({ genus, familyAPG }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Breadcrumbs
+      component="div"
+      separator=">"
+      aria-label="higher taxa"
+    >
+      <LabelValue label={t('Family')}>
+        {familyAPG ? familyAPG.name : '-'}
+      </LabelValue>
+      <LabelValue label={t('Genus')}>
+        <GenusName data={genus} />
+      </LabelValue>
+    </Breadcrumbs>
+  );
+};
 
 const NameTitleSection = ({
   name, status, publication = '-', genus, familyAPG, vernacular,
 }) => {
+  const { t } = useTranslation();
   const classes = useStyles();
 
   return (
@@ -74,7 +81,8 @@ const NameTitleSection = ({
           </Typography>
           <Typography variant="body2" display="block" gutterBottom>
             <Box color="text.secondary" component="span">
-              Published in:
+              {t('Published in')}
+              :
             </Box>
             {' '}
             {publication || '-'}
@@ -96,7 +104,7 @@ const NameTitleSection = ({
           variant="outlined"
           className={classes.higherTaxaPaper}
         >
-          <LabelValue label="Slovak name">{vernacular || '-'}</LabelValue>
+          <LabelValue label={t('Vernacular')}>{vernacular || '-'}</LabelValue>
         </Paper>
       </Grid>
     </Grid>

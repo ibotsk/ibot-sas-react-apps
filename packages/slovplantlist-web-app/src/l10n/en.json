@@ -1,0 +1,101 @@
+{
+  "Search": "Search",
+  "Search scientific names": "Search scientific names",
+  "Search slovak names": "Search slovak names",
+  "Use search fields": "Use search fields to display results",
+  "Scientific names": "Scientific names",
+  "Scientific names page title": "Scientific Names",
+  "Slovak names page title": "Slovak Names",
+  "Name": "Name",
+  "Family": "Family",
+  "Genus": "Genus",
+  "Species": "Species",
+  "Infraspecific": "Infraspecific",
+  "Published in": "Published in",
+  "Synonyms": "Synonyms",
+  "Related names": "Related names",
+  "Parent combination notation": "Parent combination notation",
+  "Taxon position": "Taxon position",
+  "Basionym": "Basionym",
+  "Nomen novum": "Nomen novum",
+  "Replaced": "Replaced",
+  "Is used as": "Is used as",
+  "Parent combination for": "Parent combination for",
+  "Taxon position for": "Taxon position for",
+  "Basionym for": "Basionym for",
+  "Nomen novum for": "Nomen novum for",
+  "Replaced for": "Replaced for",
+  "Invalid designations": "Invalid designations",
+  "Misidentifications": "Misidentifications",
+  "Accepted name": "Accepted names",
+  "Vernacular": "Slovak name",
+  "status": {
+    "accepted": "Accepted",
+    "provisionally": "Provisionally accepted",
+    "synonym": "Synonym",
+    "doubtful": "Doubtful synonym",
+    "unresolved": "Unresolved",
+    "combination": "Parent combination",
+    "position": "Taxon position"
+  },
+  "tooltips": {
+    "clear search fields": "Clear search fields. Does not clear search results"
+  },
+  "table": {
+    "rowsPerPage": "Rows per page"
+  },
+  "home": {
+    "title": "SlovPlantList – the database of the names of vascular plants of Slovakia",
+    "description": "The database presents the results of the latest revision of the diversity of vascular plants in Slovakia in the form of an overview of their accepted names and synonyms, in accordance with the valid international code of botanical nomenclature (<1>Turland et al. 2018</1>). It includes all families, genera, species and infraspecific taxa that have been recorded in the territory of the Slovak Republic so far. In addition to spontaneous, native and non-native taxa, it also provides an overview of more frequently cultivated species. The web version of this reference checklist allows it to be continuously updated. It takes into account the most recent taxonomic, chorologic and nomenclatoric studies and also presents the Slovak national nomenclature of the vascular plants, revised and approved by the Nomenclature Commission of <4>the Slovak Botanical Society at the Slovak Academy of Sciences</4> with the application of the latest principles (<7>Kliment et al. 2017</7>). In addition to the correct scientific and national names and their synonyms, each taxon is also associated with information on its origin and invasion status (<9>Medvecká et al. 2012</9>), endemism (<11>Kliment 1999</11>, <14>Kliment et al. 2016</14>), red-list category of threat (<16>Eliáš et al. 2015</16>) and legislative protection (<18>Vyhláška 24/2003</18>).",
+    "authors": "The authors of the database",
+    "institution": {
+      "ibot": "Institute of Botany, Center of Plant Biology and Biodiversity, Slovak Academy of Sciences, Dúbravská cesta 9, 845 23 Bratislava",
+      "bguk": "Botanical Garden of the Comenius University in Bratislava, the workplace Blatnica, 038 15 Blatnica 315"
+    },
+    "dbsource": "The main source of the database",
+    "dbsourceTitle": " [The compendium of the flora of Slovakia. The identification key of the vascular plants]",
+    "generaAuthorship": "The authorship of hitherto unpublished treatments of some taxonomically complicated genera",
+    "vega": "The creation of the database was supported by the Scientific Grant Agency of the Ministry of Education, Science, Research and Sport of the Slovak Republic and the Slovak Academy of Sciences (the project VEGA 2/0137/17).",
+    "techSolutionTitle": "Technical solution",
+    "techSolutionDescription": "This website is built using a JavaScript library <2>React</2> (v16.14) and <6>Material-UI</6> (v4.11) - a React UI framework. It is deployed as a docker container on the server.<9/> The data are stored in the MySQL database. The MySQL server is of version 5.7 and it is deployed as a docker container on the server.<11/>Between the website and the database lies component that is responsible for fetching of the data from the database. It is a NodeJs and TypeScript microservice that integrates <14>Loopback 4</14> framework. This application is also deployed as a docker container on the server."
+  },
+  "Useful Databases worldwide": "Useful Databases worldwide",
+  "databases": {
+    "dataflos": {
+      "url": "http://dataflos.sav.sk",
+      "text": "Dataflos – Databáza flóry Slovenska"
+    },
+    "chromosomes": {
+      "url": "https://www.chromosomes.sav.sk/main/index.php?lang=en",
+      "text": "Karyological database of the ferns and flowering plants of Slovakia"
+    },
+    "dass": {
+      "url": "http://dass.sav.sk/en/",
+      "text": "Database of non-native plant species of Slovakia"
+    },
+    "cdf": {
+      "url": "https://ibot.sav.sk/cdf/index_en.html",
+      "text": "CDF – Central database of phytocenological relevés"
+    },
+    "pladias": {
+      "url": "https://pladias.cz/en/",
+      "text": "PLADIAS – Database of the Czech Flora and Vegetation"
+    },
+    "euromed": {
+      "url": "https://www.emplantbase.org/home.html",
+      "text": "Euro+Med PlantBase"
+    },
+    "ipni": {
+      "url": "https://www.ipni.org/",
+      "text": "International Plant Name Index (IPNI)"
+    },
+    "powo": {
+      "url": "http://powo.science.kew.org/",
+      "text": "Plants of the World online"
+    },
+    "tropicos": {
+      "url": "https://www.tropicos.org/home",
+      "text": "Tropicos"
+    }
+  }
+}
