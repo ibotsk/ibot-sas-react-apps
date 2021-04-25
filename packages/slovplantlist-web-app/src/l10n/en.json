@@ -59,6 +59,10 @@
     "techSolutionTitle": "Technical solution",
     "techSolutionDescription": "This website is built using a JavaScript library <2>React</2> (v16.14) and <6>Material-UI</6> (v4.11) - a React UI framework. It is deployed as a docker container on the server.<9/> The data are stored in the MySQL database. The MySQL server is of version 5.7 and it is deployed as a docker container on the server.<11/>Between the website and the database lies component that is responsible for fetching of the data from the database. It is a NodeJs and TypeScript microservice that integrates <14>Loopback 4</14> framework. This application is also deployed as a docker container on the server."
   },
+  "tabs": {
+    "overview": "Overview",
+    "status": "Name status"
+  },
   "Useful Databases worldwide": "Useful Databases worldwide",
   "databases": {
     "dataflos": {

@@ -59,6 +59,10 @@
     "techSolutionTitle": "Technické riešenie",
     "techSolutionDescription": "Táto webstránka bola vytvorená pomocou JavaScriptovej knižnice <2>React</2> (v16.14) a <6>Material-UI</6> (v4.11) - čo je React UI framework. Stránka je nasadená na serveri ako tzv. docker kontajner.<9/> Dáta sú uložené v MySQL databáze. MySQL server je verzie 5.7 a je nasadený na serveri ako docker kontajner.<11/>Medzi webstránkou a databázou sa nachádza komponent, ktorý je zodpovedný za čítanie dát z databázy. Táto aplikácia je implementovaná v NodeJS a TypeScript a využíva framework <14>Loopback 4</14>. Rovnako je na serveri nasadená ako docker kontajner."
   },
+  "tabs": {
+    "overview": "Prehľad",
+    "status": "Status"
+  },
   "Useful Databases worldwide": "Užitočné databázy",
   "databases": {
     "dataflos": {

@@ -132,8 +132,8 @@ const NameDetail = () => {
           onChange={(e, newTab) => setActiveTab(newTab)}
           aria-label="Name details tabs"
         >
-          <Tab label="Overview" />
-          <Tab label="Name status" />
+          <Tab label={t('tabs.overview')} />
+          <Tab label={t('tabs.status')} />
         </Tabs>
         <TabPanel value={activeTab} index={0}>
           <NameDetailOverview
