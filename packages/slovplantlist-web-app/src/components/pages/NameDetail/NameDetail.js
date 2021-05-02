@@ -133,7 +133,7 @@ const NameDetail = () => {
           aria-label="Name details tabs"
         >
           <Tab label={t('tabs.overview')} />
-          <Tab label={t('tabs.status')} />
+          <Tab label={t('tabs.category')} />
         </Tabs>
         <TabPanel value={activeTab} index={0}>
           <NameDetailOverview

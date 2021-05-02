@@ -172,7 +172,7 @@ const FilterTemplate = ({
         </List>
         <List>
           <Divider />
-          <ListItemCollapsible label="Status">
+          <ListItemCollapsible label={t('nameStatus')}>
             {statusOptions.map(({ key, value }) => (
               <ListItemCheckbox
                 id={key}
