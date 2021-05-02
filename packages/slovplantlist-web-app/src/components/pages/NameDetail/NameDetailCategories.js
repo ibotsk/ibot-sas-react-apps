@@ -77,7 +77,7 @@ const ValueWithHelp = ({ value, category }) => {
   );
 };
 
-const NameDetailStatus = ({ data = {} }) => {
+const NameDetailCategories = ({ data = {} }) => {
   const { t } = useTranslation();
 
   const {
@@ -139,9 +139,9 @@ const NameDetailStatus = ({ data = {} }) => {
   );
 };
 
-export default NameDetailStatus;
+export default NameDetailCategories;
 
-NameDetailStatus.propTypes = {
+NameDetailCategories.propTypes = {
   data: PropTypes.shape({
     origin: PropTypes.string,
     cultivation: PropTypes.string,
@@ -154,7 +154,7 @@ NameDetailStatus.propTypes = {
   }),
 };
 
-NameDetailStatus.defaultProps = {
+NameDetailCategories.defaultProps = {
   data: {},
 };
 

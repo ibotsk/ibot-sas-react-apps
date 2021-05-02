@@ -21,7 +21,7 @@ import TabPanel from 'components/segments/Common/TabPanel';
 import NameTitleSection from './Components/NameTitleSection';
 
 import NameDetailOverview from './NameDetailOverview';
-import NameDetailStatus from './NameDetailStatus';
+import NameDetailCategories from './NameDetailCategories';
 
 const {
   status: statusConfig,
@@ -157,7 +157,7 @@ const NameDetail = () => {
           />
         </TabPanel>
         <TabPanel value={activeTab} index={1}>
-          <NameDetailStatus data={nomenStatus} />
+          <NameDetailCategories data={nomenStatus} />
         </TabPanel>
       </Container>
     </Box>
