@@ -17,11 +17,14 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
   },
   ul: {
-    paddingInlineStart: theme.spacing(2),
+    paddingInlineStart: 0,
+    listStyleType: 'none',
   },
 }));
 
-const Legend = ({ category, anchorEl, onClose }) => {
+const Legend = ({
+  category, anchorEl, onClose, proposal = false, uncertain = false,
+}) => {
   const { t } = useTranslation();
   const classes = useStyles();
   const transl = t(`category.legend.${category}`, { returnObjects: true });
@@ -47,12 +50,20 @@ const Legend = ({ category, anchorEl, onClose }) => {
             <li key={i}>{o}</li>
           ))}
         </ul>
+        {(proposal || uncertain) && (
+          <ul>
+            {proposal && <li>{t('category.proposal')}</li>}
+            {uncertain && <li>{t('category.uncertain')}</li>}
+          </ul>
+        )}
       </Paper>
     </Popover>
   );
 };
 
-const ValueWithHelp = ({ value, category }) => {
+const ValueWithHelp = ({
+  value, category, proposal = false, uncertain = false,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClickHelp = (e) => setAnchorEl(e.currentTarget);
@@ -71,6 +82,8 @@ const ValueWithHelp = ({ value, category }) => {
           category={category}
           anchorEl={anchorEl}
           onClose={() => setAnchorEl(null)}
+          withProposal={proposal}
+          withUncertain={uncertain}
         />
       </Grid>
     </Grid>
@@ -97,6 +110,7 @@ const NameDetailCategories = ({ data = {} }) => {
         showWhen={!!cultivation}
         title={t('category.title.cultivation')}
       >
+        {t('category.title.cultivationSubtitle')}
         <ValueWithHelp value={cultivation} category="cultivation" />
       </TitledSection>
       <TitledSection
@@ -109,7 +123,12 @@ const NameDetailCategories = ({ data = {} }) => {
         showWhen={!!residenceTime}
         title={t('category.title.residenceTime')}
       >
-        <ValueWithHelp value={residenceTime} category="residenceTime" />
+        <ValueWithHelp
+          value={residenceTime}
+          category="residenceTime"
+          proposal
+          uncertain
+        />
       </TitledSection>
       <TitledSection
         showWhen={!!endemism}
@@ -121,7 +140,7 @@ const NameDetailCategories = ({ data = {} }) => {
         showWhen={!!threat}
         title={t('category.title.threat')}
       >
-        <ValueWithHelp value={threat} category="threat" />
+        <ValueWithHelp value={threat} category="threat" proposal />
       </TitledSection>
       <TitledSection
         showWhen={!!protectionLegacy}
@@ -161,10 +180,14 @@ NameDetailCategories.defaultProps = {
 ValueWithHelp.propTypes = {
   value: PropTypes.string,
   category: PropTypes.string.isRequired,
+  proposal: PropTypes.bool,
+  uncertain: PropTypes.bool,
 };
 
 ValueWithHelp.defaultProps = {
   value: undefined,
+  proposal: false,
+  uncertain: false,
 };
 
 Legend.propTypes = {
@@ -172,8 +195,12 @@ Legend.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   anchorEl: PropTypes.object,
   onClose: PropTypes.func.isRequired,
+  proposal: PropTypes.bool,
+  uncertain: PropTypes.bool,
 };
 
 Legend.defaultProps = {
   anchorEl: null,
+  proposal: false,
+  uncertain: false,
 };
