@@ -11,7 +11,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const LabelValue = ({
+const LabelValueGrid = ({
   label,
   children = undefined,
   alignItems = 'center',
@@ -51,15 +51,15 @@ const LabelValue = ({
   );
 };
 
-export default LabelValue;
+export default LabelValueGrid;
 
-LabelValue.propTypes = {
+LabelValueGrid.propTypes = {
   label: PropTypes.string.isRequired,
   children: PropTypes.node,
   alignItems: PropTypes.string,
   alignContent: PropTypes.string,
 };
-LabelValue.defaultProps = {
+LabelValueGrid.defaultProps = {
   children: undefined,
   alignItems: 'center',
   alignContent: 'center',

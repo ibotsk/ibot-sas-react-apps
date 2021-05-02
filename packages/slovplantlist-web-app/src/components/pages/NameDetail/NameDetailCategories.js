@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next';
 
 import PropTypes from 'prop-types';
 
+import LabelValue from 'components/segments/Common/LabelValue';
 import TitledSection from './Components/TitledSection';
 
 const useStyles = makeStyles((theme) => ({
@@ -62,7 +63,7 @@ const Legend = ({
 };
 
 const ValueWithHelp = ({
-  value, category, proposal = false, uncertain = false,
+  value, category, proposal = false, uncertain = false, children,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -71,6 +72,7 @@ const ValueWithHelp = ({
     <Grid container alignItems="center">
       <Grid item xs={6}>
         {value}
+        {children}
       </Grid>
       <Grid item xs={6}>
         <Typography align="right">
@@ -143,16 +145,17 @@ const NameDetailCategories = ({ data = {} }) => {
         <ValueWithHelp value={threat} category="threat" proposal />
       </TitledSection>
       <TitledSection
-        showWhen={!!protectionLegacy}
-        title={t('category.title.protectionLegacy')}
-      >
-        <ValueWithHelp value={protectionLegacy} category="protectionLegacy" />
-      </TitledSection>
-      <TitledSection
         showWhen={!!protection}
         title={t('category.title.protection')}
       >
-        <ValueWithHelp value={protection} category="protection" />
+        <ValueWithHelp category="protection">
+          <LabelValue label={t('category.title.protectionCurrent')}>
+            {protectionLegacy}
+          </LabelValue>
+          <LabelValue label={t('category.title.protectionPrepared')}>
+            {protection}
+          </LabelValue>
+        </ValueWithHelp>
       </TitledSection>
     </>
   );
@@ -182,12 +185,14 @@ ValueWithHelp.propTypes = {
   category: PropTypes.string.isRequired,
   proposal: PropTypes.bool,
   uncertain: PropTypes.bool,
+  children: PropTypes.node,
 };
 
 ValueWithHelp.defaultProps = {
   value: undefined,
   proposal: false,
   uncertain: false,
+  children: undefined,
 };
 
 Legend.propTypes = {

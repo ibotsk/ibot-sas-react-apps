@@ -70,8 +70,9 @@
       "residenceTime": "Status podľa doby introdukcie",
       "endemism": "Status endemizmu",
       "threat": "Status ohrozenosti",
-      "protectionLegacy": "Status legislatívnej ochrany (platná vyhláška)",
-      "protection": "Status legislatívnej ochrany (aktuálny)"
+      "protection": "Status legislatívnej ochrany",
+      "protectionCurrent": "Platná vyhláška",
+      "protectionPrepared": "Pripravovaná vyhláška"
     },
     "legend": {
       "origin": [
