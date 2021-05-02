@@ -82,7 +82,7 @@
         "cult – cultivated",
         "(cult) – cultivated only in the past or for a short period"
       ],
-      "invasion": [
+      "invasiveness": [
         "cas – casual (temporarily introduced or temporarily escaping)",
         "loc. nat – locally naturalized",
         "nat – naturalized",
@@ -90,7 +90,7 @@
         "inv – invasive",
         "inv! – invasive prohibited by law"
       ],
-      "residence": [
+      "residenceTime": [
         "arch – archaeophyte (introduced from the beginning of Neolithic agriculture up to the year 1500)",
         "neo – neophyte (introduced after the year 1500 until today)"
       ],

@@ -82,7 +82,7 @@
         "cult – pestovaný",
         "(cult) – pestovaný len v minulosti alebo krátkodobo"
       ],
-      "ivasion": [
+      "invasiveness": [
         "cas – prechodne zavlečený alebo prechodne splanievajúci",
         "loc. nat – lokálne naturalizovaný",
         "nat – naturalizovaný",
@@ -90,7 +90,7 @@
         "inv – invázny",
         "inv! – invázny zakázaný zákonom"
       ],
-      "residence": [
+      "residenceTime": [
         "arch – archeofyt (introdukovaný od začiatku neolitického poľnohospodárstva až do roku 1500)",
         "neo – neofyt (introdukovaný po roku 1500 až dodnes)"
       ],
