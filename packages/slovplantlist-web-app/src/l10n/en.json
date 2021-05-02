@@ -40,7 +40,8 @@
     "position": "Taxon position"
   },
   "tooltips": {
-    "clear search fields": "Clear search fields. Does not clear search results"
+    "clear": "Clear search fields. Does not clear search results",
+    "emptyWarning": "Please provide a value<br /> or check a Status below"
   },
   "table": {
     "rowsPerPage": "Rows per page"

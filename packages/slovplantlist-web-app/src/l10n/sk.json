@@ -40,7 +40,8 @@
     "position": "Zápis pozície taxónu"
   },
   "tooltips": {
-    "clear": "Vyčistiť vyhľadávacie polia. Nevymaže výsledky vyhľadávania"
+    "clear": "Vyčistiť vyhľadávacie polia. Nevymaže výsledky vyhľadávania",
+    "emptyWarning": "Zadajte hodnotu alebo<br /> zaškrtnite Status mena nižšie"
   },
   "table": {
     "rowsPerPage": "Riadkov na stránke"
