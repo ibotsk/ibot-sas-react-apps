@@ -97,7 +97,7 @@ const NameDetailCategories = ({ data = {} }) => {
 
   const {
     origin, cultivation, invasiveness, residenceTime, endemism,
-    threat, protection, protectionLegacy,
+    threat, protectionPrepared, protectionCurrent,
   } = data;
 
   return (
@@ -145,15 +145,15 @@ const NameDetailCategories = ({ data = {} }) => {
         <ValueWithHelp value={threat} category="threat" proposal />
       </TitledSection>
       <TitledSection
-        showWhen={!!protection}
+        showWhen={!!protectionPrepared}
         title={t('category.title.protection')}
       >
         <ValueWithHelp category="protection">
           <LabelValue label={t('category.title.protectionCurrent')}>
-            {protectionLegacy}
+            {protectionCurrent}
           </LabelValue>
           <LabelValue label={t('category.title.protectionPrepared')}>
-            {protection}
+            {protectionPrepared}
           </LabelValue>
         </ValueWithHelp>
       </TitledSection>
