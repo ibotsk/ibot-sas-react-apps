@@ -541,6 +541,7 @@ class SpeciesRecord extends Component {
         hybrid, publication, vernacular, tribus,
         aggregate,
         checkedTimestamp, checkedBy,
+        'nomen-status': nomenStatus = {},
       } = {},
       basionymFor, replacedFor, nomenNovumFor,
       parentCombinationFor, taxonPositionFor,
@@ -1211,6 +1212,115 @@ class SpeciesRecord extends Component {
                       losNameOptions={{
                         uri: CHECKLIST_EDIT_URI,
                       }}
+                    />
+                  </Col>
+                </FormGroup>
+              </Well>
+            </div>
+            <div id="name-categories">
+              <h4>Name categories</h4>
+              <Well>
+                <FormGroup controlId="origin" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Origin status
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.origin || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Origin status"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="cultivation" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Cultivation
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.cultivation || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Cultivation"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="invasiveness" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Invasion status
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.invasiveness || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Invasion status"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="residenceTime" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Residence time status
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.residenceTime || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Residence time status"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="endemism" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Endemic status
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.endemism || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Endemic status"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="threat" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Status of threat
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.threat || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Status of threat"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="protection-current" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Status of legislative protection (current)
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.protectionCurrent || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Status of legislative protection (current)"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="protection-prepared" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Status of legislative protection (prepared)
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.protectionPrepared || ''}
+                      onChange={this.handleChangeInput}
+                      placeholder="Status of legislative protection (prepared)"
                     />
                   </Col>
                 </FormGroup>

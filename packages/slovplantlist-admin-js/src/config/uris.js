@@ -24,7 +24,7 @@ export default {
       {"authorsH":{"like": "%25<%term%>%25"}}
     ]}}`,
     getByIdUri: `${backendBase}/api/nomenclatures/<%id%>?access_token=<%accessToken%>`,
-    getByIdWFilterUri: `${backendBase}/api/nomenclatures/<%id%>?access_token=<%accessToken%>&filter={"include":["accepted","basionym","replaced","nomen-novum","parent-combination","taxon-position",{"genus-rel":["family","family-apg"]}]}`,
+    getByIdWFilterUri: `${backendBase}/api/nomenclatures/<%id%>?access_token=<%accessToken%>&filter={"include":["accepted","basionym","replaced","nomen-novum","parent-combination","taxon-position",{"genus-rel":["family","family-apg"]},"nomen-status"]}`,
     getNomenclatoricSynonymsUri: `${backendBase}/api/nomenclatures/<%id%>/synonyms-nomenclatoric?access_token=<%accessToken%>&filter={"include":"synonyms-nomenclatoric-through"}`,
     getTaxonomicSynonymsUri: `${backendBase}/api/nomenclatures/<%id%>/synonyms-taxonomic?access_token=<%accessToken%>&filter={"include":"synonyms-nomenclatoric-through"}`,
     getInvalidSynonymsUri: `${backendBase}/api/nomenclatures/<%id%>/synonyms-invalid?access_token=<%accessToken%>`,

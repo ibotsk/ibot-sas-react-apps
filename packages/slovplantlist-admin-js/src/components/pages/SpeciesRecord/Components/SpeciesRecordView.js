@@ -115,6 +115,7 @@ const SpeciesRecordView = ({ recordId }) => {
   }
   const {
     ntype, publication, vernacular, tribus,
+    'nomen-status': nomenStatus = {},
   } = record;
   const type = config.mappings.losType[ntype];
   // eslint-disable-next-line max-len
@@ -281,6 +282,48 @@ const SpeciesRecordView = ({ recordId }) => {
                 <dt>Taxon position for</dt>
                 <dd>
                   <LosNameList list={taxonPositionFor} />
+                </dd>
+              </dl>
+            </Panel.Body>
+          </Panel>
+        </div>
+
+        <div id="name-categories">
+          <h3>Name categories</h3>
+          <Panel>
+            <Panel.Body>
+              <dl className="dl-horizontal">
+                <dt>Origin status</dt>
+                <dd>
+                  {nomenStatus.origin || '-'}
+                </dd>
+                <dt>Cultivation</dt>
+                <dd>
+                  {nomenStatus.cultivation || '-'}
+                </dd>
+                <dt>Invasion status</dt>
+                <dd>
+                  {nomenStatus.invasiveness || '-'}
+                </dd>
+                <dt>Residence time status</dt>
+                <dd>
+                  {nomenStatus.residenceTime || '-'}
+                </dd>
+                <dt>Endemic status</dt>
+                <dd>
+                  {nomenStatus.endemism || '-'}
+                </dd>
+                <dt>Status of threat</dt>
+                <dd>
+                  {nomenStatus.threat || '-'}
+                </dd>
+                <dt>Status of legislative protection (current)</dt>
+                <dd>
+                  {nomenStatus.protectionCurrent || '-'}
+                </dd>
+                <dt>Status of legislative protection (prepared)</dt>
+                <dd>
+                  {nomenStatus.protectionPrepared || '-'}
                 </dd>
               </dl>
             </Panel.Body>
