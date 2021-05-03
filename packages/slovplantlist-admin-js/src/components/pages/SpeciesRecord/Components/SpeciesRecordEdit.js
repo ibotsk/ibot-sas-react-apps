@@ -118,6 +118,7 @@ class SpeciesRecord extends Component {
       record: {
         ...recordInitialValues,
       },
+      nomenStatus: {},
       listOfSpecies: [],
       generaOptions: [],
       familyApg: '',
@@ -153,6 +154,7 @@ class SpeciesRecord extends Component {
         genus, familyApg, family,
         basionym, replaced, nomenNovum,
         parentCombination, taxonPosition,
+        nomenStatus,
       } = await speciesFacade.getRecordById(recordId, accessToken);
 
       const {
@@ -166,6 +168,7 @@ class SpeciesRecord extends Component {
 
       this.setState({
         record: speciesRecord,
+        nomenStatus,
         accepted,
         idBasionymSelected: basionym || [],
         idReplacedSelected: replaced || [],
@@ -192,6 +195,19 @@ class SpeciesRecord extends Component {
   handleChangeInput = (e) => {
     this.handleChange(e.target.id, e.target.value);
   }
+
+  handleChangeNomenStatus = (e) => {
+    const { id, value } = e.target;
+    this.setState((state) => {
+      const { nomenStatus } = state;
+      return {
+        nomenStatus: {
+          ...nomenStatus,
+          [id]: value,
+        },
+      };
+    });
+  };
 
   handleChangeCheckbox = (e) => {
     this.handleChange(e.target.id, e.target.checked);
@@ -369,6 +385,7 @@ class SpeciesRecord extends Component {
       invalidDesignations,
       misidentifications,
       otherSynonyms,
+      nomenStatus,
     } = this.state;
 
     try {
@@ -381,6 +398,7 @@ class SpeciesRecord extends Component {
           ...misidentifications,
           ...otherSynonyms,
         ],
+        nomenStatus,
         accessToken,
         insertedBy: username,
         updatedBy: username,
@@ -541,8 +559,8 @@ class SpeciesRecord extends Component {
         hybrid, publication, vernacular, tribus,
         aggregate,
         checkedTimestamp, checkedBy,
-        'nomen-status': nomenStatus = {},
       } = {},
+      nomenStatus = {},
       basionymFor, replacedFor, nomenNovumFor,
       parentCombinationFor, taxonPositionFor,
       idGenusSelected, idBasionymSelected,
@@ -1228,7 +1246,7 @@ class SpeciesRecord extends Component {
                     <FormControl
                       type="text"
                       value={nomenStatus.origin || ''}
-                      onChange={this.handleChangeInput}
+                      onChange={this.handleChangeNomenStatus}
                       placeholder="Origin status"
                     />
                   </Col>
@@ -1241,7 +1259,7 @@ class SpeciesRecord extends Component {
                     <FormControl
                       type="text"
                       value={nomenStatus.cultivation || ''}
-                      onChange={this.handleChangeInput}
+                      onChange={this.handleChangeNomenStatus}
                       placeholder="Cultivation"
                     />
                   </Col>
@@ -1254,7 +1272,7 @@ class SpeciesRecord extends Component {
                     <FormControl
                       type="text"
                       value={nomenStatus.invasiveness || ''}
-                      onChange={this.handleChangeInput}
+                      onChange={this.handleChangeNomenStatus}
                       placeholder="Invasion status"
                     />
                   </Col>
@@ -1267,7 +1285,7 @@ class SpeciesRecord extends Component {
                     <FormControl
                       type="text"
                       value={nomenStatus.residenceTime || ''}
-                      onChange={this.handleChangeInput}
+                      onChange={this.handleChangeNomenStatus}
                       placeholder="Residence time status"
                     />
                   </Col>
@@ -1280,7 +1298,7 @@ class SpeciesRecord extends Component {
                     <FormControl
                       type="text"
                       value={nomenStatus.endemism || ''}
-                      onChange={this.handleChangeInput}
+                      onChange={this.handleChangeNomenStatus}
                       placeholder="Endemic status"
                     />
                   </Col>
@@ -1293,12 +1311,12 @@ class SpeciesRecord extends Component {
                     <FormControl
                       type="text"
                       value={nomenStatus.threat || ''}
-                      onChange={this.handleChangeInput}
+                      onChange={this.handleChangeNomenStatus}
                       placeholder="Status of threat"
                     />
                   </Col>
                 </FormGroup>
-                <FormGroup controlId="protection-current" bsSize="sm">
+                <FormGroup controlId="protectionCurrent" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Status of legislative protection (current)
                   </Col>
@@ -1306,12 +1324,12 @@ class SpeciesRecord extends Component {
                     <FormControl
                       type="text"
                       value={nomenStatus.protectionCurrent || ''}
-                      onChange={this.handleChangeInput}
+                      onChange={this.handleChangeNomenStatus}
                       placeholder="Status of legislative protection (current)"
                     />
                   </Col>
                 </FormGroup>
-                <FormGroup controlId="protection-prepared" bsSize="sm">
+                <FormGroup controlId="protectionPrepared" bsSize="sm">
                   <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
                     Status of legislative protection (prepared)
                   </Col>
@@ -1319,7 +1337,7 @@ class SpeciesRecord extends Component {
                     <FormControl
                       type="text"
                       value={nomenStatus.protectionPrepared || ''}
-                      onChange={this.handleChangeInput}
+                      onChange={this.handleChangeNomenStatus}
                       placeholder="Status of legislative protection (prepared)"
                     />
                   </Col>

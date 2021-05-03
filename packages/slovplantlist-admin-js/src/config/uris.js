@@ -42,6 +42,9 @@ export default {
     getAllWFilterUri: `${backendBase}/api/nomenclature-owners?access_token=<%accessToken%>&filter={"offset":<%offset%>,"where":<%&where%>,"limit":<%limit%>,"include":"accepted","order":<%&order%>}`,
     countUri: `${backendBase}/api/nomenclature-owners/count?access_token=<%accessToken%>&where=<%&whereString%>`,
   },
+  nomenStatusUri: {
+    baseUri: `${backendBase}/api/nomen-statuses?access_token=<%accessToken%>`,
+  },
   generaUri: {
     baseUri: `${backendBase}/api/genera?access_token=<%accessToken%>`,
     getAllWFilterUri: `${backendBase}/api/genera?access_token=<%accessToken%>&filter={"offset":<%offset%>,"where":<%&where%>,"limit":<%limit%>,"include":["family-apg","family","accepted"],"order":<%&order%>}`,

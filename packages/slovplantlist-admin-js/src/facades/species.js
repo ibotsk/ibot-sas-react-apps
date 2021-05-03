@@ -10,15 +10,19 @@ const {
     insertedMethod: insertedMethodConf,
     updatedMethod: updatedMethodConf,
   },
-  uris: { nomenclaturesUri, synonymsUri },
+  uris: { nomenclaturesUri, synonymsUri, nomenStatusUri },
 } = config;
+
+const upsertNomenStatus = async (data, accessToken) => (
+  putRequest(nomenStatusUri.baseUri, data, {}, accessToken)
+);
 
 async function getRecordById(id, accessToken) {
   const speciesRecord = await getRequest(
     nomenclaturesUri.getByIdWFilterUri, { id }, accessToken,
   );
 
-  const { accepted } = speciesRecord;
+  const { accepted, 'nomen-status': nomenStatus } = speciesRecord;
 
   const basionym = helperUtils.losToTypeaheadSelected(speciesRecord.basionym);
   const replaced = helperUtils.losToTypeaheadSelected(speciesRecord.replaced);
@@ -57,9 +61,11 @@ async function getRecordById(id, accessToken) {
   delete speciesRecord['parent-combination'];
   delete speciesRecord['taxon-position'];
   delete speciesRecord['genus-rel'];
+  delete speciesRecord['nomen-status'];
 
   return {
     speciesRecord,
+    nomenStatus,
     accepted,
     basionym,
     replaced,
@@ -215,6 +221,7 @@ async function saveSpecies(
 async function saveSpeciesAndSynonyms({
   species,
   synonyms,
+  nomenStatus,
   accessToken,
   insertedBy,
   insertedMethod = insertedMethodConf.form,
@@ -229,6 +236,11 @@ async function saveSpeciesAndSynonyms({
       updatedMethod,
     },
   );
+
+  await upsertNomenStatus({
+    ...nomenStatus,
+    idNomenclature: data.id,
+  }, accessToken);
 
   return common.submitSynonyms(data.id, synonyms, {
     getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
