@@ -20,16 +20,18 @@ import {
 import Can from 'components/segments/auth/Can';
 import Ownership from 'components/segments/auth/Ownership';
 import RemotePagination from 'components/segments/RemotePagination';
+import SpeciesRecordModal
+  from 'components/pages/SpeciesRecord/SpeciesRecordModal';
 
 import config from 'config/config';
 import { helperUtils } from 'utils';
 
 import commonHooks from 'components/segments/hooks';
 
-import SpeciesNameModal from './Modals/SpeciesNameModal';
+// import SpeciesNameModal from './Modals/SpeciesNameModal';
 
 const PAGE_DETAIL = '/checklist/detail/';
-const EDIT_RECORD = '/checklist/edit/';
+// const EDIT_RECORD = '/checklist/edit/';
 const NEW_RECORD = '/checklist/new';
 
 const {
@@ -179,7 +181,7 @@ const defaultSorted = [{
   order: 'asc',
 }];
 
-const formatResult = (records, user) => records.map(({
+const formatResult = (records, user, handleShowModal) => records.map(({
   id, accepted, idGenus, ownerNames, ...nomen
 }) => ({
   ...nomen,
@@ -193,9 +195,16 @@ const formatResult = (records, user) => records.map(({
         userGeneraIds: user.userGenera,
       }}
       yes={() => (
-        <LinkContainer to={`${EDIT_RECORD}${id}`}>
-          <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
-        </LinkContainer>
+        // <LinkContainer to={`${EDIT_RECORD}${id}`}>
+        //   <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
+        // </LinkContainer>
+        <Button
+          bsSize="xsmall"
+          bsStyle="warning"
+          onClick={() => handleShowModal(id)}
+        >
+          Edit
+        </Button>
       )}
     />
   ),
@@ -377,7 +386,7 @@ const Checklist = () => {
         <ToolkitProvider
           columnToggle
           keyField="id"
-          data={formatResult(data, user)}
+          data={formatResult(data, user, handleShowModal)}
           columns={tableColumns}
         >
           {({ baseProps, columnToggleProps }) => (
@@ -411,10 +420,10 @@ const Checklist = () => {
           )}
         </ToolkitProvider>
       </Grid>
-      <SpeciesNameModal
-        id={editId}
+      <SpeciesRecordModal
+        editId={editId}
         show={showModal}
-        onHide={() => handleHideModal()}
+        onHide={handleHideModal}
       />
     </div>
   );

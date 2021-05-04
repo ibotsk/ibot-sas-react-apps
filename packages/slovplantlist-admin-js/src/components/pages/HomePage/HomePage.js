@@ -5,7 +5,6 @@ import { Switch } from 'react-router-dom';
 import Users from 'components/pages/Users/Users';
 import Checklist from 'components/pages/Checklist/Checklist';
 import ChecklistImport from 'components/pages/Checklist/Import/ChecklistImport';
-import SpeciesRecord from 'components/pages/SpeciesRecord/SpeciesRecord';
 import Genera from 'components/pages/Genera/Genera';
 import FamiliesAPG from 'components/pages/FamiliesAPG/FamiliesAPG';
 import Families from 'components/pages/Families/Families';
@@ -19,9 +18,6 @@ import Logout from './Logout';
 const Routing = () => (
   <Switch>
     <PrivateRoute exact path="/checklist" component={Checklist} />
-    <PrivateRoute path="/checklist/detail/:id" component={SpeciesRecord} />
-    <PrivateRoute path="/checklist/edit/:id" component={SpeciesRecord} />
-    <PrivateRoute path="/checklist/new" component={SpeciesRecord} />
     <PrivateRoute path="/checklist/import" component={ChecklistImport} />
     <PrivateRoute exact path="/genera" component={Genera} />
     <PrivateRoute exact path="/families-apg" component={FamiliesAPG} />
