@@ -12,7 +12,7 @@ import {
   Search as SearchIcon,
 } from '@material-ui/icons';
 
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 import PropTypes from 'prop-types';
 
@@ -49,7 +49,7 @@ const WarningMessage = withStyles((theme) => ({
   root: {
     color: theme.palette.warning.main,
   },
-}))(Typography);
+}))(Box);
 
 const ValidationMessage = ({ open, onClose }) => {
   if (!open) {
@@ -61,9 +61,11 @@ const ValidationMessage = ({ open, onClose }) => {
         variant="body2"
         component="span"
       >
-        Please provide a value
-        <br />
-        or check a Status below
+        <Trans i18nKey="tooltips.emptyWarning">
+          Please provide a value
+          <br />
+          or check a Status below
+        </Trans>
       </WarningMessage>
     </ClickAwayListener>
   );
@@ -172,7 +174,7 @@ const FilterTemplate = ({
         </List>
         <List>
           <Divider />
-          <ListItemCollapsible label="Status">
+          <ListItemCollapsible label={t('nameStatus')}>
             {statusOptions.map(({ key, value }) => (
               <ListItemCheckbox
                 id={key}

@@ -6,6 +6,7 @@
   "Scientific names": "Scientific names",
   "Scientific names page title": "Scientific Names",
   "Slovak names page title": "Slovak Names",
+  "nameStatus":"Name status",
   "Name": "Name",
   "Family": "Family",
   "Genus": "Genus",
@@ -39,7 +40,8 @@
     "position": "Taxon position"
   },
   "tooltips": {
-    "clear search fields": "Clear search fields. Does not clear search results"
+    "clear": "Clear search fields. Does not clear search results",
+    "emptyWarning": "Please provide a value<br /> or check a Status below"
   },
   "table": {
     "rowsPerPage": "Rows per page"
@@ -58,6 +60,73 @@
     "vega": "The creation of the database was supported by the Scientific Grant Agency of the Ministry of Education, Science, Research and Sport of the Slovak Republic and the Slovak Academy of Sciences (the project VEGA 2/0137/17).",
     "techSolutionTitle": "Technical solution",
     "techSolutionDescription": "This website is built using a JavaScript library <2>React</2> (v16.14) and <6>Material-UI</6> (v4.11) - a React UI framework. It is deployed as a docker container on the server.<9/> The data are stored in the MySQL database. The MySQL server is of version 5.7 and it is deployed as a docker container on the server.<11/>Between the website and the database lies component that is responsible for fetching of the data from the database. It is a NodeJs and TypeScript microservice that integrates <14>Loopback 4</14> framework. This application is also deployed as a docker container on the server."
+  },
+  "category": {
+    "title": {
+      "origin": "Origin status",
+      "cultivation": "Cultivation",
+      "cultivationSubtitle": "(indicated at non-native taxa only)",
+      "invasiveness": "Invasion status",
+      "residenceTime": "Residence time status",
+      "endemism": "Endemic status",
+      "threat": "Status of threat",
+      "protection": "Status of legislative protection",
+      "protectionCurrent": "Valid",
+      "protectionPrepared": "Prepared"
+    },
+    "legend": {
+      "origin": [
+        "aut – native (autochthonous)",
+        "alo – non-native, alien (allochthonous)"
+      ],
+      "cultivation": [
+        "cult – cultivated",
+        "(cult) – cultivated only in the past or for a short period"
+      ],
+      "invasiveness": [
+        "cas – casual (temporarily introduced or temporarily escaping)",
+        "loc. nat – locally naturalized",
+        "nat – naturalized",
+        "loc. inv. – locally invasive",
+        "inv – invasive",
+        "inv! – invasive prohibited by law"
+      ],
+      "residenceTime": [
+        "arch – archaeophyte (introduced from the beginning of Neolithic agriculture up to the year 1500)",
+        "neo – neophyte (introduced after the year 1500 until today)"
+      ],
+      "endemism": [
+        "WC – West Carpathians",
+        "EC – East Carpathians",
+        "SC – South Carpathians",
+        "AC – Apuseni Carpathians",
+        "Tr – Transylvanian Basin",
+        "Mat – Matricum",
+        "Pan – Pannonian",
+        "Alp – Alps",
+        "sub – subendemic"
+      ],
+      "threat": [
+        "RE – regionally (in Slovakia) extinct",
+        "CR(PE) – critically endangered (probably regionally extinct)",
+        "EN – endangered",
+        "VU – vulnerable",
+        "NT – near threatened",
+        "DD – data deficient",
+        "LC – least concern",
+        "NA – not applicable",
+        "NE – not evaluated"
+      ],
+      "protection": [
+        "§ – protected by law"
+      ],
+      "proposal": "→ – our proposal to change the status compared to the last version of the red list (Eliáš jun. et al. 2015)",
+      "uncertain": "? – uncertain status"
+    }
+  },
+  "tabs": {
+    "overview": "Overview",
+    "category": "Categories"
   },
   "Useful Databases worldwide": "Useful Databases worldwide",
   "databases": {

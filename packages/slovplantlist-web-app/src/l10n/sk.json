@@ -6,6 +6,7 @@
   "Scientific names": "Vedecké mená",
   "Scientific names page title": "Vedecké mená",
   "Slovak names page title": "Slovenské mená",
+  "nameStatus": "Status mena",
   "Name": "Meno",
   "Family": "Čeľaď",
   "Genus": "Rod",
@@ -39,7 +40,8 @@
     "position": "Zápis pozície taxónu"
   },
   "tooltips": {
-    "clear": "Vyčistiť vyhľadávacie polia. Nevymaže výsledky vyhľadávania"
+    "clear": "Vyčistiť vyhľadávacie polia. Nevymaže výsledky vyhľadávania",
+    "emptyWarning": "Zadajte hodnotu alebo<br /> zaškrtnite Status mena nižšie"
   },
   "table": {
     "rowsPerPage": "Riadkov na stránke"
@@ -58,6 +60,73 @@
     "vega": "Vznik databázy podporila Vedecká grantová agentúra Ministerstva školstva, vedy, výskumu a športu Slovenskej republiky a Slovenskej akadémie vied (projekt VEGA 2/0137/17).",
     "techSolutionTitle": "Technické riešenie",
     "techSolutionDescription": "Táto webstránka bola vytvorená pomocou JavaScriptovej knižnice <2>React</2> (v16.14) a <6>Material-UI</6> (v4.11) - čo je React UI framework. Stránka je nasadená na serveri ako tzv. docker kontajner.<9/> Dáta sú uložené v MySQL databáze. MySQL server je verzie 5.7 a je nasadený na serveri ako docker kontajner.<11/>Medzi webstránkou a databázou sa nachádza komponent, ktorý je zodpovedný za čítanie dát z databázy. Táto aplikácia je implementovaná v NodeJS a TypeScript a využíva framework <14>Loopback 4</14>. Rovnako je na serveri nasadená ako docker kontajner."
+  },
+  "category": {
+    "title": {
+      "origin": "Pôvodnosť",
+      "cultivation": "Pestovanie",
+      "cultivationSubtitle": "(vyznačené len pri nepôvodných taxónoch)",
+      "invasiveness": "Status inváznosti",
+      "residenceTime": "Status podľa doby introdukcie",
+      "endemism": "Status endemizmu",
+      "threat": "Status ohrozenosti",
+      "protection": "Status legislatívnej ochrany",
+      "protectionCurrent": "Platná vyhláška",
+      "protectionPrepared": "Pripravovaná vyhláška"
+    },
+    "legend": {
+      "origin": [
+        "aut – pôvodný (autochtónny)",
+        "alo – nepôvodný (alochtónny)"
+      ],
+      "cultivation": [
+        "cult – pestovaný",
+        "(cult) – pestovaný len v minulosti alebo krátkodobo"
+      ],
+      "invasiveness": [
+        "cas – prechodne zavlečený alebo prechodne splanievajúci",
+        "loc. nat – lokálne naturalizovaný",
+        "nat – naturalizovaný",
+        "loc. inv. – lokálne invázny",
+        "inv – invázny",
+        "inv! – invázny zakázaný zákonom"
+      ],
+      "residenceTime": [
+        "arch – archeofyt (introdukovaný od začiatku neolitického poľnohospodárstva až do roku 1500)",
+        "neo – neofyt (introdukovaný po roku 1500 až dodnes)"
+      ],
+      "endemism": [
+        "WC – Západné Karpaty",
+        "EC – Východné Karpaty",
+        "SC – Južné Karpaty",
+        "AC – Apušenské Karpaty",
+        "Tr – Sedmohradská kotlina",
+        "Mat – Matranská oblasť",
+        "Pan – Panónska oblasť",
+        "Alp – Alpy",
+        "sub – subendemit"
+      ],
+      "threat": [
+        "RE – regionálne (na Slovensku) vyhynutý",
+        "CR(PE) – kriticky ohrozený (pravdepodobne regionálne vyhynutý)",
+        "EN – ohrozený",
+        "VU – zraniteľný",
+        "NT – takmer ohrozený",
+        "DD – údajovo nedostatočný",
+        "LC – menej dotknutý",
+        "NA – pravdepodobne ohrozený, ale s kontroverzným taxonomickým statusom",
+        "NE – nehodnotený pre pochybný výskyt v minulosti"
+      ],
+      "protection": [
+        "§ – zákonom chránený"
+      ],
+      "proposal": "→ – nami navrhovaná zmena statusu ohrozenosti oproti poslednej verzii červeného zoznamu (Eliáš jun. et al. 2015)",
+      "uncertain": "? – neistý status"
+    }
+  },
+  "tabs": {
+    "overview": "Prehľad",
+    "category": "Kategórie"
   },
   "Useful Databases worldwide": "Užitočné databázy",
   "databases": {

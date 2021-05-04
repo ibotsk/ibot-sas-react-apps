@@ -118,6 +118,7 @@ class SpeciesRecord extends Component {
       record: {
         ...recordInitialValues,
       },
+      nomenStatus: {},
       listOfSpecies: [],
       generaOptions: [],
       familyApg: '',
@@ -153,6 +154,7 @@ class SpeciesRecord extends Component {
         genus, familyApg, family,
         basionym, replaced, nomenNovum,
         parentCombination, taxonPosition,
+        nomenStatus,
       } = await speciesFacade.getRecordById(recordId, accessToken);
 
       const {
@@ -166,6 +168,7 @@ class SpeciesRecord extends Component {
 
       this.setState({
         record: speciesRecord,
+        nomenStatus,
         accepted,
         idBasionymSelected: basionym || [],
         idReplacedSelected: replaced || [],
@@ -192,6 +195,19 @@ class SpeciesRecord extends Component {
   handleChangeInput = (e) => {
     this.handleChange(e.target.id, e.target.value);
   }
+
+  handleChangeNomenStatus = (e) => {
+    const { id, value } = e.target;
+    this.setState((state) => {
+      const { nomenStatus } = state;
+      return {
+        nomenStatus: {
+          ...nomenStatus,
+          [id]: value,
+        },
+      };
+    });
+  };
 
   handleChangeCheckbox = (e) => {
     this.handleChange(e.target.id, e.target.checked);
@@ -369,6 +385,7 @@ class SpeciesRecord extends Component {
       invalidDesignations,
       misidentifications,
       otherSynonyms,
+      nomenStatus,
     } = this.state;
 
     try {
@@ -381,6 +398,7 @@ class SpeciesRecord extends Component {
           ...misidentifications,
           ...otherSynonyms,
         ],
+        nomenStatus,
         accessToken,
         insertedBy: username,
         updatedBy: username,
@@ -542,6 +560,7 @@ class SpeciesRecord extends Component {
         aggregate,
         checkedTimestamp, checkedBy,
       } = {},
+      nomenStatus = {},
       basionymFor, replacedFor, nomenNovumFor,
       parentCombinationFor, taxonPositionFor,
       idGenusSelected, idBasionymSelected,
@@ -1211,6 +1230,115 @@ class SpeciesRecord extends Component {
                       losNameOptions={{
                         uri: CHECKLIST_EDIT_URI,
                       }}
+                    />
+                  </Col>
+                </FormGroup>
+              </Well>
+            </div>
+            <div id="name-categories">
+              <h4>Name categories</h4>
+              <Well>
+                <FormGroup controlId="origin" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Origin status
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.origin || ''}
+                      onChange={this.handleChangeNomenStatus}
+                      placeholder="Origin status"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="cultivation" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Cultivation
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.cultivation || ''}
+                      onChange={this.handleChangeNomenStatus}
+                      placeholder="Cultivation"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="invasiveness" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Invasion status
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.invasiveness || ''}
+                      onChange={this.handleChangeNomenStatus}
+                      placeholder="Invasion status"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="residenceTime" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Residence time status
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.residenceTime || ''}
+                      onChange={this.handleChangeNomenStatus}
+                      placeholder="Residence time status"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="endemism" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Endemic status
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.endemism || ''}
+                      onChange={this.handleChangeNomenStatus}
+                      placeholder="Endemic status"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="threat" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Status of threat
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.threat || ''}
+                      onChange={this.handleChangeNomenStatus}
+                      placeholder="Status of threat"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="protectionCurrent" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Status of legislative protection (current)
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.protectionCurrent || ''}
+                      onChange={this.handleChangeNomenStatus}
+                      placeholder="Status of legislative protection (current)"
+                    />
+                  </Col>
+                </FormGroup>
+                <FormGroup controlId="protectionPrepared" bsSize="sm">
+                  <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+                    Status of legislative protection (prepared)
+                  </Col>
+                  <Col xs={CONTENT_COL_WIDTH}>
+                    <FormControl
+                      type="text"
+                      value={nomenStatus.protectionPrepared || ''}
+                      onChange={this.handleChangeNomenStatus}
+                      placeholder="Status of legislative protection (prepared)"
                     />
                   </Col>
                 </FormGroup>

@@ -163,7 +163,7 @@ const Home = () => {
             . Bratislava, Veda, in press.
           </Typography>
           <Typography paragraph variant="body2">
-            {t('home.authorship')}
+            {t('home.generaAuthorship')}
             :
             {' '}
             <i>Rubus</i>
