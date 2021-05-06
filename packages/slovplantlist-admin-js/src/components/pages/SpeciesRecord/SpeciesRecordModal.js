@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
+  Button,
   Form, Modal,
   Tabs, Tab,
 } from 'react-bootstrap';
@@ -16,11 +17,18 @@ import { speciesFacade } from 'facades';
 import SpeciesRecordNameDetails from './Components/SpeciesRecordNameDetails';
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
-  const { speciesRecord } = data;
+  const {
+    speciesRecord, family, familyApg,
+  } = data;
   return (
     <Tabs defaultActiveKey={1} id="species-details-tabs">
       <Tab eventKey={1} title="Name details">
-        <SpeciesRecordNameDetails isEdit={isEdit} record={speciesRecord} />
+        <SpeciesRecordNameDetails
+          isEdit={isEdit}
+          record={speciesRecord}
+          family={family}
+          familyApg={familyApg}
+        />
       </Tab>
       <Tab eventKey={2} title="Publication">
         Pub
@@ -39,10 +47,7 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
 };
 
 const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
-  const [record, setRecord] = useState({});
-  // // const [genus, setGenus] = useState('');
-  // const [family, setFamily] = useState('');
-  // const [familyApg, setFamilyApg] = useState('');
+  const [fullRecord, setFullRecord] = useState({});
 
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
@@ -60,7 +65,7 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
       // }
       const r = await speciesFacade.getRecordById(recordId, accessToken);
 
-      setRecord(r);
+      setFullRecord(r);
     }
   };
 
@@ -69,10 +74,11 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
     onHide();
   };
 
-  const { speciesRecord: { idGenus } = {} } = record;
+  const { speciesRecord: { idGenus } = {} } = fullRecord;
 
   return (
     <Modal
+      id="species-record-modal"
       bsSize="large"
       show={show}
       onHide={handleHide}
@@ -95,14 +101,18 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
           }}
           yes={() => (
             <Form horizontal onSubmit={() => { }}>
-              <SpeciesRecordTabs isEdit data={record} />
+              <SpeciesRecordTabs isEdit data={fullRecord} />
             </Form>
           )}
           no={() => (
-            <SpeciesRecordTabs data={record} />
+            <SpeciesRecordTabs data={fullRecord} />
           )}
         />
       </Modal.Body>
+      <Modal.Footer>
+        <Button bsStyle="default" onClick={handleHide}>Cancel</Button>
+        <Button bsStyle="primary" type="submit">Save</Button>
+      </Modal.Footer>
     </Modal>
   );
 };
@@ -121,6 +131,8 @@ SpeciesRecordTabs.propTypes = {
   isEdit: PropTypes.bool,
   data: PropTypes.shape({
     speciesRecord: SpeciesType.type,
+    family: PropTypes.string,
+    familyApg: PropTypes.string,
   }).isRequired,
 };
 SpeciesRecordTabs.defaultProps = {
