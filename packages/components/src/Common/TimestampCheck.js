@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 const TimestampCheck = ({
   isChecked, checkedTimestamp, checkedBy, onCheck,
+  editable = true,
 }) => (
   <div>
     {
@@ -23,13 +24,15 @@ const TimestampCheck = ({
         </div>
       )
     }
-    <Button
-      bsStyle={checkedTimestamp ? 'success' : 'danger'}
-      bsSize="small"
-      onClick={onCheck}
-    >
-      {checkedTimestamp ? 'Re-check' : 'Check'}
-    </Button>
+    {editable && (
+      <Button
+        bsStyle={checkedTimestamp ? 'success' : 'danger'}
+        bsSize="small"
+        onClick={onCheck}
+      >
+        {checkedTimestamp ? 'Re-check' : 'Check'}
+      </Button>
+    )}
   </div>
 );
 
@@ -40,9 +43,11 @@ TimestampCheck.propTypes = {
   checkedTimestamp: PropTypes.string,
   checkedBy: PropTypes.string,
   onCheck: PropTypes.func.isRequired,
+  editable: PropTypes.bool,
 };
 
 TimestampCheck.defaultProps = {
   checkedTimestamp: undefined,
   checkedBy: undefined,
+  editable: true,
 };

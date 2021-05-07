@@ -17,12 +17,15 @@ import { speciesFacade } from 'facades';
 import SpeciesRecordDetailsName from './Components/SpeciesRecordDetailsName';
 import SpeciesRecordDetailsCategories
   from './Components/SpeciesRecordDetailsCategories';
+import SpeciesRecordDetailsCheckPublish
+  from './Components/SpeciesRecordDetailsCheckPublish';
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
   const {
-    speciesRecord, family, familyApg,
+    speciesRecord = {}, family, familyApg,
     nomenStatus,
   } = data;
+  const { checkTimestamp, checkedBy } = speciesRecord;
   return (
     <Tabs defaultActiveKey={1} id="species-details-tabs">
       <Tab eventKey={1} title="Name composition">
@@ -43,7 +46,11 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
         />
       </Tab>
       <Tab eventKey={4} title="Check and Publish">
-        CP
+        <SpeciesRecordDetailsCheckPublish
+          isEdit={isEdit}
+          checkedAt={checkTimestamp}
+          checkedBy={checkedBy}
+        />
       </Tab>
     </Tabs>
   );
