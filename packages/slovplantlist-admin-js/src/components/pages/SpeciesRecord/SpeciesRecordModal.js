@@ -15,10 +15,13 @@ import Can from 'components/segments/auth/Can';
 
 import { speciesFacade } from 'facades';
 import SpeciesRecordDetailsName from './Components/SpeciesRecordDetailsName';
+import SpeciesRecordDetailsCategories
+  from './Components/SpeciesRecordDetailsCategories';
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
   const {
     speciesRecord, family, familyApg,
+    nomenStatus,
   } = data;
   return (
     <Tabs defaultActiveKey={1} id="species-details-tabs">
@@ -34,7 +37,10 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
         SA
       </Tab>
       <Tab eventKey={3} title="Categories">
-        Cat
+        <SpeciesRecordDetailsCategories
+          isEdit={isEdit}
+          categoriesRecord={nomenStatus}
+        />
       </Tab>
       <Tab eventKey={4} title="Check and Publish">
         CP
@@ -120,6 +126,16 @@ SpeciesRecordTabs.propTypes = {
     speciesRecord: SpeciesType.type,
     family: PropTypes.string,
     familyApg: PropTypes.string,
+    nomenStatus: PropTypes.shape({
+      origin: PropTypes.string,
+      cultivation: PropTypes.string,
+      invasiveness: PropTypes.string,
+      residenceTime: PropTypes.string,
+      endemism: PropTypes.string,
+      threat: PropTypes.string,
+      protectionCurrent: PropTypes.string,
+      protectionPrepared: PropTypes.string,
+    }),
   }).isRequired,
 };
 SpeciesRecordTabs.defaultProps = {
