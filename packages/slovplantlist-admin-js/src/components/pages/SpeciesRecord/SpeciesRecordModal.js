@@ -14,7 +14,7 @@ import SpeciesType from 'components/propTypes/species';
 import Can from 'components/segments/auth/Can';
 
 import { speciesFacade } from 'facades';
-import SpeciesRecordNameDetails from './Components/SpeciesRecordNameDetails';
+import SpeciesRecordDetailsName from './Components/SpeciesRecordDetailsName';
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
   const {
@@ -22,24 +22,21 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
   } = data;
   return (
     <Tabs defaultActiveKey={1} id="species-details-tabs">
-      <Tab eventKey={1} title="Name details">
-        <SpeciesRecordNameDetails
+      <Tab eventKey={1} title="Name composition">
+        <SpeciesRecordDetailsName
           isEdit={isEdit}
-          record={speciesRecord}
+          nomenRecord={speciesRecord}
           family={family}
           familyApg={familyApg}
         />
       </Tab>
-      <Tab eventKey={2} title="Publication">
-        Pub
-      </Tab>
-      <Tab eventKey={3} title="Synonyms and Associations">
+      <Tab eventKey={2} title="Synonyms and Associations">
         SA
       </Tab>
-      <Tab eventKey={4} title="Categories">
+      <Tab eventKey={3} title="Categories">
         Cat
       </Tab>
-      <Tab eventKey={5} title="Check and Publish">
+      <Tab eventKey={4} title="Check and Publish">
         CP
       </Tab>
     </Tabs>
@@ -54,17 +51,7 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
 
   const onEnter = async () => {
     if (recordId) {
-      // const {
-      // speciesRecord,
-      // accepted,
-      // genus,
-      // familyApg, family,
-      // basionym, replaced, nomenNovum,
-      // parentCombination, taxonPosition,
-      // nomenStatus,
-      // }
       const r = await speciesFacade.getRecordById(recordId, accessToken);
-
       setFullRecord(r);
     }
   };

@@ -14,23 +14,23 @@ import FormControlEditableOrStatic
 
 import config from 'config/config';
 
-const LABEL_COL_WIDTH = 2;
-const CONTENT_COL_WIDTH = 10;
-
 const {
   mappings: {
     losType: ntypesConfig,
   },
+  constants: {
+    labelColumnWidth,
+    contentColumnWidth,
+  },
 } = config;
 
-const SpeciesRecordNameDetails = ({
-  record = {},
+const SpeciesRecordDetailsName = ({
+  nomenRecord = {},
   familyApg = '-',
   family = '-',
   isEdit = false,
 }) => {
   const [ntype, setNtype] = useState();
-  const [aggregate, setAggregate] = useState();
   const [genus, setGenus] = useState();
   const [species, setSpecies] = useState();
   const [subsp, setSubsp] = useState();
@@ -54,32 +54,41 @@ const SpeciesRecordNameDetails = ({
   const [nothoformaH, setNothoformaH] = useState();
   const [authorsH, setAuthorsH] = useState();
 
-  useEffect(() => {
-    setNtype(record.ntype);
-    setAggregate(record.aggregate);
-    setGenus(record.genus);
-    setSpecies(record.species);
-    setSubsp(record.subsp);
-    setVariety(record.var);
-    setSubvar(record.subvar);
-    setForma(record.forma);
-    setNothosubsp(record.nothosubsp);
-    setNothoforma(record.nothoforma);
-    setProles(record.proles);
-    setUnranked(record.unranked);
-    setAuthors(record.authors);
-    setHybrid(record.hybrid);
+  const [publication, setPublication] = useState();
+  const [aggregate, setAggregate] = useState();
+  const [vernacular, setVernacular] = useState();
+  const [tribus, setTribus] = useState();
 
-    setGenusH(record.genusH);
-    setSpeciesH(record.speciesH);
-    setSubspH(record.subspH);
-    setVarH(record.varH);
-    setSubvarH(record.subvarH);
-    setFormaH(record.formaH);
-    setNothosubspH(record.nothosubspH);
-    setNothoformaH(record.nothoformaH);
-    setAuthorsH(record.authorsH);
-  }, [record]);
+  useEffect(() => {
+    setNtype(nomenRecord.ntype);
+    setGenus(nomenRecord.genus);
+    setSpecies(nomenRecord.species);
+    setSubsp(nomenRecord.subsp);
+    setVariety(nomenRecord.var);
+    setSubvar(nomenRecord.subvar);
+    setForma(nomenRecord.forma);
+    setNothosubsp(nomenRecord.nothosubsp);
+    setNothoforma(nomenRecord.nothoforma);
+    setProles(nomenRecord.proles);
+    setUnranked(nomenRecord.unranked);
+    setAuthors(nomenRecord.authors);
+    setHybrid(nomenRecord.hybrid);
+
+    setGenusH(nomenRecord.genusH);
+    setSpeciesH(nomenRecord.speciesH);
+    setSubspH(nomenRecord.subspH);
+    setVarH(nomenRecord.varH);
+    setSubvarH(nomenRecord.subvarH);
+    setFormaH(nomenRecord.formaH);
+    setNothosubspH(nomenRecord.nothosubspH);
+    setNothoformaH(nomenRecord.nothoformaH);
+    setAuthorsH(nomenRecord.authorsH);
+
+    setPublication(nomenRecord.publication);
+    setAggregate(nomenRecord.aggregate);
+    setVernacular(nomenRecord.vernacular);
+    setTribus(nomenRecord.tribus);
+  }, [nomenRecord]);
 
   const renderHybridFields = () => {
     if (!hybrid) {
@@ -90,11 +99,12 @@ const SpeciesRecordNameDetails = ({
       <Panel>
         <Panel.Body>
           <FormGroup controlId="genusH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Genus
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={genusH || ''}
                 onChange={(e) => setGenusH(e.target.value)}
@@ -103,11 +113,12 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="speciesH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Species
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={speciesH || ''}
                 onChange={(e) => setSpeciesH(e.target.value)}
@@ -116,11 +127,12 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="subspH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Subsp
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={subspH || ''}
                 onChange={(e) => setSubspH(e.target.value)}
@@ -129,11 +141,12 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="varH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Var
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={varH || ''}
                 onChange={(e) => setVarH(e.target.value)}
@@ -142,11 +155,12 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="subvarH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Subvar
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={subvarH || ''}
                 onChange={(e) => setSubvarH(e.target.value)}
@@ -155,11 +169,12 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="formaH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Forma
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={formaH || ''}
                 onChange={(e) => setFormaH(e.target.value)}
@@ -168,11 +183,12 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="nothosubspH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Nothosubsp
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={nothosubspH || ''}
                 onChange={(e) => setNothosubspH(e.target.value)}
@@ -181,11 +197,12 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="nothoformaH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Nothoforma
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={nothoformaH || ''}
                 onChange={(e) => setNothoformaH(e.target.value)}
@@ -194,11 +211,12 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="authorsH" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Hybrid Authors
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
-              <FormControl
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
                 type="text"
                 value={authorsH || ''}
                 onChange={(e) => setAuthorsH(e.target.value)}
@@ -216,10 +234,10 @@ const SpeciesRecordNameDetails = ({
       <Panel>
         <Panel.Body>
           <FormGroup controlId="ntype" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Type
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 componentClass="select"
@@ -244,26 +262,26 @@ const SpeciesRecordNameDetails = ({
       <Panel>
         <Panel.Body>
           <FormGroup bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               <ControlLabel>Family APG</ControlLabel>
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControl.Static>{familyApg}</FormControl.Static>
             </Col>
           </FormGroup>
           <FormGroup bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               <ControlLabel>Family</ControlLabel>
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControl.Static>{family}</FormControl.Static>
             </Col>
           </FormGroup>
           <FormGroup controlId="idGenus" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Genus (reference)
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               {/* <AsyncTypeahead
               id="id-genus-autocomplete"
               isLoading={isLoading}
@@ -279,10 +297,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="aggregate" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Aggregate
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -295,11 +313,43 @@ const SpeciesRecordNameDetails = ({
       </Panel>
       <Panel>
         <Panel.Body>
+          <FormGroup controlId="vernacular" bsSize="sm">
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
+              Vernacular
+            </Col>
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
+                type="text"
+                value={vernacular || ''}
+                placeholder="Vernacular"
+                onChange={(e) => setVernacular(e.target.value)}
+              />
+            </Col>
+          </FormGroup>
+          <FormGroup controlId="tribus" bsSize="sm">
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
+              Tribus
+            </Col>
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
+                type="text"
+                value={tribus || ''}
+                placeholder="Tribus"
+                onChange={(e) => setTribus(e.target.value)}
+              />
+            </Col>
+          </FormGroup>
+        </Panel.Body>
+      </Panel>
+      <Panel>
+        <Panel.Body>
           <FormGroup controlId="genus" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Genus (text)
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -310,10 +360,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="species" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Species
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -323,10 +373,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="subsp" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Subsp
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -336,10 +386,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="var" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Var
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -349,10 +399,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="subvar" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Subvar
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -362,10 +412,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="forma" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Forma
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -375,10 +425,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="nothosubsp" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Nothosubsp
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -388,10 +438,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="nothoforma" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Nothoforma
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -401,10 +451,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="proles" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Proles
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -414,10 +464,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="unranked" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Unranked
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -427,10 +477,10 @@ const SpeciesRecordNameDetails = ({
             </Col>
           </FormGroup>
           <FormGroup controlId="authors" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={LABEL_COL_WIDTH}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Authors
             </Col>
-            <Col sm={CONTENT_COL_WIDTH}>
+            <Col sm={contentColumnWidth}>
               <FormControlEditableOrStatic
                 editable={isEdit}
                 type="text"
@@ -441,8 +491,8 @@ const SpeciesRecordNameDetails = ({
           </FormGroup>
           <FormGroup controlId="hybrid">
             <Col
-              sm={CONTENT_COL_WIDTH}
-              smOffset={LABEL_COL_WIDTH}
+              sm={contentColumnWidth}
+              smOffset={labelColumnWidth}
               xs={12}
             >
               <Checkbox
@@ -461,20 +511,37 @@ const SpeciesRecordNameDetails = ({
           }
         </Panel.Body>
       </Panel>
+      <Panel>
+        <Panel.Body>
+          <FormGroup controlId="publication" bsSize="sm">
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
+              Publication
+            </Col>
+            <Col sm={contentColumnWidth}>
+              <FormControlEditableOrStatic
+                editable={isEdit}
+                type="text"
+                value={publication || ''}
+                onChange={(e) => setPublication(e.target.value)}
+              />
+            </Col>
+          </FormGroup>
+        </Panel.Body>
+      </Panel>
     </>
   );
 };
 
-export default SpeciesRecordNameDetails;
+export default SpeciesRecordDetailsName;
 
-SpeciesRecordNameDetails.propTypes = {
-  record: SpeciesPropType.type,
+SpeciesRecordDetailsName.propTypes = {
+  nomenRecord: SpeciesPropType.type,
   familyApg: PropTypes.string,
   family: PropTypes.string,
   isEdit: PropTypes.bool,
 };
-SpeciesRecordNameDetails.defaultProps = {
-  record: {},
+SpeciesRecordDetailsName.defaultProps = {
+  nomenRecord: {},
   familyApg: '-',
   family: '-',
   isEdit: false,
