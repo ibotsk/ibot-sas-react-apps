@@ -9,10 +9,16 @@ import {
 import PropTypes from 'prop-types';
 import SpeciesPropType from 'components/propTypes/species';
 
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+
+import { hooks } from '@ibot/core';
+
 import FormControlEditableOrStatic
   from 'components/segments/FormControlEditableOrStatic';
 
+import { genusFacade } from 'facades';
 import config from 'config/config';
+import { useSelector } from 'react-redux';
 
 const {
   mappings: {
@@ -24,13 +30,24 @@ const {
   },
 } = config;
 
+const searchGenusByTerm = (query, accessToken) => (
+  genusFacade.getAllGeneraBySearchTerm(
+    query, accessToken, (g) => ({
+      id: g.id,
+      label: g.name,
+    }),
+  )
+);
+
 const SpeciesRecordDetailsName = ({
   nomenRecord = {},
-  familyApg = '-',
-  family = '-',
+  genusReference = [],
   isEdit = false,
 }) => {
-  const [ntype, setNtype] = useState();
+  const [family, setFamily] = useState('-');
+  const [familyApg, setFamilyApg] = useState('-');
+
+  const [ntype, setNtype] = useState('A');
   const [genus, setGenus] = useState();
   const [species, setSpecies] = useState();
   const [subsp, setSubsp] = useState();
@@ -58,6 +75,17 @@ const SpeciesRecordDetailsName = ({
   const [aggregate, setAggregate] = useState();
   const [vernacular, setVernacular] = useState();
   const [tribus, setTribus] = useState();
+
+  const accessToken = useSelector((state) => state.authentication.accessToken);
+
+  const {
+    selected: genusSelected,
+    isLoading: isLoadingGenus,
+    results: generaOptions,
+    doSearch: doSearchGenus,
+    handleChangeTypeahead: handleChangeTypeaheadGenus,
+    getStaticSelected: getStaticSelectedGenus,
+  } = hooks.useAsyncTypeahead(searchGenusByTerm, genusReference, accessToken);
 
   useEffect(() => {
     setNtype(nomenRecord.ntype);
@@ -89,6 +117,24 @@ const SpeciesRecordDetailsName = ({
     setVernacular(nomenRecord.vernacular);
     setTribus(nomenRecord.tribus);
   }, [nomenRecord]);
+
+  useEffect(() => {
+    const fetchFamilies = async () => {
+      const genusId = genusSelected[0] ? genusSelected[0].id : undefined;
+      if (genusId) {
+        const {
+          family: familyObj,
+          familyApg: familyApgObj,
+        } = await genusFacade.getGenusByIdWithRelations(
+          genusId, accessToken,
+        );
+        setFamily(familyObj.name);
+        setFamilyApg(familyApgObj.name);
+      }
+    };
+
+    fetchFamilies();
+  }, [genusSelected, accessToken]);
 
   const renderHybridFields = () => {
     if (!hybrid) {
@@ -244,16 +290,13 @@ const SpeciesRecordDetailsName = ({
                 value={ntype}
                 onChange={(e) => setNtype(e.target.value)}
               >
-                {
+                {isEdit ? (
                   Object.keys(ntypesConfig).map((t) => (
-                    <option
-                      value={t}
-                      key={t}
-                    >
-                      {ntypesConfig[t].text}
-                    </option>
+                    <option value={t} key={t}>{ntypesConfig[t].text}</option>
                   ))
-                }
+                ) : (
+                  <option>{ntype ? ntypesConfig[ntype].text : ''}</option>
+                )}
               </FormControlEditableOrStatic>
             </Col>
           </FormGroup>
@@ -282,18 +325,24 @@ const SpeciesRecordDetailsName = ({
               Genus (reference)
             </Col>
             <Col sm={contentColumnWidth}>
-              {/* <AsyncTypeahead
-              id="id-genus-autocomplete"
-              isLoading={isLoading}
-              options={generaOptions}
-              onSearch={this.handleSearchGeneraAsyncTypeahead}
-              selected={idGenusSelected}
-              onChange={(selected) => this.handleChangeGenusTypeahead(
-                selected, 'idGenus',
-              )}
-              placeholder="Start by typing a genus present
+              {
+                isEdit ? (
+                  <AsyncTypeahead
+                    id="id-genus-autocomplete"
+                    isLoading={isLoadingGenus}
+                    options={generaOptions}
+                    onSearch={doSearchGenus}
+                    selected={genusSelected}
+                    onChange={handleChangeTypeaheadGenus}
+                    placeholder="Start by typing a genus present
                         in the database (case sensitive)"
-            /> */}
+                  />
+                ) : (
+                  <FormControl.Static>
+                    {getStaticSelectedGenus()}
+                  </FormControl.Static>
+                )
+              }
             </Col>
           </FormGroup>
           <FormGroup controlId="aggregate" bsSize="sm">
@@ -536,13 +585,14 @@ export default SpeciesRecordDetailsName;
 
 SpeciesRecordDetailsName.propTypes = {
   nomenRecord: SpeciesPropType.type,
-  familyApg: PropTypes.string,
-  family: PropTypes.string,
+  genusReference: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    label: PropTypes.string.isRequired,
+  })),
   isEdit: PropTypes.bool,
 };
 SpeciesRecordDetailsName.defaultProps = {
   nomenRecord: {},
-  familyApg: '-',
-  family: '-',
+  genusReference: [],
   isEdit: false,
 };

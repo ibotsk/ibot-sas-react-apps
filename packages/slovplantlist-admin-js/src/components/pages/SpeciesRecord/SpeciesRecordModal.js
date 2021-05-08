@@ -22,7 +22,8 @@ import SpeciesRecordDetailsCheckPublish
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
   const {
-    speciesRecord = {}, family, familyApg,
+    speciesRecord = {},
+    genus,
     nomenStatus,
   } = data;
   const { checkTimestamp, checkedBy } = speciesRecord;
@@ -32,8 +33,7 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
         <SpeciesRecordDetailsName
           isEdit={isEdit}
           nomenRecord={speciesRecord}
-          family={family}
-          familyApg={familyApg}
+          genusReference={genus}
         />
       </Tab>
       <Tab eventKey={2} title="Synonyms and Associations">
@@ -143,6 +143,10 @@ SpeciesRecordTabs.propTypes = {
       protectionCurrent: PropTypes.string,
       protectionPrepared: PropTypes.string,
     }),
+    genus: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      label: PropTypes.string.isRequired,
+    })),
   }).isRequired,
 };
 SpeciesRecordTabs.defaultProps = {

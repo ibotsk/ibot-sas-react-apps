@@ -230,9 +230,9 @@ const formatResult = (records, user, handleShowModal) => records.map(({
   ),
   [listOfSpeciesColumn]: (
     <span>
-      <a href={`${PAGE_DETAIL}${id}`}>
+      <Button bsStyle="link" onClick={() => handleShowModal(id)}>
         <LosName key={id} data={nomen} />
-      </a>
+      </Button>
       <Can
         role={user.role}
         perform="species:edit"
