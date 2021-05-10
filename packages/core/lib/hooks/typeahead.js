@@ -6,9 +6,11 @@ export function useAsyncTypeahead(onSearch, initialSelected, accessToken) {
   const [results, setResults] = useState([]);
   const [selected, setSelected] = useState([]);
 
-  useEffect(() => (
-    setSelected(initialSelected)
-  ), [initialSelected]);
+  useEffect(() => {
+    if (initialSelected && initialSelected.length > 0) {
+      setSelected(initialSelected);
+    }
+  }, [initialSelected]);
 
   const doSearch = useCallback((query) => {
     let cancelled = false;

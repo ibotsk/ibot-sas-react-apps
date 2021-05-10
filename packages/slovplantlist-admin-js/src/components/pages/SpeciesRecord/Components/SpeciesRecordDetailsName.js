@@ -9,8 +9,6 @@ import {
 import PropTypes from 'prop-types';
 import SpeciesPropType from 'components/propTypes/species';
 
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
-
 import { hooks } from '@ibot/core';
 
 import FormControlEditableOrStatic
@@ -19,6 +17,7 @@ import FormControlEditableOrStatic
 import { genusFacade } from 'facades';
 import config from 'config/config';
 import { useSelector } from 'react-redux';
+import AsyncTypeaheadOrStatic from 'components/segments/AsyncTypeaheadOrStatic';
 
 const {
   mappings: {
@@ -325,24 +324,18 @@ const SpeciesRecordDetailsName = ({
               Genus (reference)
             </Col>
             <Col sm={contentColumnWidth}>
-              {
-                isEdit ? (
-                  <AsyncTypeahead
-                    id="id-genus-autocomplete"
-                    isLoading={isLoadingGenus}
-                    options={generaOptions}
-                    onSearch={doSearchGenus}
-                    selected={genusSelected}
-                    onChange={handleChangeTypeaheadGenus}
-                    placeholder="Start by typing a genus present
-                        in the database (case sensitive)"
-                  />
-                ) : (
-                  <FormControl.Static>
-                    {getStaticSelectedGenus()}
-                  </FormControl.Static>
-                )
-              }
+              <AsyncTypeaheadOrStatic
+                id="id-genus-autocomplete"
+                editable={isEdit}
+                isLoading={isLoadingGenus}
+                options={generaOptions}
+                onSearch={doSearchGenus}
+                selected={genusSelected}
+                onChange={handleChangeTypeaheadGenus}
+                staticVal={getStaticSelectedGenus()}
+                placeholder="Start by typing a genus present
+                  in the database (case sensitive)"
+              />
             </Col>
           </FormGroup>
           <FormGroup controlId="aggregate" bsSize="sm">

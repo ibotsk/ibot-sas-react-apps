@@ -19,12 +19,15 @@ import SpeciesRecordDetailsCategories
   from './Components/SpeciesRecordDetailsCategories';
 import SpeciesRecordDetailsCheckPublish
   from './Components/SpeciesRecordDetailsCheckPublish';
+import SpeciesRecordDetailsSynonyms from './SpeciesRecordDetailsSynonyms';
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
   const {
     speciesRecord = {},
     genus,
     nomenStatus,
+    accepted,
+    basionym, replaced, nomenNovum, taxonPosition, parentCombinantion,
   } = data;
   const { checkTimestamp, checkedBy } = speciesRecord;
   return (
@@ -37,7 +40,16 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
         />
       </Tab>
       <Tab eventKey={2} title="Synonyms and Associations">
-        SA
+        <SpeciesRecordDetailsSynonyms
+          isEdit={isEdit}
+          recordId={speciesRecord.id}
+          acceptedNames={accepted}
+          basionymReference={basionym}
+          replacedReference={replaced}
+          nomenNovumReference={nomenNovum}
+          parentCombinationReference={parentCombinantion}
+          taxonPositionReference={taxonPosition}
+        />
       </Tab>
       <Tab eventKey={3} title="Categories">
         <SpeciesRecordDetailsCategories
@@ -147,6 +159,15 @@ SpeciesRecordTabs.propTypes = {
       id: PropTypes.number.isRequired,
       label: PropTypes.string.isRequired,
     })),
+    accepted: PropTypes.arrayOf(PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      parent: SpeciesType.type.isRequired,
+    })),
+    basionym: PropTypes.arrayOf(SpeciesType.type),
+    replaced: PropTypes.arrayOf(SpeciesType.type),
+    nomenNovum: PropTypes.arrayOf(SpeciesType.type),
+    taxonPosition: PropTypes.arrayOf(SpeciesType.type),
+    parentCombinantion: PropTypes.arrayOf(SpeciesType.type),
   }).isRequired,
 };
 SpeciesRecordTabs.defaultProps = {
