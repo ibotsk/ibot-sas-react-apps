@@ -18,7 +18,7 @@ import {
   SpeciesRecordDetailsName,
   SpeciesRecordDetailsCategories,
   SpeciesRecordDetailsCheckPublish,
-  SpeciesRecordDetailsSynonyms,
+  SpeciesRecordDetailsAssociations,
 } from './Components';
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
@@ -39,8 +39,8 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
           genusReference={genus}
         />
       </Tab>
-      <Tab eventKey={2} title="Synonyms and Associations">
-        <SpeciesRecordDetailsSynonyms
+      <Tab eventKey={2} title="Associations">
+        <SpeciesRecordDetailsAssociations
           isEdit={isEdit}
           recordId={speciesRecord.id}
           acceptedNames={accepted}
