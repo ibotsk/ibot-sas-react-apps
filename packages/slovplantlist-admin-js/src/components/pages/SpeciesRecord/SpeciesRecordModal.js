@@ -14,12 +14,12 @@ import SpeciesType from 'components/propTypes/species';
 import Can from 'components/segments/auth/Can';
 
 import { speciesFacade } from 'facades';
-import SpeciesRecordDetailsName from './Components/SpeciesRecordDetailsName';
-import SpeciesRecordDetailsCategories
-  from './Components/SpeciesRecordDetailsCategories';
-import SpeciesRecordDetailsCheckPublish
-  from './Components/SpeciesRecordDetailsCheckPublish';
-import SpeciesRecordDetailsSynonyms from './SpeciesRecordDetailsSynonyms';
+import {
+  SpeciesRecordDetailsName,
+  SpeciesRecordDetailsCategories,
+  SpeciesRecordDetailsCheckPublish,
+  SpeciesRecordDetailsSynonyms,
+} from './Components';
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
   const {
