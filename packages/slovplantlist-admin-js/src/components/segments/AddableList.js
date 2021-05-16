@@ -15,6 +15,7 @@ import { useAsyncTypeahead } from '@ibot/core/lib/hooks/typeahead';
 const AddableList = ({
   id,
   async = false,
+  editable = true,
   data = [],
   options: propsOptions = [],
   onSearch,
@@ -87,6 +88,7 @@ const AddableList = ({
             const rowId = getRowId ? getRowId(d) : index;
             return (
               <ListRowItem
+                editable={editable}
                 rowId={rowId}
                 key={rowId}
                 data={d}
@@ -98,27 +100,29 @@ const AddableList = ({
             );
           })
         }
-        <ListGroupItem>
-          <FormGroup>
-            <Col sm={12}>
-              <InputGroup bsSize="sm">
-                {renderTypeahead()}
-                <InputGroup.Button>
-                  <Button
-                    bsStyle="success"
-                    onClick={handleAddItem}
-                    disabled={!selected || selected.length < 1}
-                    title="Add to this list"
-                  >
-                    <Glyphicon glyph="plus" />
-                    {' '}
-                    Add
-                  </Button>
-                </InputGroup.Button>
-              </InputGroup>
-            </Col>
-          </FormGroup>
-        </ListGroupItem>
+        {editable && (
+          <ListGroupItem>
+            <FormGroup>
+              <Col sm={12}>
+                <InputGroup bsSize="sm">
+                  {renderTypeahead()}
+                  <InputGroup.Button>
+                    <Button
+                      bsStyle="success"
+                      onClick={handleAddItem}
+                      disabled={!selected || selected.length < 1}
+                      title="Add to this list"
+                    >
+                      <Glyphicon glyph="plus" />
+                      {' '}
+                      Add
+                    </Button>
+                  </InputGroup.Button>
+                </InputGroup>
+              </Col>
+            </FormGroup>
+          </ListGroupItem>
+        )}
       </ListGroup>
     </div>
   );
@@ -140,6 +144,7 @@ AddableList.propTypes = {
   onRowDelete: PropTypes.func.isRequired,
   onSearch: PropTypes.func,
   async: PropTypes.bool,
+  editable: PropTypes.bool,
   accessToken: PropTypes.string,
 };
 
@@ -149,6 +154,7 @@ AddableList.defaultProps = {
   data: [],
   options: undefined,
   async: false,
+  editable: true,
   onSearch: undefined,
   renderMenu: undefined,
   getRowId: undefined,

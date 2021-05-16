@@ -17,6 +17,7 @@ const InvalidSynonymListItem = ({
   onRowDelete,
   onChangeToNomenclatoric,
   onChangeToTaxonomic,
+  editable = true,
 }) => {
   const Additions = () => (
     <>
@@ -55,6 +56,7 @@ const InvalidSynonymListItem = ({
   );
   return (
     <SynonymListItem
+      editable={editable}
       rowId={rowId}
       data={data}
       nameComponent={(props) => (
@@ -76,9 +78,11 @@ InvalidSynonymListItem.propTypes = {
   onRowDelete: PropTypes.func.isRequired,
   onChangeToNomenclatoric: PropTypes.func,
   onChangeToTaxonomic: PropTypes.func,
+  editable: PropTypes.bool,
 };
 
 InvalidSynonymListItem.defaultProps = {
   onChangeToNomenclatoric: undefined,
   onChangeToTaxonomic: undefined,
+  editable: true,
 };

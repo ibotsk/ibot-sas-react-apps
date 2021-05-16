@@ -13,8 +13,10 @@ const OtherSynonymListItem = ({
   rowId,
   data,
   onRowDelete,
+  editable = true,
 }) => (
   <SynonymListItem
+    editable={editable}
     rowId={rowId}
     data={data}
     nameComponent={(props) => (
@@ -32,4 +34,8 @@ OtherSynonymListItem.propTypes = {
   rowId: PropTypes.number.isRequired,
   data: SynonymType.type.isRequired,
   onRowDelete: PropTypes.func.isRequired,
+  editable: PropTypes.bool,
+};
+OtherSynonymListItem.defaultProps = {
+  editable: true,
 };

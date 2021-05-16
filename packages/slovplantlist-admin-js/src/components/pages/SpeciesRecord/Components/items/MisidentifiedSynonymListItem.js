@@ -18,10 +18,12 @@ const MisidentifiedSynonymListItem = ({
   onChangeAuthor,
   data,
   onRowDelete,
+  editable = true,
 }) => {
   const { misidentificationAuthor } = data;
   return (
     <SynonymListItem
+      editable={editable}
       rowId={rowId}
       data={data}
       nameComponent={(props) => (
@@ -55,4 +57,8 @@ MisidentifiedSynonymListItem.propTypes = {
   data: SynonymType.type.isRequired,
   onRowDelete: PropTypes.func.isRequired,
   onChangeAuthor: PropTypes.func.isRequired,
+  editable: PropTypes.bool,
+};
+MisidentifiedSynonymListItem.defaultProps = {
+  editable: true,
 };

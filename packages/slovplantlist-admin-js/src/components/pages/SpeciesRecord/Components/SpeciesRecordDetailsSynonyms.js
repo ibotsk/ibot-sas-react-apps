@@ -272,6 +272,7 @@ const SpeciesRecordDetailsSynonyms = ({
               <AddableList
                 id="nomenclatoric-synonyms-autocomplete"
                 async
+                editable={isEdit}
                 data={nomenclatoricSynonyms}
                 onSearch={searchSpeciesByQuery}
                 accessToken={accessToken}
@@ -292,6 +293,7 @@ const SpeciesRecordDetailsSynonyms = ({
               <AddableList
                 id="taxonomic-synonyms-autocomplete"
                 async
+                editable={isEdit}
                 data={taxonomicSynonyms}
                 onSearch={searchSpeciesByQuery}
                 accessToken={accessToken}
@@ -312,6 +314,7 @@ const SpeciesRecordDetailsSynonyms = ({
               <AddableList
                 id="invalid-designations-autocomplete"
                 async
+                editable={isEdit}
                 data={invalidDesignations}
                 onSearch={searchSpeciesByQuery}
                 accessToken={accessToken}
@@ -332,6 +335,7 @@ const SpeciesRecordDetailsSynonyms = ({
               <AddableList
                 id="misidentifications-autocomplete"
                 async
+                editable={isEdit}
                 data={misidentifications}
                 onSearch={searchSpeciesByQuery}
                 accessToken={accessToken}
@@ -351,6 +355,7 @@ const SpeciesRecordDetailsSynonyms = ({
               <AddableList
                 id="other-synonyms-autocomplete"
                 async
+                editable={isEdit}
                 data={otherSynonyms}
                 onSearch={searchSpeciesByQuery}
                 accessToken={accessToken}
