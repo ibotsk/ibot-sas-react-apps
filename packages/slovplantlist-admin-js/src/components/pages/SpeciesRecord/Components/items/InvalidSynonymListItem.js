@@ -9,7 +9,7 @@ import { LosName, SynonymListItem } from '@ibot/components';
 
 import config from 'config/config';
 
-const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
+// const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
 
 const InvalidSynonymListItem = ({
   rowId,
@@ -59,7 +59,7 @@ const InvalidSynonymListItem = ({
       data={data}
       nameComponent={(props) => (
         // eslint-disable-next-line react/jsx-props-no-spreading
-        <LosName {...props} uri={CHECKLIST_PAGE(props.data.id)} />
+        <LosName {...props} />
       )}
       prefix={config.mappings.synonym.invalid.prefix}
       additions={Additions}

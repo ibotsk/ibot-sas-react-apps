@@ -6,3 +6,5 @@ export { default as SpeciesRecordDetailsName }
   from './SpeciesRecordDetailsName';
 export { default as SpeciesRecordDetailsAssociations }
   from './SpeciesRecordDetailsAssociations';
+export { default as SpeciesRecordDetailsSynonyms }
+  from './SpeciesRecordDetailsSynonyms';

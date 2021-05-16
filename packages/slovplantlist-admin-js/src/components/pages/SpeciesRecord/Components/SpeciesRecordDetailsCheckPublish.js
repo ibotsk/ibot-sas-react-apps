@@ -40,10 +40,10 @@ const SpeciesRecordDetailsCheckPublish = ({
       <Panel>
         <Panel.Body>
           <Row>
-            <Col componentClass={ControlLabel} sm={labelColumnWidth + 1}>
+            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
               Check correctnes
             </Col>
-            <Col sm={contentColumnWidth - 1}>
+            <Col sm={contentColumnWidth}>
               <TimestampCheck
                 editable={isEdit}
                 isChecked={!!checkedTimestamp}

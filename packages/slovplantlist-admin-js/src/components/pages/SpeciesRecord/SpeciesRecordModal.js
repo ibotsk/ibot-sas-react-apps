@@ -19,6 +19,7 @@ import {
   SpeciesRecordDetailsCategories,
   SpeciesRecordDetailsCheckPublish,
   SpeciesRecordDetailsAssociations,
+  SpeciesRecordDetailsSynonyms,
 } from './Components';
 
 const SpeciesRecordTabs = ({ isEdit = false, data }) => {
@@ -29,7 +30,9 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
     accepted,
     basionym, replaced, nomenNovum, taxonPosition, parentCombinantion,
   } = data;
-  const { checkTimestamp, checkedBy } = speciesRecord;
+  const {
+    id: recordId, checkTimestamp, checkedBy,
+  } = speciesRecord;
   return (
     <Tabs defaultActiveKey={1} id="species-details-tabs">
       <Tab eventKey={1} title="Name composition">
@@ -42,7 +45,7 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
       <Tab eventKey={2} title="Associations">
         <SpeciesRecordDetailsAssociations
           isEdit={isEdit}
-          recordId={speciesRecord.id}
+          recordId={recordId}
           acceptedNames={accepted}
           basionymReference={basionym}
           replacedReference={replaced}
@@ -51,13 +54,19 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
           taxonPositionReference={taxonPosition}
         />
       </Tab>
-      <Tab eventKey={3} title="Categories">
+      <Tab eventKey={3} title="Synonyms">
+        <SpeciesRecordDetailsSynonyms
+          isEdit={isEdit}
+          recordId={recordId}
+        />
+      </Tab>
+      <Tab eventKey={4} title="Categories">
         <SpeciesRecordDetailsCategories
           isEdit={isEdit}
           categoriesRecord={nomenStatus}
         />
       </Tab>
-      <Tab eventKey={4} title="Check and Publish">
+      <Tab eventKey={5} title="Check and Publish">
         <SpeciesRecordDetailsCheckPublish
           isEdit={isEdit}
           checkedAt={checkTimestamp}
