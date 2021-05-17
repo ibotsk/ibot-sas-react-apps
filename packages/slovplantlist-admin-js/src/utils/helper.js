@@ -65,7 +65,7 @@ const filterToWhereItem = (filter, key) => {
 
 function losToTypeaheadSelected(data) {
   if (!data) {
-    return undefined;
+    return [];
   }
   return [{
     id: data.id,

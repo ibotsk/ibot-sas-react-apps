@@ -1,16 +1,30 @@
 /* eslint-disable import/prefer-default-export */
 import { useCallback, useEffect, useState } from 'react';
 
-export function useAsyncTypeahead(onSearch, initialSelected, accessToken) {
+// only single selection is possible
+export function useAsyncTypeahead(
+  onSearch, initialSelected = [], accessToken,
+  callbackFunction = () => {},
+) {
   const [isLoading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [selected, setSelected] = useState([]);
 
+  const [{ id: idInitial, label: labelInitial } = {}] = initialSelected;
+  const [{ id, label } = {}] = selected;
+
   useEffect(() => {
-    if (initialSelected && initialSelected.length > 0) {
-      setSelected(initialSelected);
+    if (initialSelected.length > 0) {
+      setSelected([{ id: idInitial, label: labelInitial }]);
     }
-  }, [initialSelected]);
+  }, [idInitial, labelInitial]);
+
+  useEffect(() => {
+    if (!id && !label) {
+      return callbackFunction([]);
+    }
+    return callbackFunction([{ id, label }]);
+  }, [id, label]);
 
   const doSearch = useCallback((query) => {
     let cancelled = false;

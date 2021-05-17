@@ -22,17 +22,35 @@ import {
   SpeciesRecordDetailsSynonyms,
 } from './Components';
 
-const SpeciesRecordTabs = ({ isEdit = false, data }) => {
+const SpeciesRecordTabs = ({
+  isEdit = false,
+  data,
+  onChangeData,
+}) => {
+  console.log({ data });
   const {
     speciesRecord = {},
     genus,
-    nomenStatus,
+    nomenStatus = {},
     accepted,
     basionym, replaced, nomenNovum, taxonPosition, parentCombinantion,
   } = data;
   const {
-    id: recordId, checkTimestamp, checkedBy,
+    id: recordId, checkedTimestamp, checkedBy,
   } = speciesRecord;
+
+  const handleChangeSpeciesRecord = (changed) => (
+    onChangeData({ speciesRecord: { ...speciesRecord, ...changed } })
+  );
+  const handleChangeGenus = (changed) => (
+    onChangeData({ genus: changed })
+  );
+  const handleChangeNomenStatus = (changed) => (
+    onChangeData({ nomenStatus: { ...nomenStatus, ...changed } })
+  );
+
+  // these handlers decide where data from components belong in context of the full record
+
   return (
     <Tabs defaultActiveKey={1} id="species-details-tabs">
       <Tab eventKey={1} title="Name composition">
@@ -40,6 +58,8 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
           isEdit={isEdit}
           nomenRecord={speciesRecord}
           genusReference={genus}
+          onChangeData={handleChangeSpeciesRecord}
+          onChangeGenus={handleChangeGenus}
         />
       </Tab>
       <Tab eventKey={2} title="Associations">
@@ -52,25 +72,29 @@ const SpeciesRecordTabs = ({ isEdit = false, data }) => {
           nomenNovumReference={nomenNovum}
           parentCombinationReference={parentCombinantion}
           taxonPositionReference={taxonPosition}
+          onChangeData={onChangeData}
         />
       </Tab>
-      <Tab eventKey={3} title="Synonyms">
+      {/* <Tab eventKey={3} title="Synonyms">
         <SpeciesRecordDetailsSynonyms
           isEdit={isEdit}
           recordId={recordId}
+          onChangeData={handleChangeData}
         />
-      </Tab>
+      </Tab> */}
       <Tab eventKey={4} title="Categories">
         <SpeciesRecordDetailsCategories
           isEdit={isEdit}
           categoriesRecord={nomenStatus}
+          onChangeData={handleChangeNomenStatus}
         />
       </Tab>
       <Tab eventKey={5} title="Check and Publish">
         <SpeciesRecordDetailsCheckPublish
           isEdit={isEdit}
-          checkedAt={checkTimestamp}
+          checkedTimestamp={checkedTimestamp}
           checkedBy={checkedBy}
+          onChangeData={handleChangeSpeciesRecord}
         />
       </Tab>
     </Tabs>
@@ -93,6 +117,15 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
   const handleHide = () => {
     // setRecord({});
     onHide();
+  };
+
+  const handleDataChange = (changed) => {
+    console.log({ changed });
+    setFullRecord({ ...fullRecord, ...changed });
+  };
+
+  const handleSubmit = () => {
+    console.log(fullRecord);
   };
 
   const { speciesRecord: { idGenus } = {} } = fullRecord;
@@ -121,8 +154,12 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
             userGeneraIds: user.userGenera,
           }}
           yes={() => (
-            <Form horizontal onSubmit={() => { }}>
-              <SpeciesRecordTabs isEdit data={fullRecord} />
+            <Form horizontal onSubmit={handleSubmit}>
+              <SpeciesRecordTabs
+                isEdit
+                data={fullRecord}
+                onChangeData={handleDataChange}
+              />
             </Form>
           )}
           no={() => (
@@ -132,7 +169,9 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
       </Modal.Body>
       <Modal.Footer>
         <Button bsStyle="default" onClick={handleHide}>Cancel</Button>
-        <Button bsStyle="primary" type="submit">Save</Button>
+        <Button bsStyle="primary" type="submit" onClick={handleSubmit}>
+          Save
+        </Button>
       </Modal.Footer>
     </Modal>
   );
@@ -178,6 +217,7 @@ SpeciesRecordTabs.propTypes = {
     taxonPosition: PropTypes.arrayOf(SpeciesType.type),
     parentCombinantion: PropTypes.arrayOf(SpeciesType.type),
   }).isRequired,
+  onChangeData: PropTypes.func.isRequired,
 };
 SpeciesRecordTabs.defaultProps = {
   isEdit: false,

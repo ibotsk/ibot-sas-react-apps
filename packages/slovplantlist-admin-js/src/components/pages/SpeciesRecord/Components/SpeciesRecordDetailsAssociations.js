@@ -43,6 +43,7 @@ const SpeciesRecordDetailsAssociations = ({
   parentCombinationReference = [],
   taxonPositionReference = [],
   isEdit = false,
+  onChangeData,
 }) => {
   const [basionymFor, setBasionymFor] = useState([]);
   const [replacedFor, setReplacedFor] = useState([]);
@@ -52,6 +53,22 @@ const SpeciesRecordDetailsAssociations = ({
 
   const accessToken = useSelector((state) => state.authentication.accessToken);
 
+  const handleChangeDataBasionym = (changed) => (
+    onChangeData({ basionym: changed })
+  );
+  const handleChangeDataReplaced = (changed) => (
+    onChangeData({ replaced: changed })
+  );
+  const handleChangeDataNomenNovum = (changed) => (
+    onChangeData({ nomenNovum: changed })
+  );
+  const handleChangeDataParentCombination = (changed) => (
+    onChangeData({ parentCombination: changed })
+  );
+  const handleChangeDataTaxonPosition = (changed) => (
+    onChangeData({ taxonPosition: changed })
+  );
+
   const {
     selected: selectedBasionym,
     isLoading: isLoadingBasionym,
@@ -59,7 +76,10 @@ const SpeciesRecordDetailsAssociations = ({
     doSearch: doSearchBasionym,
     handleChangeTypeahead: handleChangeTypeaheadBasionym,
     getStaticSelected: getStaticSelectedBasionym,
-  } = useAsyncTypeahead(searchSpeciesByQuery, basionymReference, accessToken);
+  } = useAsyncTypeahead(
+    searchSpeciesByQuery, basionymReference, accessToken,
+    handleChangeDataBasionym,
+  );
 
   const {
     selected: selectedReplaced,
@@ -68,7 +88,10 @@ const SpeciesRecordDetailsAssociations = ({
     doSearch: doSearchReplaced,
     handleChangeTypeahead: handleChangeTypeaheadReplaced,
     getStaticSelected: getStaticSelectedReplaced,
-  } = useAsyncTypeahead(searchSpeciesByQuery, replacedReference, accessToken);
+  } = useAsyncTypeahead(
+    searchSpeciesByQuery, replacedReference, accessToken,
+    handleChangeDataReplaced,
+  );
 
   const {
     selected: selectedNomenNovum,
@@ -77,7 +100,10 @@ const SpeciesRecordDetailsAssociations = ({
     doSearch: doSearchNomenNovum,
     handleChangeTypeahead: handleChangeTypeaheadNomenNovum,
     getStaticSelected: getStaticSelectedNomenNovum,
-  } = useAsyncTypeahead(searchSpeciesByQuery, nomenNovumReference, accessToken);
+  } = useAsyncTypeahead(
+    searchSpeciesByQuery, nomenNovumReference, accessToken,
+    handleChangeDataNomenNovum,
+  );
 
   const {
     selected: selectedParentCombination,
@@ -88,6 +114,7 @@ const SpeciesRecordDetailsAssociations = ({
     getStaticSelected: getStaticSelectedParentCombination,
   } = useAsyncTypeahead(
     searchSpeciesByQuery, parentCombinationReference, accessToken,
+    handleChangeDataParentCombination,
   );
 
   const {
@@ -99,6 +126,7 @@ const SpeciesRecordDetailsAssociations = ({
     getStaticSelected: getStaticSelectedTaxonPosition,
   } = useAsyncTypeahead(
     searchSpeciesByQuery, taxonPositionReference, accessToken,
+    handleChangeDataTaxonPosition,
   );
 
   useEffect(() => {
@@ -308,6 +336,7 @@ SpeciesRecordDetailsAssociations.propTypes = {
   nomenNovumReference: PropTypes.arrayOf(SpeciesType.type),
   taxonPositionReference: PropTypes.arrayOf(SpeciesType.type),
   parentCombinationReference: PropTypes.arrayOf(SpeciesType.type),
+  onChangeData: PropTypes.func.isRequired,
 };
 SpeciesRecordDetailsAssociations.defaultProps = {
   recordId: undefined,

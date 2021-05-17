@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   Col, Panel,
@@ -22,26 +22,22 @@ const {
 const SpeciesRecordDetailsCategories = ({
   categoriesRecord = {},
   isEdit = false,
+  onChangeData,
 }) => {
-  const [origin, setOrigin] = useState();
-  const [cultivation, setCultivation] = useState();
-  const [invasiveness, setInvasiveness] = useState();
-  const [residenceTime, setResidenceTime] = useState();
-  const [endemism, setEndemism] = useState();
-  const [threat, setThreat] = useState();
-  const [protectionCurrent, setProtectionCurrent] = useState();
-  const [protectionPrepared, setProtectionPrepared] = useState();
+  const {
+    origin,
+    cultivation,
+    invasiveness,
+    residenceTime,
+    endemism,
+    threat,
+    protectionCurrent,
+    protectionPrepared,
+  } = categoriesRecord;
 
-  useEffect(() => {
-    setOrigin(categoriesRecord.origin);
-    setCultivation(categoriesRecord.cultivation);
-    setInvasiveness(categoriesRecord.invasiveness);
-    setResidenceTime(categoriesRecord.residenceTime);
-    setEndemism(categoriesRecord.endemism);
-    setThreat(categoriesRecord.threat);
-    setProtectionCurrent(categoriesRecord.protectionCurrent);
-    setProtectionPrepared(categoriesRecord.protectionPrepared);
-  }, [categoriesRecord]);
+  const handleChange = (e) => (
+    onChangeData({ [e.target.id]: e.target.value })
+  );
 
   return (
     <>
@@ -59,7 +55,7 @@ const SpeciesRecordDetailsCategories = ({
                 editable={isEdit}
                 type="text"
                 value={origin || ''}
-                onChange={(e) => setOrigin(e.target.value)}
+                onChange={handleChange}
               />
             </Col>
           </FormGroup>
@@ -75,7 +71,7 @@ const SpeciesRecordDetailsCategories = ({
                 editable={isEdit}
                 type="text"
                 value={cultivation || ''}
-                onChange={(e) => setCultivation(e.target.value)}
+                onChange={handleChange}
               />
             </Col>
           </FormGroup>
@@ -91,7 +87,7 @@ const SpeciesRecordDetailsCategories = ({
                 editable={isEdit}
                 type="text"
                 value={invasiveness || ''}
-                onChange={(e) => setInvasiveness(e.target.value)}
+                onChange={handleChange}
               />
             </Col>
           </FormGroup>
@@ -107,7 +103,7 @@ const SpeciesRecordDetailsCategories = ({
                 editable={isEdit}
                 type="text"
                 value={residenceTime || ''}
-                onChange={(e) => setResidenceTime(e.target.value)}
+                onChange={handleChange}
               />
             </Col>
           </FormGroup>
@@ -123,7 +119,7 @@ const SpeciesRecordDetailsCategories = ({
                 editable={isEdit}
                 type="text"
                 value={endemism || ''}
-                onChange={(e) => setEndemism(e.target.value)}
+                onChange={handleChange}
               />
             </Col>
           </FormGroup>
@@ -139,7 +135,7 @@ const SpeciesRecordDetailsCategories = ({
                 editable={isEdit}
                 type="text"
                 value={threat || ''}
-                onChange={(e) => setThreat(e.target.value)}
+                onChange={handleChange}
               />
             </Col>
           </FormGroup>
@@ -155,7 +151,7 @@ const SpeciesRecordDetailsCategories = ({
                 editable={isEdit}
                 type="text"
                 value={protectionCurrent || ''}
-                onChange={(e) => setProtectionCurrent(e.target.value)}
+                onChange={handleChange}
               />
             </Col>
           </FormGroup>
@@ -171,7 +167,7 @@ const SpeciesRecordDetailsCategories = ({
                 editable={isEdit}
                 type="text"
                 value={protectionPrepared || ''}
-                onChange={(e) => setProtectionPrepared(e.target.value)}
+                onChange={handleChange}
               />
             </Col>
           </FormGroup>
@@ -195,6 +191,7 @@ SpeciesRecordDetailsCategories.propTypes = {
     protectionPrepared: PropTypes.string,
   }),
   isEdit: PropTypes.bool,
+  onChangeData: PropTypes.func.isRequired,
 };
 SpeciesRecordDetailsCategories.defaultProps = {
   categoriesRecord: {},

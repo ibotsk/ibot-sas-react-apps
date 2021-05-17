@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Row, Col,
   Panel, ControlLabel,
@@ -21,19 +21,19 @@ const {
 } = config;
 
 const SpeciesRecordDetailsCheckPublish = ({
-  checkedAt,
+  checkedTimestamp,
   checkedBy,
   isEdit = false,
+  onChangeData,
 }) => {
-  const [checkedTimestamp, setCheckedTimestamp] = useState(checkedAt);
-  const [checkedByState, setCheckedByState] = useState(checkedBy);
-
   const username = useSelector((state) => state.user.username);
 
-  const handleCheck = () => {
-    setCheckedTimestamp(format.timestampISO());
-    setCheckedByState(username);
-  };
+  const handleCheck = () => (
+    onChangeData({
+      checkedBy: username,
+      checkedTimestamp: format.timestampISO(),
+    })
+  );
 
   return (
     <>
@@ -48,7 +48,7 @@ const SpeciesRecordDetailsCheckPublish = ({
                 editable={isEdit}
                 isChecked={!!checkedTimestamp}
                 checkedTimestamp={checkedTimestamp}
-                checkedBy={checkedByState}
+                checkedBy={checkedBy}
                 onCheck={handleCheck}
               />
             </Col>
@@ -62,12 +62,13 @@ const SpeciesRecordDetailsCheckPublish = ({
 export default SpeciesRecordDetailsCheckPublish;
 
 SpeciesRecordDetailsCheckPublish.propTypes = {
-  checkedAt: PropTypes.string,
+  checkedTimestamp: PropTypes.string,
   checkedBy: PropTypes.string,
   isEdit: PropTypes.bool,
+  onChangeData: PropTypes.func.isRequired,
 };
 SpeciesRecordDetailsCheckPublish.defaultProps = {
-  checkedAt: undefined,
+  checkedTimestamp: undefined,
   checkedBy: undefined,
   isEdit: false,
 };
