@@ -23,6 +23,17 @@ import {
   SpeciesRecordDetailsSynonyms,
 } from './Components';
 
+const getSelectedId = (selected) => (
+  (selected && selected.length) > 0 ? selected[0].id : null
+);
+const CHANGED_KEY_TO_ID_KEY = {
+  basionym: 'idBasionym',
+  replaced: 'idReplaced',
+  nomenNovum: 'idNomenNovum',
+  parentCombination: 'idParentCombination',
+  taxonPosition: 'idTaxonPosition',
+};
+
 const SpeciesRecordTabs = ({
   isEdit = false,
   data,
@@ -41,17 +52,39 @@ const SpeciesRecordTabs = ({
     id: recordId, checkedTimestamp, checkedBy,
   } = speciesRecord;
 
+  // these handlers decide where data from components belong in context of the full record
   const handleChangeSpeciesRecord = (changed) => (
     onChangeData({ speciesRecord: { ...speciesRecord, ...changed } })
   );
   const handleChangeGenus = (changed) => (
-    onChangeData({ genus: changed })
+    onChangeData({
+      genus: changed,
+      speciesRecord: {
+        ...speciesRecord,
+        idGenus: getSelectedId(changed),
+      },
+    })
   );
   const handleChangeNomenStatus = (changed) => (
     onChangeData({ nomenStatus: { ...nomenStatus, ...changed } })
   );
+  const handleChangeAssociations = (changed) => {
+    const referenceIds = Object.keys(changed).reduce((prev, curr) => {
+      const idProp = CHANGED_KEY_TO_ID_KEY[curr];
+      return {
+        ...prev,
+        [idProp]: getSelectedId(changed[curr]),
+      };
+    }, {});
 
-  // these handlers decide where data from components belong in context of the full record
+    onChangeData({
+      ...changed,
+      speciesRecord: {
+        ...speciesRecord,
+        ...referenceIds,
+      },
+    });
+  };
 
   return (
     <Tabs defaultActiveKey={1} id="species-details-tabs">
@@ -74,7 +107,7 @@ const SpeciesRecordTabs = ({
           nomenNovumReference={nomenNovum}
           parentCombinationReference={parentCombinantion}
           taxonPositionReference={taxonPosition}
-          onChangeData={onChangeData}
+          onChangeData={handleChangeAssociations}
         />
       </Tab>
       <Tab eventKey={3} title="Synonyms">
@@ -134,7 +167,7 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
     setSynonyms({ ...synonyms, ...changed });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     console.log(fullRecord);
   };
 
@@ -164,7 +197,7 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
             userGeneraIds: user.userGenera,
           }}
           yes={() => (
-            <Form horizontal onSubmit={handleSubmit}>
+            <Form horizontal>
               <SpeciesRecordTabs
                 isEdit
                 data={fullRecord}
@@ -180,10 +213,25 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
         />
       </Modal.Body>
       <Modal.Footer>
-        <Button bsStyle="default" onClick={handleHide}>Cancel</Button>
-        <Button bsStyle="primary" type="submit" onClick={handleSubmit}>
-          Save
-        </Button>
+        <Can
+          role={user.role}
+          perform="genus:edit"
+          data={{
+            speciesGenusId: idGenus,
+            userGeneraIds: user.userGenera,
+          }}
+          yes={() => (
+            <>
+              <Button bsStyle="default" onClick={handleHide}>Cancel</Button>
+              <Button bsStyle="primary" type="submit" onClick={handleSubmit}>
+                Save
+              </Button>
+            </>
+          )}
+          no={() => (
+            <Button bsStyle="default" onClick={handleHide}>Close</Button>
+          )}
+        />
       </Modal.Footer>
     </Modal>
   );
