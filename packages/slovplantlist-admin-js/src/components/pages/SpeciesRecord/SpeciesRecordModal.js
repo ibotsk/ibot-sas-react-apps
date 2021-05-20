@@ -15,6 +15,8 @@ import SynonymType from 'components/propTypes/synonym';
 import Can from 'components/segments/auth/Can';
 
 import { speciesFacade } from 'facades';
+import { notifications } from 'utils';
+
 import {
   SpeciesRecordDetailsName,
   SpeciesRecordDetailsCategories,
@@ -155,7 +157,6 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
   }, [recordId, accessToken]);
 
   const handleHide = () => {
-    // setRecord({});
     onHide();
   };
 
@@ -167,8 +168,43 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
     setSynonyms({ ...synonyms, ...changed });
   };
 
-  const handleSubmit = async () => {
-    console.log(fullRecord);
+  const handleSubmit = async (close = false) => {
+    const {
+      speciesRecord,
+      nomenStatus,
+    } = fullRecord;
+    const {
+      nomenclatoricSynonyms,
+      taxonomicSynonyms,
+      invalidDesignations,
+      misidentifications,
+      otherSynonyms,
+    } = synonyms;
+    const { username } = user;
+
+    try {
+      await speciesFacade.saveSpeciesAndSynonyms({
+        species: speciesRecord,
+        synonyms: [
+          ...nomenclatoricSynonyms,
+          ...taxonomicSynonyms,
+          ...invalidDesignations,
+          ...misidentifications,
+          ...otherSynonyms,
+        ],
+        nomenStatus,
+        accessToken,
+        insertedBy: username,
+        updatedBy: username,
+      });
+      notifications.success('Saved');
+      if (close) {
+        handleHide();
+      }
+    } catch (error) {
+      notifications.error('Error saving');
+      throw error;
+    }
   };
 
   const { speciesRecord: { idGenus } = {} } = fullRecord;
@@ -222,9 +258,20 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
           }}
           yes={() => (
             <>
-              <Button bsStyle="default" onClick={handleHide}>Cancel</Button>
-              <Button bsStyle="primary" type="submit" onClick={handleSubmit}>
+              <Button bsStyle="default" onClick={handleHide}>Close</Button>
+              <Button
+                bsStyle="primary"
+                type="submit"
+                onClick={() => handleSubmit(false)}
+              >
                 Save
+              </Button>
+              <Button
+                bsStyle="primary"
+                type="submit"
+                onClick={() => handleSubmit(true)}
+              >
+                Save &amp; Close
               </Button>
             </>
           )}

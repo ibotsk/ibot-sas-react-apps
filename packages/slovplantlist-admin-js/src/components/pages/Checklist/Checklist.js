@@ -7,6 +7,8 @@ import {
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
+import { NotificationContainer } from 'react-notifications';
+
 import filterFactory, {
   dateFilter, textFilter, multiSelectFilter, selectFilter,
   Comparator,
@@ -425,6 +427,7 @@ const Checklist = () => {
         show={showModal}
         onHide={handleHideModal}
       />
+      <NotificationContainer />
     </div>
   );
 };
