@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
@@ -10,6 +10,7 @@ import {
 
 import PropTypes from 'prop-types';
 import SpeciesType from 'components/propTypes/species';
+import SynonymType from 'components/propTypes/synonym';
 
 import Can from 'components/segments/auth/Can';
 
@@ -25,9 +26,10 @@ import {
 const SpeciesRecordTabs = ({
   isEdit = false,
   data,
+  synonyms,
   onChangeData,
+  onChangeSynonyms,
 }) => {
-  console.log({ data });
   const {
     speciesRecord = {},
     genus,
@@ -75,13 +77,14 @@ const SpeciesRecordTabs = ({
           onChangeData={onChangeData}
         />
       </Tab>
-      {/* <Tab eventKey={3} title="Synonyms">
+      <Tab eventKey={3} title="Synonyms">
         <SpeciesRecordDetailsSynonyms
           isEdit={isEdit}
           recordId={recordId}
-          onChangeData={handleChangeData}
+          data={synonyms}
+          onChangeData={onChangeSynonyms}
         />
-      </Tab> */}
+      </Tab>
       <Tab eventKey={4} title="Categories">
         <SpeciesRecordDetailsCategories
           isEdit={isEdit}
@@ -103,16 +106,20 @@ const SpeciesRecordTabs = ({
 
 const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
   const [fullRecord, setFullRecord] = useState({});
+  const [synonyms, setSynonyms] = useState({});
 
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
 
-  const onEnter = async () => {
+  const onEnter = useCallback(async () => {
     if (recordId) {
       const r = await speciesFacade.getRecordById(recordId, accessToken);
+      const syns = await speciesFacade.getSynonyms(recordId, accessToken);
+
       setFullRecord(r);
+      setSynonyms(syns);
     }
-  };
+  }, [recordId, accessToken]);
 
   const handleHide = () => {
     // setRecord({});
@@ -120,8 +127,11 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
   };
 
   const handleDataChange = (changed) => {
-    console.log({ changed });
     setFullRecord({ ...fullRecord, ...changed });
+  };
+
+  const handleSynonymsChange = (changed) => {
+    setSynonyms({ ...synonyms, ...changed });
   };
 
   const handleSubmit = () => {
@@ -158,7 +168,9 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
               <SpeciesRecordTabs
                 isEdit
                 data={fullRecord}
+                synonyms={synonyms}
                 onChangeData={handleDataChange}
+                onChangeSynonyms={handleSynonymsChange}
               />
             </Form>
           )}
@@ -217,7 +229,15 @@ SpeciesRecordTabs.propTypes = {
     taxonPosition: PropTypes.arrayOf(SpeciesType.type),
     parentCombinantion: PropTypes.arrayOf(SpeciesType.type),
   }).isRequired,
+  synonyms: PropTypes.shape({
+    nomenclatoricSynonyms: PropTypes.arrayOf(SynonymType.type),
+    taxonomicSynonyms: PropTypes.arrayOf(SynonymType.type),
+    invalidDesignations: PropTypes.arrayOf(SynonymType.type),
+    misidentifications: PropTypes.arrayOf(SynonymType.type),
+    otherSynonyms: PropTypes.arrayOf(SynonymType.type),
+  }).isRequired,
   onChangeData: PropTypes.func.isRequired,
+  onChangeSynonyms: PropTypes.func.isRequired,
 };
 SpeciesRecordTabs.defaultProps = {
   isEdit: false,

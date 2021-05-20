@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { useSelector } from 'react-redux';
 import {
@@ -7,6 +7,7 @@ import {
 } from 'react-bootstrap';
 
 import PropTypes from 'prop-types';
+import SynonymType from 'components/propTypes/synonym';
 
 import { species as speciesUtils } from '@ibot/utils';
 
@@ -35,7 +36,7 @@ const {
       taxonomic: configTaxonomic,
       invalid: configInvalid,
       misidentification: configMisidentification,
-      otherSynonyms: configOtherSynonym,
+      none: configOtherSynonym,
     },
   },
 } = config;
@@ -65,7 +66,7 @@ const createNewSynonymToList = async (
   };
 };
 
-const synonymsChanged = (list) => {
+const reorder = (list) => {
   list.sort(sorterUtils.synonymSorterLex);
   return list.map((item, i) => ({ ...item, rorder: i + 1 }));
 };
@@ -84,12 +85,12 @@ const addSynonym = async (
     return undefined;
   }
   collection.push(newSynonym);
-  return synonymsChanged(collection);
+  return reorder(collection);
 };
 
 const removeSynonym = (rowId, collection) => {
   const synonymsWithoutRemoved = collection.filter((_, i) => i !== rowId);
-  return synonymsChanged(synonymsWithoutRemoved);
+  return reorder(synonymsWithoutRemoved);
 };
 
 const synonymTransition = (rowId, fromCollection, toCollection, newNumType) => {
@@ -97,10 +98,10 @@ const synonymTransition = (rowId, fromCollection, toCollection, newNumType) => {
   selected.syntype = newNumType;
   // add selected to toList
   toCollection.push(selected);
-  const toCollectionChanged = synonymsChanged(toCollection);
+  const toCollectionChanged = reorder(toCollection);
 
   const synonymsFromWORemoved = fromCollection.filter((s, i) => i !== rowId);
-  const fromCollectionChanged = synonymsChanged(synonymsFromWORemoved);
+  const fromCollectionChanged = reorder(synonymsFromWORemoved);
   return {
     fromCollectionChanged,
     toCollectionChanged,
@@ -110,44 +111,46 @@ const synonymTransition = (rowId, fromCollection, toCollection, newNumType) => {
 const SpeciesRecordDetailsSynonyms = ({
   recordId,
   isEdit = false,
+  data = {},
+  onChangeData,
 }) => {
-  const [nomenclatoricSynonyms, setNomenclatoricSynonyms] = useState([]);
-  const [taxonomicSynonyms, setTaxonomicSynonyms] = useState([]);
-  const [invalidDesignations, setInvalidDesignations] = useState([]);
-  const [misidentifications, setMisidentifications] = useState([]);
-  const [otherSynonyms, setOtherSynonyms] = useState([]);
-
   const accessToken = useSelector((state) => state.authentication.accessToken);
 
-  useEffect(() => {
-    const fetchSynonyms = async () => {
-      if (recordId) {
-        const {
-          nomenclatoricSynonyms: ns, taxonomicSynonyms: ts,
-          invalidDesignations: idg, misidentifications: m, otherSynonyms: os,
-        } = await speciesFacade.getSynonyms(recordId, accessToken);
-        setNomenclatoricSynonyms(ns);
-        setTaxonomicSynonyms(ts);
-        setInvalidDesignations(idg);
-        setMisidentifications(m);
-        setOtherSynonyms(os);
-      }
-    };
+  const {
+    nomenclatoricSynonyms,
+    taxonomicSynonyms,
+    invalidDesignations,
+    misidentifications,
+    otherSynonyms,
+  } = data;
 
-    fetchSynonyms();
-  }, [recordId, accessToken]);
+  const handleChangeNomenclatoric = (changed) => (
+    onChangeData({ nomenclatoricSynonyms: changed })
+  );
+  const handleChangeTaxonomic = (changed) => (
+    onChangeData({ taxonomicSynonyms: changed })
+  );
+  const handleChangeInvalid = (changed) => (
+    onChangeData({ invalidDesignations: changed })
+  );
+  const handleChangeMisidentifications = (changed) => (
+    onChangeData({ misidentifications: changed })
+  );
+  const handleChangeOther = (changed) => (
+    onChangeData({ otherSynonyms: changed })
+  );
 
   const handleAddNomenclatoric = async (selected) => {
     const changedSynonyms = await addSynonym(
       selected, nomenclatoricSynonyms, recordId, configNomenclatoric.numType,
       accessToken,
     );
-    setNomenclatoricSynonyms(changedSynonyms);
+    handleChangeNomenclatoric(changedSynonyms);
   };
 
   const handleRemoveNomenclatoric = (rowId) => {
     const changedSynonyms = removeSynonym(rowId, nomenclatoricSynonyms);
-    setNomenclatoricSynonyms(changedSynonyms);
+    handleChangeNomenclatoric(changedSynonyms);
   };
 
   const handleAddTaxonomic = async (selected) => {
@@ -155,12 +158,12 @@ const SpeciesRecordDetailsSynonyms = ({
       selected, taxonomicSynonyms, recordId, configTaxonomic.numType,
       accessToken,
     );
-    setTaxonomicSynonyms(changedSynonyms);
+    handleChangeTaxonomic(changedSynonyms);
   };
 
   const handleRemoveTaxonomic = (rowId) => {
     const changedSynonyms = removeSynonym(rowId, taxonomicSynonyms);
-    setTaxonomicSynonyms(changedSynonyms);
+    handleChangeTaxonomic(changedSynonyms);
   };
 
   const handleAddInvalid = async (selected) => {
@@ -168,12 +171,12 @@ const SpeciesRecordDetailsSynonyms = ({
       selected, invalidDesignations, recordId, configInvalid.numType,
       accessToken,
     );
-    setInvalidDesignations(changedSynonyms);
+    handleChangeInvalid(changedSynonyms);
   };
 
   const handleRemoveInvalid = (rowId) => {
     const changedSynonyms = removeSynonym(rowId, invalidDesignations);
-    setInvalidDesignations(changedSynonyms);
+    handleChangeInvalid(changedSynonyms);
   };
 
   const handleAddMisidentified = async (selected) => {
@@ -181,12 +184,12 @@ const SpeciesRecordDetailsSynonyms = ({
       selected, misidentifications, recordId, configMisidentification.numType,
       accessToken,
     );
-    setMisidentifications(changedSynonyms);
+    handleChangeMisidentifications(changedSynonyms);
   };
 
   const handleRemoveMisidentified = (rowId) => {
     const changedSynonyms = removeSynonym(rowId, misidentifications);
-    setMisidentifications(changedSynonyms);
+    handleChangeMisidentifications(changedSynonyms);
   };
 
   const handleAddOther = async (selected) => {
@@ -194,12 +197,12 @@ const SpeciesRecordDetailsSynonyms = ({
       selected, otherSynonyms, recordId, configOtherSynonym.numType,
       accessToken,
     );
-    setOtherSynonyms(changedSynonyms);
+    handleChangeOther(changedSynonyms);
   };
 
   const handleRemoveOther = (rowId) => {
     const changedSynonyms = removeSynonym(rowId, otherSynonyms);
-    setOtherSynonyms(changedSynonyms);
+    handleChangeOther(changedSynonyms);
   };
 
   // --- transition handlers --- //
@@ -208,16 +211,20 @@ const SpeciesRecordDetailsSynonyms = ({
     const { fromCollectionChanged, toCollectionChanged } = synonymTransition(
       rowId, nomenclatoricSynonyms, taxonomicSynonyms, configTaxonomic.numType,
     );
-    setNomenclatoricSynonyms(fromCollectionChanged);
-    setTaxonomicSynonyms(toCollectionChanged);
+    onChangeData({
+      nomenclatoricSynonyms: fromCollectionChanged,
+      taxonomicSynonyms: toCollectionChanged,
+    });
   };
 
   const handleNomenToInv = (rowId) => {
     const { fromCollectionChanged, toCollectionChanged } = synonymTransition(
       rowId, nomenclatoricSynonyms, invalidDesignations, configInvalid.numType,
     );
-    setNomenclatoricSynonyms(fromCollectionChanged);
-    setInvalidDesignations(toCollectionChanged);
+    onChangeData({
+      nomenclatoricSynonyms: fromCollectionChanged,
+      invalidDesignations: toCollectionChanged,
+    });
   };
 
   const handleTaxToNomen = (rowId) => {
@@ -225,16 +232,20 @@ const SpeciesRecordDetailsSynonyms = ({
       rowId, taxonomicSynonyms, nomenclatoricSynonyms,
       configNomenclatoric.numType,
     );
-    setTaxonomicSynonyms(fromCollectionChanged);
-    setNomenclatoricSynonyms(toCollectionChanged);
+    onChangeData({
+      taxonomicSynonyms: fromCollectionChanged,
+      nomenclatoricSynonyms: toCollectionChanged,
+    });
   };
 
   const handleTaxToInv = (rowId) => {
     const { fromCollectionChanged, toCollectionChanged } = synonymTransition(
       rowId, taxonomicSynonyms, invalidDesignations, configInvalid.numType,
     );
-    setTaxonomicSynonyms(fromCollectionChanged);
-    setInvalidDesignations(toCollectionChanged);
+    onChangeData({
+      taxonomicSynonyms: fromCollectionChanged,
+      invalidDesignations: toCollectionChanged,
+    });
   };
 
   const handleInvToNomen = (rowId) => {
@@ -242,22 +253,26 @@ const SpeciesRecordDetailsSynonyms = ({
       rowId, invalidDesignations, nomenclatoricSynonyms,
       configNomenclatoric.numType,
     );
-    setInvalidDesignations(fromCollectionChanged);
-    setNomenclatoricSynonyms(toCollectionChanged);
+    onChangeData({
+      invalidDesignations: fromCollectionChanged,
+      nomenclatoricSynonyms: toCollectionChanged,
+    });
   };
 
   const handleInvToTax = (rowId) => {
     const { fromCollectionChanged, toCollectionChanged } = synonymTransition(
       rowId, invalidDesignations, taxonomicSynonyms, configTaxonomic.numType,
     );
-    setInvalidDesignations(fromCollectionChanged);
-    setTaxonomicSynonyms(toCollectionChanged);
+    onChangeData({
+      invalidDesignations: fromCollectionChanged,
+      taxonomicSynonyms: toCollectionChanged,
+    });
   };
 
   const handleChangeMisidentificationAuthor = (rowId, value) => {
     const ms = [...misidentifications];
     ms[rowId].misidentificationAuthor = value;
-    setMisidentifications(ms);
+    handleChangeMisidentifications(ms);
   };
 
   return (
@@ -376,8 +391,17 @@ export default SpeciesRecordDetailsSynonyms;
 SpeciesRecordDetailsSynonyms.propTypes = {
   recordId: PropTypes.number,
   isEdit: PropTypes.bool,
+  data: PropTypes.shape({
+    nomenclatoricSynonyms: PropTypes.arrayOf(SynonymType.type),
+    taxonomicSynonyms: PropTypes.arrayOf(SynonymType.type),
+    invalidDesignations: PropTypes.arrayOf(SynonymType.type),
+    misidentifications: PropTypes.arrayOf(SynonymType.type),
+    otherSynonyms: PropTypes.arrayOf(SynonymType.type),
+  }),
+  onChangeData: PropTypes.func.isRequired,
 };
 SpeciesRecordDetailsSynonyms.defaultProps = {
   recordId: undefined,
   isEdit: false,
+  data: {},
 };
