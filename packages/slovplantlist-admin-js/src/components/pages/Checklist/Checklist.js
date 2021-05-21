@@ -231,29 +231,27 @@ const formatResult = (records, user, handleShowModal) => records.map(({
   ),
   [listOfSpeciesColumn]: (
     <span>
-      <Button bsStyle="link" onClick={() => handleShowModal(id)}>
+      <Button
+        bsStyle="link"
+        bsSize="xs"
+        onClick={() => handleShowModal(id)}
+      >
         <LosName key={id} data={nomen} />
       </Button>
-      <Can
-        role={user.role}
-        perform="species:edit"
-        data={{
-          speciesGenusId: idGenus,
-          userGeneraIds: user.userGenera,
-        }}
-        yes={() => (
-          <small className="pull-right gray-text unselectable">
-            Double click to quick edit
-          </small>
-        )}
-      />
     </span>
   ),
   acceptedNames: (
     accepted.map(({ parent }, i) => [
       i > 0 && ', ',
-      // eslint-disable-next-line react/no-array-index-key
-      <LosName key={i} data={parent} />,
+      <span key={parent.id}>
+        <Button
+          bsStyle="link"
+          bsSize="xs"
+          onClick={() => handleShowModal(parent.id)}
+        >
+          <LosName data={parent} />
+        </Button>
+      </span>,
     ])
   ),
 }));
