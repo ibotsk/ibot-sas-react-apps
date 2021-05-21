@@ -102,7 +102,6 @@ const SpeciesRecordDetailsName = ({
     if (!hybrid) {
       return null;
     }
-
     return (
       <Panel>
         <Panel.Body>
@@ -115,7 +114,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={genusH || ''}
-                // onChange={(e) => setGenusH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -129,7 +127,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={speciesH || ''}
-                // onChange={(e) => setSpeciesH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -143,7 +140,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={subspH || ''}
-                // onChange={(e) => setSubspH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -157,7 +153,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={varH || ''}
-                // onChange={(e) => setVarH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -171,7 +166,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={subvarH || ''}
-                // onChange={(e) => setSubvarH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -185,7 +179,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={formaH || ''}
-                // onChange={(e) => setFormaH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -199,7 +192,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={nothosubspH || ''}
-                // onChange={(e) => setNothosubspH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -213,7 +205,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={nothoformaH || ''}
-                // onChange={(e) => setNothoformaH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -227,7 +218,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={authorsH || ''}
-                // onChange={(e) => setAuthorsH(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -250,7 +240,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 componentClass="select"
                 value={ntype}
-                // onChange={(e) => setNtype(e.target.value)}
                 onChange={handleChange}
               >
                 {isEdit ? (
@@ -329,8 +318,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={vernacular || ''}
-                placeholder="Vernacular"
-                // onChange={(e) => setVernacular(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -344,8 +331,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={tribus || ''}
-                placeholder="Tribus"
-                // onChange={(e) => setTribus(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -363,7 +348,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={genus || ''}
-                // onChange={(e) => setGenus(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -377,7 +361,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={species || ''}
-                // onChange={(e) => setSpecies(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -391,7 +374,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={subsp || ''}
-                // onChange={(e) => setSubsp(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -405,7 +387,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={varieta || ''}
-                // onChange={(e) => setVariety(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -419,7 +400,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={subvar || ''}
-                // onChange={(e) => setSubvar(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -433,7 +413,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={forma || ''}
-                // onChange={(e) => setForma(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -447,7 +426,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={nothosubsp || ''}
-                // onChange={(e) => setNothosubsp(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -461,7 +439,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={nothoforma || ''}
-                // onChange={(e) => setNothoforma(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -475,7 +452,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={proles || ''}
-                // onChange={(e) => setProles(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -489,7 +465,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={unranked || ''}
-                // onChange={(e) => setUnranked(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -503,7 +478,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={authors || ''}
-                // onChange={(e) => setAuthors(e.target.value)}
                 onChange={handleChange}
               />
             </Col>
@@ -519,7 +493,6 @@ const SpeciesRecordDetailsName = ({
                 disabled={!isEdit}
                 id="hybrid"
                 checked={hybrid || false}
-                // onChange={() => setHybrid(!hybrid)}
                 onChange={handleChangeCheckbox}
               >
                 Hybrid
@@ -542,7 +515,6 @@ const SpeciesRecordDetailsName = ({
                 editable={isEdit}
                 type="text"
                 value={publication || ''}
-                // onChange={(e) => setPublication(e.target.value)}
                 onChange={handleChange}
               />
             </Col>

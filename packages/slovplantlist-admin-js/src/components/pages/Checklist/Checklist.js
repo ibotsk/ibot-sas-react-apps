@@ -5,7 +5,6 @@ import {
   Grid, Row, Col,
   Button, Glyphicon,
 } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 
 import { NotificationContainer } from 'react-notifications';
 
@@ -32,9 +31,9 @@ import commonHooks from 'components/segments/hooks';
 
 // import SpeciesNameModal from './Modals/SpeciesNameModal';
 
-const PAGE_DETAIL = '/checklist/detail/';
+// const PAGE_DETAIL = '/checklist/detail/';
 // const EDIT_RECORD = '/checklist/edit/';
-const NEW_RECORD = '/checklist/new';
+// const NEW_RECORD = '/checklist/new';
 
 const {
   constants: {
@@ -253,12 +252,8 @@ const formatResult = (records, user, handleShowModal) => records.map(({
   acceptedNames: (
     accepted.map(({ parent }, i) => [
       i > 0 && ', ',
-      <a
-        key={parent.id}
-        href={`${PAGE_DETAIL}${parent.id}`}
-      >
-        <LosName data={parent} />
-      </a>,
+      // eslint-disable-next-line react/no-array-index-key
+      <LosName key={i} data={parent} />,
     ])
   ),
 }));
@@ -344,17 +339,8 @@ const Checklist = () => {
                   >
                     <Glyphicon glyph="plus" />
                     {' '}
-                    Add new quick
+                    Add new
                   </Button>
-                </Col>
-                <Col md={2}>
-                  <LinkContainer to={NEW_RECORD}>
-                    <Button bsStyle="success">
-                      <Glyphicon glyph="plus" />
-                      {' '}
-                      Add new full
-                    </Button>
-                  </LinkContainer>
                 </Col>
               </Row>
             )}

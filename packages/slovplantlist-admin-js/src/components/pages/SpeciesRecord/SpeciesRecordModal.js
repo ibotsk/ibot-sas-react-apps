@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useSelector } from 'react-redux';
 
@@ -16,6 +16,7 @@ import Can from 'components/segments/auth/Can';
 
 import { speciesFacade } from 'facades';
 import { notifications } from 'utils';
+import config from 'config/config';
 
 import {
   SpeciesRecordDetailsName,
@@ -24,6 +25,18 @@ import {
   SpeciesRecordDetailsAssociations,
   SpeciesRecordDetailsSynonyms,
 } from './Components';
+
+const {
+  mappings: { losType },
+} = config;
+
+const initStateRecord = {
+  speciesRecord: { // default mandatory values
+    ntype: losType.A.key,
+    hybrid: false,
+  },
+  nomenStatus: {},
+};
 
 const getSelectedId = (selected) => (
   (selected && selected.length) > 0 ? selected[0].id : null
@@ -139,24 +152,35 @@ const SpeciesRecordTabs = ({
   );
 };
 
-const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
-  const [fullRecord, setFullRecord] = useState({});
+const SpeciesRecordModal = ({ editId, show, onHide }) => {
+  const [recordId, setRecordId] = useState(editId);
+  const [fullRecord, setFullRecord] = useState(initStateRecord);
   const [synonyms, setSynonyms] = useState({});
 
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
 
-  const onEnter = useCallback(async () => {
-    if (recordId) {
+  useEffect(() => (
+    setRecordId(editId)
+  ), [editId]);
+
+  useEffect(() => {
+    const fetchData = async () => {
       const r = await speciesFacade.getRecordById(recordId, accessToken);
       const syns = await speciesFacade.getSynonyms(recordId, accessToken);
 
       setFullRecord(r);
       setSynonyms(syns);
+    };
+
+    if (recordId) {
+      fetchData();
     }
   }, [recordId, accessToken]);
 
   const handleHide = () => {
+    setFullRecord(initStateRecord);
+    setSynonyms({});
     onHide();
   };
 
@@ -174,16 +198,16 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
       nomenStatus,
     } = fullRecord;
     const {
-      nomenclatoricSynonyms,
-      taxonomicSynonyms,
-      invalidDesignations,
-      misidentifications,
-      otherSynonyms,
+      nomenclatoricSynonyms = [],
+      taxonomicSynonyms = [],
+      invalidDesignations = [],
+      misidentifications = [],
+      otherSynonyms = [],
     } = synonyms;
     const { username } = user;
 
     try {
-      await speciesFacade.saveSpeciesAndSynonyms({
+      const recId = await speciesFacade.saveSpeciesAndSynonyms({
         species: speciesRecord,
         synonyms: [
           ...nomenclatoricSynonyms,
@@ -200,6 +224,8 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
       notifications.success('Saved');
       if (close) {
         handleHide();
+      } else {
+        setRecordId(recId);
       }
     } catch (error) {
       notifications.error('Error saving');
@@ -215,7 +241,6 @@ const SpeciesRecordModal = ({ editId: recordId, show, onHide }) => {
       bsSize="large"
       show={show}
       onHide={handleHide}
-      onEnter={onEnter}
     >
       <Modal.Header closeButton>
         <Modal.Title>

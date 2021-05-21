@@ -117,11 +117,11 @@ const SpeciesRecordDetailsSynonyms = ({
   const accessToken = useSelector((state) => state.authentication.accessToken);
 
   const {
-    nomenclatoricSynonyms,
-    taxonomicSynonyms,
-    invalidDesignations,
-    misidentifications,
-    otherSynonyms,
+    nomenclatoricSynonyms = [],
+    taxonomicSynonyms = [],
+    invalidDesignations = [],
+    misidentifications = [],
+    otherSynonyms = [],
   } = data;
 
   const handleChangeNomenclatoric = (changed) => (

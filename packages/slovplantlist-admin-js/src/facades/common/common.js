@@ -121,8 +121,9 @@ async function submitSynonyms(
     deleteRequest(deleteSynonymsByIdUri, { id: synId }, accessToken)
   ));
   const upsertPromises = toBeUpserted.map((synonym) => (
+    // set idParent anyway - can be null when creating new nomen record together with synonyms
     putRequest(
-      updateSynonymsUri, synonym, {}, accessToken,
+      updateSynonymsUri, { ...synonym, idParent }, {}, accessToken,
     )
   ));
 
