@@ -6,6 +6,7 @@ export { HelmetProvider } from 'react-helmet-async';
 export * from './Names';
 export * from './Synonyms';
 export * from './Common';
+export * from './MaterialUI';
 
 export const ExampleComponent = () => (
   <div>
