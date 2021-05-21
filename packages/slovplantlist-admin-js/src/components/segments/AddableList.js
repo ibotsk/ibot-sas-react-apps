@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useRef } from 'react';
 
 import {
   Col,
@@ -10,67 +10,55 @@ import {
 import PropTypes from 'prop-types';
 
 import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
+import { useAsyncTypeahead } from '@ibot/core/lib/hooks/typeahead';
 
-class AddableList extends Component {
-  constructor(props) {
-    super(props);
+const AddableList = ({
+  id,
+  async = false,
+  editable = true,
+  data = [],
+  options: propsOptions = [],
+  onSearch,
+  onAddItemToList,
+  onRowDelete,
+  getRowId,
+  itemComponent: ListRowItem,
+  accessToken = '', // pass when onSearch function requires it
+  optionsLabelKey,
+  renderMenu,
+  ...itemSpecificProps
+}) => {
+  const {
+    selected,
+    results: stateOptions,
+    isLoading,
+    doSearch,
+    handleChangeTypeahead,
+  } = useAsyncTypeahead(onSearch, [], accessToken);
 
-    this.state = {
-      selected: [],
-      options: [],
-      isLoading: false,
-    };
-  }
+  const typeaheadRef = useRef();
 
-  handleChange = (selected) => {
-    this.setState({
-      selected,
-    });
-  }
+  const handleAddItem = () => {
+    if (selected && selected.length > 0) {
+      onAddItemToList(selected[0]);
+      typeaheadRef.current.clear();
+      handleChangeTypeahead([]);
+    }
+  };
 
-  handleAddItem = () => {
-    const { onAddItemToList } = this.props;
-    this.setState((state) => {
-      const { selected } = state;
-      if (selected) {
-        onAddItemToList(selected[0]);
-
-        this.typeahead.clear();
-        return {
-          selected: [],
-        };
-      }
-      return undefined;
-    });
-  }
-
-  handleSearchAsync = async (query) => {
-    this.setState({ isLoading: true });
-    const { onSearch } = this.props;
-    const options = await onSearch(query);
-    this.setState({
-      isLoading: false,
-      options,
-    });
-  }
-
-  renderTypeahead = (async) => {
-    const {
-      id, optionsLabelKey, options: propsOptions, renderMenu,
-    } = this.props;
-    const { isLoading, options: stateOptions, selected } = this.state;
+  const renderTypeahead = () => {
     if (async) {
       return (
         <AsyncTypeahead
           id={id}
           labelKey={optionsLabelKey}
           size="sm"
-          ref={(typeahead) => { this.typeahead = typeahead; }}
+          ref={typeaheadRef}
           isLoading={isLoading}
           options={stateOptions}
-          onChange={this.handleChange}
+          onChange={handleChangeTypeahead}
           selected={selected}
-          onSearch={this.handleSearchAsync}
+          onSearch={doSearch}
           placeholder="Start by typing (case sensitive)"
           renderMenu={renderMenu}
         />
@@ -80,56 +68,48 @@ class AddableList extends Component {
       <Typeahead
         id={id}
         size="sm"
-        ref={(typeahead) => { this.typeahead = typeahead; }}
+        ref={typeaheadRef}
         options={propsOptions}
-        onChange={this.handleChange}
+        onChange={handleChangeTypeahead}
         selected={selected}
         placeholder="Start by typing"
         renderMenu={renderMenu}
       />
     );
-  }
+  };
 
-  render() {
-    const {
-      data = [],
-      itemComponent: ListRowItem,
-      getRowId,
-      onRowDelete,
-      async,
-      ...props
-    } = this.props;
-    const { selected } = this.state;
-    return (
-      <div className="addable-list compact-list">
-        <ListGroup>
-          {
-            // row must contain id, props is the rest
-            // ListRow is an injected component that will be rendered as item
-            data.map((d, index) => {
-              const rowId = getRowId ? getRowId(d) : index;
-              return (
-                <ListRowItem
-                  rowId={rowId}
-                  key={rowId}
-                  data={d}
-                  onRowDelete={() => onRowDelete(rowId)}
-                  // in the rest of the props are custom properties per item
-                  // eslint-disable-next-line react/jsx-props-no-spreading
-                  {...props}
-                />
-              );
-            })
-          }
+  return (
+    <div className="addable-list compact-list">
+      <ListGroup>
+        {
+          // row must contain id, props is the rest
+          // ListRow is an injected component that will be rendered as item
+          data.map((d, index) => {
+            const rowId = getRowId ? getRowId(d) : index;
+            return (
+              <ListRowItem
+                editable={editable}
+                rowId={rowId}
+                key={rowId}
+                data={d}
+                onRowDelete={() => onRowDelete(rowId)}
+                // in the rest of the props are custom properties per item
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...itemSpecificProps}
+              />
+            );
+          })
+        }
+        {editable && (
           <ListGroupItem>
             <FormGroup>
               <Col sm={12}>
                 <InputGroup bsSize="sm">
-                  {this.renderTypeahead(async)}
+                  {renderTypeahead()}
                   <InputGroup.Button>
                     <Button
                       bsStyle="success"
-                      onClick={this.handleAddItem}
+                      onClick={handleAddItem}
                       disabled={!selected || selected.length < 1}
                       title="Add to this list"
                     >
@@ -142,11 +122,11 @@ class AddableList extends Component {
               </Col>
             </FormGroup>
           </ListGroupItem>
-        </ListGroup>
-      </div>
-    );
-  }
-}
+        )}
+      </ListGroup>
+    </div>
+  );
+};
 
 export default AddableList;
 
@@ -164,6 +144,8 @@ AddableList.propTypes = {
   onRowDelete: PropTypes.func.isRequired,
   onSearch: PropTypes.func,
   async: PropTypes.bool,
+  editable: PropTypes.bool,
+  accessToken: PropTypes.string,
 };
 
 AddableList.defaultProps = {
@@ -172,7 +154,9 @@ AddableList.defaultProps = {
   data: [],
   options: undefined,
   async: false,
+  editable: true,
   onSearch: undefined,
   renderMenu: undefined,
   getRowId: undefined,
+  accessToken: '',
 };

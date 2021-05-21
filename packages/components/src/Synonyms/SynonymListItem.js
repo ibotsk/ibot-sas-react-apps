@@ -39,6 +39,7 @@ const SynonymListItem = ({
   showSubNomenclatoric = false,
   children,
   onRowDelete,
+  editable = true,
 }) => {
   const { synonym: subject } = data;
   return (
@@ -48,22 +49,24 @@ const SynonymListItem = ({
           {prefix}
           {' '}
           <NameComponent data={subject} />
-          <span className="pull-right">
-            {Additions && <Additions />}
-            {onRowDelete
-              && (
-                <span className="remove-list-item">
-                  <Button
-                    bsStyle="danger"
-                    bsSize="xsmall"
-                    onClick={() => onRowDelete(rowId)}
-                    title="Remove from this list"
-                  >
-                    <Glyphicon glyph="remove" />
-                  </Button>
-                </span>
-              )}
-          </span>
+          {editable && (
+            <span className="pull-right">
+              {Additions && <Additions />}
+              {onRowDelete
+                && (
+                  <span className="remove-list-item">
+                    <Button
+                      bsStyle="danger"
+                      bsSize="xsmall"
+                      onClick={() => onRowDelete(rowId)}
+                      title="Remove from this list"
+                    >
+                      <Glyphicon glyph="remove" />
+                    </Button>
+                  </span>
+                )}
+            </span>
+          )}
         </Col>
       </Row>
       {children}
@@ -89,6 +92,7 @@ SynonymListItem.propTypes = {
   onRowDelete: PropTypes.func,
   showSubNomenclatoric: PropTypes.bool,
   children: PropTypes.element,
+  editable: PropTypes.bool,
 };
 
 SynonymListItem.defaultProps = {
@@ -97,4 +101,5 @@ SynonymListItem.defaultProps = {
   onRowDelete: undefined,
   showSubNomenclatoric: false,
   children: undefined,
+  editable: true,
 };

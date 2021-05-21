@@ -11,22 +11,24 @@ import { LosName, SynonymListItem } from '@ibot/components';
 
 import config from 'config/config';
 
-const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
+// const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
 
 const MisidentifiedSynonymListItem = ({
   rowId,
   onChangeAuthor,
   data,
   onRowDelete,
+  editable = true,
 }) => {
   const { misidentificationAuthor } = data;
   return (
     <SynonymListItem
+      editable={editable}
       rowId={rowId}
       data={data}
       nameComponent={(props) => (
         // eslint-disable-next-line react/jsx-props-no-spreading
-        <LosName {...props} uri={CHECKLIST_PAGE(props.data.id)} />
+        <LosName {...props} />
       )}
       prefix={config.mappings.synonym.misidentification.prefix}
       onRowDelete={onRowDelete}
@@ -55,4 +57,8 @@ MisidentifiedSynonymListItem.propTypes = {
   data: SynonymType.type.isRequired,
   onRowDelete: PropTypes.func.isRequired,
   onChangeAuthor: PropTypes.func.isRequired,
+  editable: PropTypes.bool,
+};
+MisidentifiedSynonymListItem.defaultProps = {
+  editable: true,
 };

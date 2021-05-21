@@ -26,6 +26,8 @@ export default {
       form: 'FORM',
       import: 'IMPORT',
     },
+    labelColumnWidth: 3,
+    contentColumnWidth: 9,
   },
   nomenclature: {
     filter: {

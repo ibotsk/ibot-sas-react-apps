@@ -9,7 +9,7 @@ import { LosName, SynonymListItem } from '@ibot/components';
 
 import config from 'config/config';
 
-const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
+// const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
 
 const NomenclatoricSynonymListItem = ({
   rowId,
@@ -17,6 +17,7 @@ const NomenclatoricSynonymListItem = ({
   onRowDelete,
   onChangeToTaxonomic,
   onChangeToInvalid,
+  editable = true,
 }) => {
   const Additions = () => (
     <>
@@ -54,11 +55,12 @@ const NomenclatoricSynonymListItem = ({
   );
   return (
     <SynonymListItem
+      editable={editable}
       rowId={rowId}
       data={data}
       nameComponent={(props) => (
         // eslint-disable-next-line react/jsx-props-no-spreading
-        <LosName {...props} uri={CHECKLIST_PAGE(props.data.id)} />
+        <LosName {...props} />
       )}
       prefix={config.mappings.synonym.nomenclatoric.prefix}
       additions={Additions}
@@ -76,9 +78,11 @@ NomenclatoricSynonymListItem.propTypes = {
   onRowDelete: PropTypes.func.isRequired,
   onChangeToTaxonomic: PropTypes.func,
   onChangeToInvalid: PropTypes.func,
+  editable: PropTypes.bool,
 };
 
 NomenclatoricSynonymListItem.defaultProps = {
   onChangeToTaxonomic: undefined,
   onChangeToInvalid: undefined,
+  editable: true,
 };

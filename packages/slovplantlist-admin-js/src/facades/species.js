@@ -242,11 +242,13 @@ async function saveSpeciesAndSynonyms({
     idNomenclature: data.id,
   }, accessToken);
 
-  return common.submitSynonyms(data.id, synonyms, {
+  await common.submitSynonyms(data.id, synonyms, {
     getCurrentSynonymsUri: nomenclaturesUri.getSynonymsOfParent,
     deleteSynonymsByIdUri: synonymsUri.synonymsByIdUri,
     updateSynonymsUri: synonymsUri.baseUri,
   }, accessToken);
+
+  return data.id;
 }
 
 function patchSpecies(id, data, accessToken) {
@@ -257,7 +259,7 @@ function patchSpecies(id, data, accessToken) {
 
 function createSynonym(idParent, idSynonym, syntype) {
   return {
-    idParent: parseInt(idParent, 10),
+    idParent: idParent ? parseInt(idParent, 10) : null,
     idSynonym,
     syntype,
   };

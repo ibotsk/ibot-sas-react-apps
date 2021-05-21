@@ -5,7 +5,8 @@ import {
   Grid, Row, Col,
   Button, Glyphicon,
 } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+
+import { NotificationContainer } from 'react-notifications';
 
 import filterFactory, {
   dateFilter, textFilter, multiSelectFilter, selectFilter,
@@ -20,17 +21,19 @@ import {
 import Can from 'components/segments/auth/Can';
 import Ownership from 'components/segments/auth/Ownership';
 import RemotePagination from 'components/segments/RemotePagination';
+import SpeciesRecordModal
+  from 'components/pages/SpeciesRecord/SpeciesRecordModal';
 
 import config from 'config/config';
 import { helperUtils } from 'utils';
 
 import commonHooks from 'components/segments/hooks';
 
-import SpeciesNameModal from './Modals/SpeciesNameModal';
+// import SpeciesNameModal from './Modals/SpeciesNameModal';
 
-const PAGE_DETAIL = '/checklist/detail/';
-const EDIT_RECORD = '/checklist/edit/';
-const NEW_RECORD = '/checklist/new';
+// const PAGE_DETAIL = '/checklist/detail/';
+// const EDIT_RECORD = '/checklist/edit/';
+// const NEW_RECORD = '/checklist/new';
 
 const {
   constants: {
@@ -179,7 +182,7 @@ const defaultSorted = [{
   order: 'asc',
 }];
 
-const formatResult = (records, user) => records.map(({
+const formatResult = (records, user, handleShowModal) => records.map(({
   id, accepted, idGenus, ownerNames, ...nomen
 }) => ({
   ...nomen,
@@ -193,9 +196,16 @@ const formatResult = (records, user) => records.map(({
         userGeneraIds: user.userGenera,
       }}
       yes={() => (
-        <LinkContainer to={`${EDIT_RECORD}${id}`}>
-          <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
-        </LinkContainer>
+        // <LinkContainer to={`${EDIT_RECORD}${id}`}>
+        //   <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
+        // </LinkContainer>
+        <Button
+          bsSize="xsmall"
+          bsStyle="warning"
+          onClick={() => handleShowModal(id)}
+        >
+          Edit
+        </Button>
       )}
     />
   ),
@@ -221,33 +231,27 @@ const formatResult = (records, user) => records.map(({
   ),
   [listOfSpeciesColumn]: (
     <span>
-      <a href={`${PAGE_DETAIL}${id}`}>
+      <Button
+        bsStyle="link"
+        bsSize="xs"
+        onClick={() => handleShowModal(id)}
+      >
         <LosName key={id} data={nomen} />
-      </a>
-      <Can
-        role={user.role}
-        perform="species:edit"
-        data={{
-          speciesGenusId: idGenus,
-          userGeneraIds: user.userGenera,
-        }}
-        yes={() => (
-          <small className="pull-right gray-text unselectable">
-            Double click to quick edit
-          </small>
-        )}
-      />
+      </Button>
     </span>
   ),
   acceptedNames: (
     accepted.map(({ parent }, i) => [
       i > 0 && ', ',
-      <a
-        key={parent.id}
-        href={`${PAGE_DETAIL}${parent.id}`}
-      >
-        <LosName data={parent} />
-      </a>,
+      <span key={parent.id}>
+        <Button
+          bsStyle="link"
+          bsSize="xs"
+          onClick={() => handleShowModal(parent.id)}
+        >
+          <LosName data={parent} />
+        </Button>
+      </span>,
     ])
   ),
 }));
@@ -333,17 +337,8 @@ const Checklist = () => {
                   >
                     <Glyphicon glyph="plus" />
                     {' '}
-                    Add new quick
+                    Add new
                   </Button>
-                </Col>
-                <Col md={2}>
-                  <LinkContainer to={NEW_RECORD}>
-                    <Button bsStyle="success">
-                      <Glyphicon glyph="plus" />
-                      {' '}
-                      Add new full
-                    </Button>
-                  </LinkContainer>
                 </Col>
               </Row>
             )}
@@ -377,7 +372,7 @@ const Checklist = () => {
         <ToolkitProvider
           columnToggle
           keyField="id"
-          data={formatResult(data, user)}
+          data={formatResult(data, user, handleShowModal)}
           columns={tableColumns}
         >
           {({ baseProps, columnToggleProps }) => (
@@ -411,11 +406,12 @@ const Checklist = () => {
           )}
         </ToolkitProvider>
       </Grid>
-      <SpeciesNameModal
-        id={editId}
+      <SpeciesRecordModal
+        editId={editId}
         show={showModal}
-        onHide={() => handleHideModal()}
+        onHide={handleHideModal}
       />
+      <NotificationContainer />
     </div>
   );
 };
