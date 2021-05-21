@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import SpeciesType from 'components/propTypes/species';
 import SynonymType from 'components/propTypes/synonym';
 
+import { LosName } from '@ibot/components';
 import Can from 'components/segments/auth/Can';
 
 import { speciesFacade } from 'facades';
@@ -245,7 +246,12 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
       <Modal.Header closeButton>
         <Modal.Title>
           {recordId
-            ? `Edit species name - ID ${recordId}`
+            ? (
+              <>
+                {`Edit species name - ID ${recordId} - `}
+                <LosName data={fullRecord.speciesRecord} isAggregates />
+              </>
+            )
             : 'Create new species name'}
         </Modal.Title>
       </Modal.Header>
