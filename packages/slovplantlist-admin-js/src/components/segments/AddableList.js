@@ -10,7 +10,7 @@ import {
 import PropTypes from 'prop-types';
 
 import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
-import { useAsyncTypeahead } from '@ibot/core/lib/hooks/typeahead';
+import { useAsyncTypeahead } from '@ibot/core/lib/hooks/autocomplete';
 
 const AddableList = ({
   id,

@@ -1,2 +1,6 @@
-export { default as hooks } from './hooks';
+import * as hooks from './hooks';
+
 export * from './core';
+export {
+  hooks,
+};

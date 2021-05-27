@@ -28,9 +28,11 @@
     "deploy": "gh-pages -d example/build"
   },
   "dependencies": {
+    "@ibot/core": "^0.1.0",
     "@ibot/types": "^0.1.0",
     "@ibot/utils": "^0.1.0",
     "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "react": "16",
     "react-bootstrap-table-next": "^4.0.3",

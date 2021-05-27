@@ -22,7 +22,6 @@ const AdminAutocompleteAsync = ({
 
   return (
     <Autocomplete
-      {...props}
       open={open}
       onOpen={() => {
         setOpen(true);
@@ -31,11 +30,12 @@ const AdminAutocompleteAsync = ({
         setOpen(false);
       }}
       getOptionSelected={(option, value) => (
-        !value.label || option.label === value.label
+        !(value.label) || option.label === value.label
       )}
       getOptionLabel={(option) => (
-        option ? option.label : ''
+        (option && option.label) ? option.label : ''
       )}
+      handleHomeEndKeys
       renderInput={(params) => (
         <AdminTextField
           {...params}
@@ -44,16 +44,17 @@ const AdminAutocompleteAsync = ({
           InputProps={{
             ...params.InputProps,
             endAdornment: (
-              <>
+              <div>
                 {loading ? (
                   <CircularProgress color="inherit" size={20} />
                 ) : null}
                 {params.InputProps.endAdornment}
-              </>
+              </div>
             ),
           }}
         />
       )}
+      {...props}
     />
   );
 };
