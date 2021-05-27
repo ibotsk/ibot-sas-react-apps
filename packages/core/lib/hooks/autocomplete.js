@@ -95,6 +95,7 @@ export function useAsyncAutocomplete(
       setSelected({ id: idInitial, label: labelInitial });
     } else {
       setSelected({});
+      setOptions([]);
     }
   }, [idInitial, labelInitial]);
 
@@ -126,7 +127,12 @@ export function useAsyncAutocomplete(
     return () => { cancelled = true; };
   }, [searchFunc, accessToken, minInputLength]);
 
-  const handleChange = (e, newValue) => setSelected(newValue || {});
+  const handleChange = (e, newValue) => {
+    setSelected(newValue || {});
+    if (!newValue) {
+      setOptions([]);
+    }
+  };
 
   return {
     selected,

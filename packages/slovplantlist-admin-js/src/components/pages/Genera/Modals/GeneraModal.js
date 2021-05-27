@@ -224,6 +224,9 @@ const GeneraModal = ({
 
   const handleHide = () => {
     setGenus({ ...initialValues });
+    setSynonyms([]);
+    setFamily({});
+    setFamilyApg({});
     onHide();
   };
 

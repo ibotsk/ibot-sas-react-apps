@@ -105,7 +105,6 @@ const AdminAddableList = ({
       </List>
       <AdminAutocompleteAsync
         id={id}
-        className={classes.autocomplete}
         options={options}
         value={selected}
         loading={loading}

@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 
 import PropTypes from 'prop-types';
 
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import AdminTextField from './AdminTextField';
 
@@ -35,6 +35,8 @@ const AdminAutocompleteAsync = ({
       getOptionLabel={(option) => (
         (option && option.label) ? option.label : ''
       )}
+      blurOnSelect
+      selectOnFocus
       handleHomeEndKeys
       renderInput={(params) => (
         <AdminTextField
