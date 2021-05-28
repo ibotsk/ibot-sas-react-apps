@@ -296,7 +296,7 @@ const GeneraModal = ({
           select
           id="ntype"
           name="ntype"
-          label="Name status"
+          label="Genus status"
           value={ntype || ''}
           onChange={handleChangeInput}
         >
@@ -312,7 +312,6 @@ const GeneraModal = ({
           {...(isGenusInvalid().props)}
         />
         <AdminTextField
-          fullWidth
           id="authors"
           label="Authors"
           value={authors || ''}
@@ -339,7 +338,6 @@ const GeneraModal = ({
         />
         <DividerSpaced />
         <AdminTextField
-          fullWidth
           id="vernacular"
           label="Vernacular"
           value={vernacular || ''}

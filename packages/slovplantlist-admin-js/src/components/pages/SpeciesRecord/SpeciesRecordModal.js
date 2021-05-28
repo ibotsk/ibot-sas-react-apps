@@ -3,16 +3,21 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  Button,
-  Form, Modal,
-  Tabs, Tab,
+  Form,
 } from 'react-bootstrap';
+
+import {
+  Dialog, DialogTitle, DialogContent, DialogActions,
+  Button,
+  Tabs, Tab,
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
 import SpeciesType from 'components/propTypes/species';
 import SynonymType from 'components/propTypes/synonym';
 
-import { LosName } from '@ibot/components';
+import { LosName, TabPanel } from '@ibot/components';
 import Can from 'components/segments/auth/Can';
 
 import { speciesFacade } from 'facades';
@@ -39,6 +44,17 @@ const initStateRecord = {
   nomenStatus: {},
 };
 
+const useStyles = makeStyles((theme) => ({
+  dialogRoot: {
+    '& .MuiDialog-paper': {
+      height: `calc(100% - ${theme.spacing(10)}px)`,
+    },
+  },
+  tabs: {
+    marginBottom: theme.spacing(4),
+  },
+}));
+
 const getSelectedId = (selected) => (
   (selected && selected.length) > 0 ? selected[0].id : null
 );
@@ -57,6 +73,9 @@ const SpeciesRecordTabs = ({
   onChangeData,
   onChangeSynonyms,
 }) => {
+  const classes = useStyles();
+  const [activeTab, setActiveTab] = useState(0);
+
   const {
     speciesRecord = {},
     genus,
@@ -103,8 +122,25 @@ const SpeciesRecordTabs = ({
   };
 
   return (
-    <Tabs defaultActiveKey={1} id="species-details-tabs">
-      <Tab eventKey={1} title="Name composition">
+    <>
+      <Tabs
+        id="species-details-tabs"
+        className={classes.tabs}
+        value={activeTab}
+        indicatorColor="primary"
+        textColor="primary"
+        onChange={(e, newTab) => setActiveTab(newTab)}
+        aria-label="Name details tabs"
+        variant="scrollable"
+        scrollButtons="auto"
+      >
+        <Tab label="Name composition" />
+        <Tab label="Associations" />
+        <Tab label="Synonyms" />
+        <Tab label="Categories" />
+        <Tab label="Check and Publish" />
+      </Tabs>
+      <TabPanel value={activeTab} index={0}>
         <SpeciesRecordDetailsName
           isEdit={isEdit}
           nomenRecord={speciesRecord}
@@ -112,8 +148,8 @@ const SpeciesRecordTabs = ({
           onChangeData={handleChangeSpeciesRecord}
           onChangeGenus={handleChangeGenus}
         />
-      </Tab>
-      <Tab eventKey={2} title="Associations">
+      </TabPanel>
+      <TabPanel value={activeTab} index={1}>
         <SpeciesRecordDetailsAssociations
           isEdit={isEdit}
           recordId={recordId}
@@ -125,35 +161,36 @@ const SpeciesRecordTabs = ({
           taxonPositionReference={taxonPosition}
           onChangeData={handleChangeAssociations}
         />
-      </Tab>
-      <Tab eventKey={3} title="Synonyms">
+      </TabPanel>
+      <TabPanel value={activeTab} index={2}>
         <SpeciesRecordDetailsSynonyms
           isEdit={isEdit}
           recordId={recordId}
           data={synonyms}
           onChangeData={onChangeSynonyms}
         />
-      </Tab>
-      <Tab eventKey={4} title="Categories">
+      </TabPanel>
+      <TabPanel value={activeTab} index={3}>
         <SpeciesRecordDetailsCategories
           isEdit={isEdit}
           categoriesRecord={nomenStatus}
           onChangeData={handleChangeNomenStatus}
         />
-      </Tab>
-      <Tab eventKey={5} title="Check and Publish">
+      </TabPanel>
+      <TabPanel value={activeTab} index={4}>
         <SpeciesRecordDetailsCheckPublish
           isEdit={isEdit}
           checkedTimestamp={checkedTimestamp}
           checkedBy={checkedBy}
           onChangeData={handleChangeSpeciesRecord}
         />
-      </Tab>
-    </Tabs>
+      </TabPanel>
+    </>
   );
 };
 
 const SpeciesRecordModal = ({ editId, show, onHide }) => {
+  const classes = useStyles();
   const [recordId, setRecordId] = useState(editId);
   const [fullRecord, setFullRecord] = useState(initStateRecord);
   const [synonyms, setSynonyms] = useState({});
@@ -161,22 +198,23 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
 
+  // recordId exists because of possibility of creating a new record without closing the dialog
   useEffect(() => (
     setRecordId(editId)
   ), [editId]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const r = await speciesFacade.getRecordById(recordId, accessToken);
-      const syns = await speciesFacade.getSynonyms(recordId, accessToken);
+      if (recordId) {
+        const r = await speciesFacade.getRecordById(recordId, accessToken);
+        const syns = await speciesFacade.getSynonyms(recordId, accessToken);
 
-      setFullRecord(r);
-      setSynonyms(syns);
+        setFullRecord(r);
+        setSynonyms(syns);
+      }
     };
 
-    if (recordId) {
-      fetchData();
-    }
+    fetchData();
   }, [recordId, accessToken]);
 
   const handleHide = () => {
@@ -185,13 +223,13 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
     onHide();
   };
 
-  const handleDataChange = (changed) => {
-    setFullRecord({ ...fullRecord, ...changed });
-  };
+  const handleDataChange = (changed) => (
+    setFullRecord({ ...fullRecord, ...changed })
+  );
 
-  const handleSynonymsChange = (changed) => {
-    setSynonyms({ ...synonyms, ...changed });
-  };
+  const handleSynonymsChange = (changed) => (
+    setSynonyms({ ...synonyms, ...changed })
+  );
 
   const handleSubmit = async (close = false) => {
     const {
@@ -237,25 +275,25 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
   const { speciesRecord: { idGenus } = {} } = fullRecord;
 
   return (
-    <Modal
-      id="species-record-modal"
-      bsSize="large"
-      show={show}
-      onHide={handleHide}
+    <Dialog
+      className={classes.dialogRoot}
+      open={show}
+      onClose={handleHide}
+      fullWidth
+      scroll="paper"
+      aria-labelledby="species-dialog"
     >
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {recordId
-            ? (
-              <>
-                {`Edit species name - ID ${recordId} - `}
-                <LosName data={fullRecord.speciesRecord} isAggregates />
-              </>
-            )
-            : 'Create new species name'}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
+      <DialogTitle id="genus-dialog-title">
+        {editId
+          ? (
+            <>
+              {`Edit species name - ID ${editId} - `}
+              <LosName data={fullRecord.speciesRecord} isAggregates />
+            </>
+          )
+          : 'Create new species name'}
+      </DialogTitle>
+      <DialogContent>
         <Can
           role={user.role}
           perform="genus:edit"
@@ -278,8 +316,8 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
             <SpeciesRecordTabs data={fullRecord} />
           )}
         />
-      </Modal.Body>
-      <Modal.Footer>
+      </DialogContent>
+      <DialogActions>
         <Can
           role={user.role}
           perform="genus:edit"
@@ -289,29 +327,21 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
           }}
           yes={() => (
             <>
-              <Button bsStyle="default" onClick={handleHide}>Close</Button>
-              <Button
-                bsStyle="primary"
-                type="submit"
-                onClick={() => handleSubmit(false)}
-              >
+              <Button onClick={handleHide}>Close</Button>
+              <Button color="primary" onClick={() => handleSubmit(false)}>
                 Save
               </Button>
-              <Button
-                bsStyle="primary"
-                type="submit"
-                onClick={() => handleSubmit(true)}
-              >
+              <Button color="primary" onClick={() => handleSubmit(true)}>
                 Save &amp; Close
               </Button>
             </>
           )}
           no={() => (
-            <Button bsStyle="default" onClick={handleHide}>Close</Button>
+            <Button onClick={handleHide}>Close</Button>
           )}
         />
-      </Modal.Footer>
-    </Modal>
+      </DialogActions>
+    </Dialog>
   );
 };
 
@@ -341,19 +371,19 @@ SpeciesRecordTabs.propTypes = {
       protectionCurrent: PropTypes.string,
       protectionPrepared: PropTypes.string,
     }),
-    genus: PropTypes.arrayOf(PropTypes.shape({
-      id: PropTypes.number.isRequired,
-      label: PropTypes.string.isRequired,
-    })),
+    genus: PropTypes.shape({
+      id: PropTypes.number,
+      label: PropTypes.string,
+    }),
     accepted: PropTypes.arrayOf(PropTypes.shape({
       id: PropTypes.number.isRequired,
       parent: SpeciesType.type.isRequired,
     })),
-    basionym: PropTypes.arrayOf(SpeciesType.type),
-    replaced: PropTypes.arrayOf(SpeciesType.type),
-    nomenNovum: PropTypes.arrayOf(SpeciesType.type),
-    taxonPosition: PropTypes.arrayOf(SpeciesType.type),
-    parentCombinantion: PropTypes.arrayOf(SpeciesType.type),
+    basionym: SpeciesType.type,
+    replaced: SpeciesType.type,
+    nomenNovum: SpeciesType.type,
+    taxonPosition: SpeciesType.type,
+    parentCombinantion: SpeciesType.type,
   }).isRequired,
   synonyms: PropTypes.shape({
     nomenclatoricSynonyms: PropTypes.arrayOf(SynonymType.type),

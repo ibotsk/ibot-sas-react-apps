@@ -146,6 +146,16 @@ function listOfSpeciesString(name, options) {
   return nameArr.map(({ string }) => string).join(' ');
 }
 
+function listOfSpeciesIdLabelFormatter(name) {
+  if (!name) {
+    return {};
+  }
+  return {
+    id: name.id,
+    label: listOfSpeciesString(name),
+  };
+}
+
 /**
  * Creates equality 
  * @param {object} a 
@@ -162,5 +172,6 @@ function areEqualSpecies(a, b, properties = undefined) {
 export default {
   listOfSpeciesFormat,
   listOfSpeciesString,
+  listOfSpeciesIdLabelFormatter,
   areEqualSpecies,
 };

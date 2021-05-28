@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -18,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
 
 const TitledSection = ({
   title, children, showWhen = true, hideWhen = false,
+  ...paperProps
 }) => {
   const classes = useStyles();
 
@@ -34,7 +36,7 @@ const TitledSection = ({
         </Typography>
       </Grid>
       <Grid item xs={12}>
-        <Paper className={classes.paper}>
+        <Paper className={classes.paper} {...paperProps}>
           {children}
         </Paper>
       </Grid>

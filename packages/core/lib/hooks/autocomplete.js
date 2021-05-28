@@ -93,9 +93,6 @@ export function useAsyncAutocomplete(
   useEffect(() => {
     if (idInitial && labelInitial) {
       setSelected({ id: idInitial, label: labelInitial });
-    } else {
-      setSelected({});
-      setOptions([]);
     }
   }, [idInitial, labelInitial]);
 
