@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  Dialog, DialogActions, DialogTitle, DialogContent,
+  DialogActions, DialogTitle, DialogContent,
   Button, MenuItem,
 } from '@material-ui/core';
 
@@ -13,6 +13,7 @@ import {
   NameList, DividerSpaced,
   TitledSection,
   GenusName,
+  AdminEditDialog,
   AdminTextField, AdminAutocompleteAsync, AdminTimestampCheck,
   AdminAddableList,
 } from '@ibot/components';
@@ -273,12 +274,10 @@ const GeneraModal = ({
   } = genus;
 
   return (
-    <Dialog
+    <AdminEditDialog
       open={show}
       onEnter={handleEnter}
       onClose={handleHide}
-      fullWidth
-      scroll="paper"
       aria-labelledby="genus-dialog"
     >
       <DialogTitle id="genus-dialog-title">
@@ -376,7 +375,7 @@ const GeneraModal = ({
           Save changes
         </Button>
       </DialogActions>
-    </Dialog>
+    </AdminEditDialog>
   );
 };
 

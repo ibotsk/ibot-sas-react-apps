@@ -3,13 +3,14 @@ import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
+  DialogTitle, DialogContent, DialogActions,
   Button,
 } from '@material-ui/core';
 
 import PropTypes from 'prop-types';
 
 import {
+  AdminEditDialog,
   AdminTextField, AdminTimestampCheck, DividerSpaced,
 } from '@ibot/components';
 
@@ -86,19 +87,18 @@ const FamiliesApgModal = ({ id, show, onHide }) => {
   };
 
   return (
-    <Dialog
+    <AdminEditDialog
       open={show}
       onEnter={handleEnter}
       onClose={handleHide}
       aria-labelledby="genus-dialog"
-      fullWidth
     >
       <DialogTitle id="family-dialog-title">
         {id
           ? `Edit family APG - ID ${id} - ${name}`
           : 'Create new family APG'}
       </DialogTitle>
-      <DialogContent>
+      <DialogContent dividers>
         <AdminTextField
           fullWidth
           id="name"
@@ -128,7 +128,7 @@ const FamiliesApgModal = ({ id, show, onHide }) => {
           Save changes
         </Button>
       </DialogActions>
-    </Dialog>
+    </AdminEditDialog>
   );
 };
 

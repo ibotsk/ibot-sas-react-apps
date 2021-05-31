@@ -3,11 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  Form,
-} from 'react-bootstrap';
-
-import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
+  DialogTitle, DialogContent, DialogActions,
   Button,
   Tabs, Tab,
 } from '@material-ui/core';
@@ -18,7 +14,10 @@ import PropTypes from 'prop-types';
 import SpeciesType from 'components/propTypes/species';
 import SynonymType from 'components/propTypes/synonym';
 
-import { LosName, TabPanel } from '@ibot/components';
+import {
+  LosName, TabPanel,
+  AdminEditDialog,
+} from '@ibot/components';
 import Can from 'components/segments/auth/Can';
 
 import { speciesFacade } from 'facades';
@@ -53,6 +52,10 @@ const useStyles = makeStyles((theme) => ({
   },
   tabs: {
     marginBottom: theme.spacing(4),
+    '& .MuiTab-root:hover': {
+      backgroundColor: theme.palette.grey[100],
+      opacity: 1,
+    },
   },
 }));
 
@@ -128,12 +131,13 @@ const SpeciesRecordTabs = ({
         id="species-details-tabs"
         className={classes.tabs}
         value={activeTab}
-        indicatorColor="primary"
-        textColor="primary"
+        indicatorColor="secondary"
+        textColor="secondary"
         onChange={(e, newTab) => setActiveTab(newTab)}
         aria-label="Name details tabs"
         variant="scrollable"
         scrollButtons="auto"
+        centered
       >
         <Tab label="Name composition" />
         <Tab label="Associations" />
@@ -277,7 +281,7 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
   const { speciesRecord: { idGenus } = {} } = fullRecord;
 
   return (
-    <Dialog
+    <AdminEditDialog
       className={classes.dialogRoot}
       open={show}
       onEnter={handleEnter}
@@ -297,7 +301,7 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
           )
           : 'Create new species name'}
       </DialogTitle>
-      <DialogContent>
+      <DialogContent dividers>
         <Can
           role={user.role}
           perform="genus:edit"
@@ -306,15 +310,13 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
             userGeneraIds: user.userGenera,
           }}
           yes={() => (
-            <Form horizontal>
-              <SpeciesRecordTabs
-                isEdit
-                data={fullRecord}
-                synonyms={synonyms}
-                onChangeData={handleDataChange}
-                onChangeSynonyms={handleSynonymsChange}
-              />
-            </Form>
+            <SpeciesRecordTabs
+              isEdit
+              data={fullRecord}
+              synonyms={synonyms}
+              onChangeData={handleDataChange}
+              onChangeSynonyms={handleSynonymsChange}
+            />
           )}
           no={() => (
             <SpeciesRecordTabs data={fullRecord} />
@@ -353,7 +355,7 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
           )}
         />
       </DialogActions>
-    </Dialog>
+    </AdminEditDialog>
   );
 };
 
