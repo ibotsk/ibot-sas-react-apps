@@ -1,13 +1,15 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
+  Box,
   List, ListItem, ListItemIcon,
   CircularProgress, Divider, IconButton,
   InputAdornment,
 } from '@material-ui/core';
 import {
   Add as AddIcon,
+  Done as DoneIcon,
   RemoveCircleOutline as RemoveIcon,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,6 +31,9 @@ const useStyles = makeStyles((theme) => ({
   addIcon: {
     color: theme.palette.success.main,
   },
+  addButtonBox: {
+    paddingLeft: theme.spacing(1) - 3,
+  },
   removeIcon: {
     color: theme.palette.error.main,
   },
@@ -41,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 const AdminAddableList = ({
   id,
   data = [],
-  options: propsOptions = [],
+  // options: propsOptions = [],
   onSearch,
   onAddItemToList,
   onRowDelete,
@@ -53,6 +58,7 @@ const AdminAddableList = ({
   ...itemSpecificProps
 }) => {
   const classes = useStyles();
+  const [inputOpen, setInputOpen] = useState(false);
 
   const {
     selected,
@@ -67,6 +73,7 @@ const AdminAddableList = ({
       onAddItemToList(selected);
       handleChange();
     }
+    setInputOpen(false);
   };
 
   return (
@@ -103,46 +110,66 @@ const AdminAddableList = ({
           })
         }
       </List>
-      <AdminAutocompleteAsync
-        id={id}
-        options={options}
-        value={selected}
-        loading={loading}
-        onChange={handleChange}
-        onInputChange={handleFetch}
-        renderInput={(params) => (
-          <AdminTextField
-            {...params}
-            className={classes.inputRoot}
-            label="Add to list"
-            helperText="Start typing and select a value from the list"
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <div>
-                  {loading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
-                  {params.InputProps.endAdornment}
-                </div>
-              ),
-              startAdornment: (
-                <InputAdornment position="start">
-                  <IconButton
-                    size="small"
-                    className={classes.addIcon}
-                    onClick={handleAddItem}
-                    title="Add item"
-                  >
-                    <AddIcon />
-                  </IconButton>
-                  <Divider orientation="vertical" className={classes.divider} />
-                </InputAdornment>
-              ),
-            }}
+      {
+        inputOpen ? (
+          <AdminAutocompleteAsync
+            id={id}
+            options={options}
+            value={selected}
+            loading={loading}
+            onChange={handleChange}
+            onInputChange={handleFetch}
+            renderInput={(params) => (
+              <AdminTextField
+                {...params}
+                className={classes.inputRoot}
+                label="Add to list"
+                helperText="Start typing and select a value from the list"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <div>
+                      {loading ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </div>
+                  ),
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <IconButton
+                        size="small"
+                        className={classes.addIcon}
+                        onClick={handleAddItem}
+                        title="Confirm add"
+                      >
+                        <DoneIcon />
+                      </IconButton>
+                      <Divider orientation="vertical" className={classes.divider} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
           />
+        ) : (
+          <div>
+            {
+              data && data.length > 0 && (
+                <Divider />
+              )
+            }
+            <Box className={classes.addButtonBox}>
+              <IconButton
+                size="small"
+                onClick={() => setInputOpen(true)}
+                title="Add item"
+              >
+                <AddIcon />
+              </IconButton>
+            </Box>
+          </div>
         )}
-      />
     </div>
   );
 };
@@ -155,7 +182,7 @@ AdminAddableList.propTypes = {
   data: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number,
   })),
-  options: PropTypes.arrayOf(PropTypes.object),
+  // options: PropTypes.arrayOf(PropTypes.object),
   itemComponent: PropTypes.func.isRequired,
   renderMenu: PropTypes.func,
   getRowId: PropTypes.func,
@@ -170,7 +197,7 @@ AdminAddableList.defaultProps = {
   id: undefined,
   optionsLabelKey: 'label',
   data: [],
-  options: undefined,
+  // options: undefined,
   async: false,
   onSearch: undefined,
   renderMenu: undefined,

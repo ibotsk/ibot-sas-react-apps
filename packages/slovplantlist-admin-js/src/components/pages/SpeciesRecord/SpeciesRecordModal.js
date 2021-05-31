@@ -280,6 +280,7 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
       open={show}
       onClose={handleHide}
       fullWidth
+      maxWidth="md"
       scroll="paper"
       aria-labelledby="species-dialog"
     >

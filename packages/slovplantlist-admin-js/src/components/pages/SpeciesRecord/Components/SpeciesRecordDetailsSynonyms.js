@@ -268,7 +268,7 @@ const SpeciesRecordDetailsSynonyms = ({
 
   return (
     <>
-      <TitledSection title="Nomenclatoric Synonyms">
+      <TitledSection title="Nomenclatoric Synonyms" variant="outlined">
         <AdminAddableList
           data={nomenclatoricSynonyms}
           onSearch={searchSpeciesByQuery}
@@ -276,9 +276,12 @@ const SpeciesRecordDetailsSynonyms = ({
           onRowDelete={handleRemoveNomenclatoric}
           accessToken={accessToken}
           itemComponent={NomenclatoricSynonymListItem}
+          // props specific to itemComponent
+          onChangeToTaxonomic={handleNomenToTax}
+          onChangeToInvalid={handleNomenToInv}
         />
       </TitledSection>
-      <TitledSection title="Taxonomic Synonyms">
+      <TitledSection title="Taxonomic Synonyms" variant="outlined">
         <AdminAddableList
           data={taxonomicSynonyms}
           onSearch={searchSpeciesByQuery}
@@ -286,9 +289,12 @@ const SpeciesRecordDetailsSynonyms = ({
           onRowDelete={handleRemoveTaxonomic}
           accessToken={accessToken}
           itemComponent={TaxonomicSynonymListItem}
+          // props specific to itemComponent
+          onChangeToNomenclatoric={handleTaxToNomen}
+          onChangeToInvalid={handleTaxToInv}
         />
       </TitledSection>
-      <TitledSection title="Invalid Designations">
+      <TitledSection title="Invalid Designations" variant="outlined">
         <AdminAddableList
           data={invalidDesignations}
           onSearch={searchSpeciesByQuery}
@@ -296,9 +302,12 @@ const SpeciesRecordDetailsSynonyms = ({
           onRowDelete={handleRemoveInvalid}
           accessToken={accessToken}
           itemComponent={InvalidSynonymListItem}
+          // props specific to itemComponent
+          onChangeToNomenclatoric={handleInvToNomen}
+          onChangeToTaxonomic={handleInvToTax}
         />
       </TitledSection>
-      <TitledSection title="Misidentifications">
+      <TitledSection title="Misidentifications" variant="outlined">
         <AdminAddableList
           data={misidentifications}
           onSearch={searchSpeciesByQuery}
@@ -306,9 +315,11 @@ const SpeciesRecordDetailsSynonyms = ({
           onRowDelete={handleRemoveMisidentified}
           accessToken={accessToken}
           itemComponent={MisidentifiedSynonymListItem}
+          // props specific to itemComponent
+          onChangeAuthor={handleChangeMisidentificationAuthor}
         />
       </TitledSection>
-      <TitledSection title="Taxonomic Synonyms">
+      <TitledSection title="Other Synonyms" variant="outlined">
         <AdminAddableList
           data={otherSynonyms}
           onSearch={searchSpeciesByQuery}
@@ -318,111 +329,6 @@ const SpeciesRecordDetailsSynonyms = ({
           itemComponent={OtherSynonymListItem}
         />
       </TitledSection>
-      {/* <Panel>
-        <Panel.Body> */}
-      {/* <FormGroup controlId="nomenclatoric-synonyms" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Nomenclatoric Synonyms
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <AddableList
-                id="nomenclatoric-synonyms-autocomplete"
-                async
-                editable={isEdit}
-                data={nomenclatoricSynonyms}
-                onSearch={searchSpeciesByQuery}
-                accessToken={accessToken}
-                onAddItemToList={handleAddNomenclatoric}
-                onRowDelete={handleRemoveNomenclatoric}
-                itemComponent={NomenclatoricSynonymListItem}
-                // props specific to itemComponent
-                onChangeToTaxonomic={handleNomenToTax}
-                onChangeToInvalid={handleNomenToInv}
-              />
-            </Col>
-          </FormGroup> */}
-      {/* <FormGroup controlId="taxonomic-synonyms" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Taxonomic Synonyms
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <AddableList
-                id="taxonomic-synonyms-autocomplete"
-                async
-                editable={isEdit}
-                data={taxonomicSynonyms}
-                onSearch={searchSpeciesByQuery}
-                accessToken={accessToken}
-                onAddItemToList={handleAddTaxonomic}
-                onRowDelete={handleRemoveTaxonomic}
-                itemComponent={TaxonomicSynonymListItem}
-                // props specific to itemComponent
-                onChangeToNomenclatoric={handleTaxToNomen}
-                onChangeToInvalid={handleTaxToInv}
-              />
-            </Col>
-          </FormGroup> */}
-      {/* <FormGroup controlId="invalid-designations" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Invalid Designations
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <AddableList
-                id="invalid-designations-autocomplete"
-                async
-                editable={isEdit}
-                data={invalidDesignations}
-                onSearch={searchSpeciesByQuery}
-                accessToken={accessToken}
-                onAddItemToList={handleAddInvalid}
-                onRowDelete={handleRemoveInvalid}
-                itemComponent={InvalidSynonymListItem}
-                // props specific to itemComponent
-                onChangeToNomenclatoric={handleInvToNomen}
-                onChangeToTaxonomic={handleInvToTax}
-              />
-            </Col>
-          </FormGroup> */}
-      {/* <FormGroup controlId="misidentifications" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Misidentifications
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <AddableList
-                id="misidentifications-autocomplete"
-                async
-                editable={isEdit}
-                data={misidentifications}
-                onSearch={searchSpeciesByQuery}
-                accessToken={accessToken}
-                onAddItemToList={handleAddMisidentified}
-                onRowDelete={handleRemoveMisidentified}
-                itemComponent={MisidentifiedSynonymListItem}
-                // props specific to itemComponent
-                onChangeAuthor={handleChangeMisidentificationAuthor}
-              />
-            </Col>
-          </FormGroup> */}
-      {/* <FormGroup controlId="other-synonyms" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Other Synonyms
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <AddableList
-                id="other-synonyms-autocomplete"
-                async
-                editable={isEdit}
-                data={otherSynonyms}
-                onSearch={searchSpeciesByQuery}
-                accessToken={accessToken}
-                onAddItemToList={handleAddOther}
-                onRowDelete={handleRemoveOther}
-                itemComponent={OtherSynonymListItem}
-              />
-            </Col>
-          </FormGroup> */}
-      {/* </Panel.Body>
-      </Panel> */}
     </>
   );
 };
