@@ -4,6 +4,8 @@ import React from 'react';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 
+import clsx from 'clsx';
+
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles((theme) => ({
@@ -17,17 +19,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AdminTextField = ({ readonly = false, ...textFieldProps }) => {
+const AdminTextField = ({ readonly = false, className, ...textFieldProps }) => {
   const classes = useStyles();
   return (
     <TextField
-      {...textFieldProps}
       fullWidth
       variant="outlined"
       size="small"
       margin="dense"
       disabled={readonly}
-      className={readonly ? classes.readonly : ''}
+      className={clsx(readonly && classes.readonly, className)}
+      {...textFieldProps}
     />
   );
 };
@@ -36,7 +38,9 @@ export default AdminTextField;
 
 AdminTextField.propTypes = {
   readonly: PropTypes.bool,
+  className: PropTypes.string,
 };
 AdminTextField.defaultProps = {
   readonly: false,
+  className: undefined,
 };

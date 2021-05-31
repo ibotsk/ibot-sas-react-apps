@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { makeStyles } from '@material-ui/core/styles';
+
 import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
@@ -7,7 +9,14 @@ import { AdminTextField, LosName, SynonymListItem } from '@ibot/components';
 
 import config from 'config/config';
 
-// const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
+const useStyles = makeStyles(() => ({
+  authorInput: {
+    '& .MuiInputBase-input': {
+      fontSize: 'small',
+      height: '0.8em',
+    },
+  },
+}));
 
 const MisidentifiedSynonymListItem = ({
   rowId,
@@ -15,6 +24,7 @@ const MisidentifiedSynonymListItem = ({
   data,
   editable = true,
 }) => {
+  const classes = useStyles();
   const { misidentificationAuthor } = data;
   return (
     <SynonymListItem
@@ -27,6 +37,7 @@ const MisidentifiedSynonymListItem = ({
       prefix={config.mappings.synonym.misidentification.prefix}
     >
       <AdminTextField
+        className={classes.authorInput}
         label="Misidentification Author"
         value={misidentificationAuthor || ''}
         onChange={(e) => onChangeAuthor(rowId, e.target.value)}

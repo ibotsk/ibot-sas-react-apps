@@ -11,6 +11,7 @@ import {
   Button,
   Tabs, Tab,
 } from '@material-ui/core';
+import { Save as SaveIcon } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
@@ -329,10 +330,18 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
           yes={() => (
             <>
               <Button onClick={handleHide}>Close</Button>
-              <Button color="primary" onClick={() => handleSubmit(false)}>
+              <Button
+                color="primary"
+                onClick={() => handleSubmit(false)}
+                startIcon={<SaveIcon />}
+              >
                 Save
               </Button>
-              <Button color="primary" onClick={() => handleSubmit(true)}>
+              <Button
+                color="primary"
+                onClick={() => handleSubmit(true)}
+                startIcon={<SaveIcon />}
+              >
                 Save &amp; Close
               </Button>
             </>
