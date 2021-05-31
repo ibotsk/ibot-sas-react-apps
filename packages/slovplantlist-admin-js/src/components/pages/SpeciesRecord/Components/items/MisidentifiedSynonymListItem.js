@@ -5,7 +5,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
-import { AdminTextField, LosName, SynonymListItem } from '@ibot/components';
+import {
+  AdminTextField, LosName, MUISynonymListItem,
+} from '@ibot/components';
 
 import config from 'config/config';
 
@@ -26,8 +28,9 @@ const MisidentifiedSynonymListItem = ({
 }) => {
   const classes = useStyles();
   const { misidentificationAuthor } = data;
+
   return (
-    <SynonymListItem
+    <MUISynonymListItem
       editable={editable}
       data={data}
       nameComponent={(props) => (
@@ -42,7 +45,7 @@ const MisidentifiedSynonymListItem = ({
         value={misidentificationAuthor || ''}
         onChange={(e) => onChangeAuthor(rowId, e.target.value)}
       />
-    </SynonymListItem>
+    </MUISynonymListItem>
   );
 };
 

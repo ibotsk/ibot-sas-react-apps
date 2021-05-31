@@ -1,12 +1,20 @@
 import React from 'react';
 
 import {
+  Box,
   ListItemText,
   ListItemSecondaryAction,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
 import { SpeciesType } from '@ibot/types';
+
+const useStyles = makeStyles(() => ({
+  root: {
+    minWidth: '190px',
+  },
+}));
 
 // const constructSubNomenlatoric = (subNomenclatoricList) => {
 //   if (!subNomenclatoricList || subNomenclatoricList.length === 0) {
@@ -39,12 +47,13 @@ const SynonymListItem = ({
   prefix,
   additions: Additions,
   nameComponent: NameComponent,
-  showSubNomenclatoric = false,
+  // showSubNomenclatoric = false,
   children,
 }) => {
+  const classes = useStyles();
   const { synonym: subject } = data;
   return (
-    <div>
+    <Box className={classes.root}>
       <ListItemText
         primary={(
           <ItemContent prefix={prefix}>
@@ -55,8 +64,8 @@ const SynonymListItem = ({
       <ListItemSecondaryAction>
         {Additions && <Additions />}
       </ListItemSecondaryAction>
-    </div>
-    //   {children}
+      {children}
+    </Box>
     //   {showSubNomenclatoric
     //     && constructSubNomenlatoric(
     //       subject['synonyms-nomenclatoric-through'],
@@ -75,12 +84,12 @@ SynonymListItem.propTypes = {
   nameComponent: PropTypes.func.isRequired,
   prefix: PropTypes.string.isRequired,
   additions: PropTypes.func,
-  showSubNomenclatoric: PropTypes.bool,
+  // showSubNomenclatoric: PropTypes.bool,
   children: PropTypes.element,
 };
 SynonymListItem.defaultProps = {
   additions: undefined,
-  showSubNomenclatoric: false,
+  // showSubNomenclatoric: false,
   children: undefined,
 };
 

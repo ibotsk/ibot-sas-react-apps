@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
-import { LosName, SynonymListItem } from '@ibot/components';
+import { LosName, MUISynonymListItem } from '@ibot/components';
 
 import config from 'config/config';
 
@@ -11,7 +11,7 @@ const OtherSynonymListItem = ({
   data,
   editable = true,
 }) => (
-  <SynonymListItem
+  <MUISynonymListItem
     editable={editable}
     data={data}
     nameComponent={(props) => (
