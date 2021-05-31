@@ -199,11 +199,6 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
 
-  // recordId exists because of possibility of creating a new record without closing the dialog
-  useEffect(() => (
-    setRecordId(editId)
-  ), [editId]);
-
   useEffect(() => {
     const fetchData = async () => {
       if (recordId) {
@@ -218,9 +213,15 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
     fetchData();
   }, [recordId, accessToken]);
 
+  // recordId exists because of possibility of creating a new record without closing the dialog
+  const handleEnter = () => (
+    setRecordId(editId)
+  );
+
   const handleHide = () => {
     setFullRecord(initStateRecord);
     setSynonyms({});
+    setRecordId(undefined);
     onHide();
   };
 
@@ -279,6 +280,7 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
     <Dialog
       className={classes.dialogRoot}
       open={show}
+      onEnter={handleEnter}
       onClose={handleHide}
       fullWidth
       maxWidth="md"
