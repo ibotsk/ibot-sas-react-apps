@@ -137,7 +137,6 @@ const SpeciesRecordTabs = ({
         aria-label="Name details tabs"
         variant="scrollable"
         scrollButtons="auto"
-        centered
       >
         <Tab label="Name composition" />
         <Tab label="Associations" />

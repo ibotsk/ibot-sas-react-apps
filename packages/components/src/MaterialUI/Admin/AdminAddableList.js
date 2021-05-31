@@ -27,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 0,
     paddingLeft: theme.spacing(1) + 1,
     paddingRight: theme.spacing(1) + 1,
+    alignItems: 'flex-start',
   },
   addIcon: {
     color: theme.palette.success.main,
@@ -122,7 +123,6 @@ const AdminAddableList = ({
             renderInput={(params) => (
               <AdminTextField
                 {...params}
-                className={classes.inputRoot}
                 label="Add to list"
                 helperText="Start typing and select a value from the list"
                 InputProps={{

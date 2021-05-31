@@ -13,6 +13,7 @@ import config from 'config/config';
 
 const useStyles = makeStyles(() => ({
   authorInput: {
+    marginTop: 0,
     '& .MuiInputBase-input': {
       fontSize: 'small',
       height: '0.8em',
