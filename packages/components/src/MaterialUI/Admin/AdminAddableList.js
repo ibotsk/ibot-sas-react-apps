@@ -35,9 +35,6 @@ const useStyles = makeStyles((theme) => ({
   addButtonBox: {
     paddingLeft: theme.spacing(1) - 3,
   },
-  removeIcon: {
-    color: theme.palette.error.main,
-  },
   divider: {
     height: 28,
     margin: 4,
@@ -93,7 +90,6 @@ const AdminAddableList = ({
                   <IconButton
                     edge="start"
                     size="small"
-                    className={classes.removeIcon}
                     onClick={() => onRowDelete(rowId)}
                     title="Remove item"
                   >
@@ -139,6 +135,7 @@ const AdminAddableList = ({
                     <InputAdornment position="start">
                       <IconButton
                         size="small"
+                        color="primary"
                         className={classes.addIcon}
                         onClick={handleAddItem}
                         title="Confirm add"
@@ -162,6 +159,7 @@ const AdminAddableList = ({
             <Box className={classes.addButtonBox}>
               <IconButton
                 size="small"
+                color="primary"
                 onClick={() => setInputOpen(true)}
                 title="Add item"
               >
