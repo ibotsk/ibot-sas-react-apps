@@ -2,8 +2,13 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  Grid, Button, Glyphicon,
-} from 'react-bootstrap';
+  Toolbar, Button, Typography,
+} from '@material-ui/core';
+import {
+  Add as AddIcon,
+  Done as DoneIcon,
+  Clear as ClearIcon,
+} from '@material-ui/icons';
 
 import filterFactory, {
   textFilter, multiSelectFilter, Comparator,
@@ -50,9 +55,9 @@ const columns = [
     dataField: 'checkedTimestamp',
     text: 'Checked',
     formatter: (cell) => (cell ? (
-      <Glyphicon glyph="ok" className="green" />
+      <DoneIcon />
     ) : (
-      <Glyphicon glyph="remove" className="red" />
+      <ClearIcon />
     )),
     align: 'center',
   },
@@ -125,8 +130,8 @@ const formatResult = (records, userRole, handleShowModal) => (
         perform="genus:edit"
         yes={() => (
           <Button
-            bsSize="xsmall"
-            bsStyle="warning"
+            size="small"
+            color="primary"
             onClick={() => handleShowModal(id)}
           >
             Edit
@@ -142,8 +147,8 @@ const formatResult = (records, userRole, handleShowModal) => (
           accepted.map(({ parent }, i) => [
             i > 0 && ', ',
             <Button
-              bsStyle="link"
-              className="no-padding"
+              size="small"
+              color="primary"
               key={parent.id}
               onClick={() => handleShowModal(parent.id)}
             >
@@ -212,45 +217,39 @@ const Genera = ({ user, accessToken }) => {
   return (
     <div id="genera">
       <PageTitle title="Genera - Slovplantlist" />
-      <Grid id="functions-panel">
-        <div id="functions">
-          <Can
-            role={user.role}
-            perform="genus:edit"
-            yes={() => (
-              <Button
-                bsStyle="success"
-                onClick={() => handleShowModal(undefined)}
-              >
-                <Glyphicon glyph="plus" />
-                {' '}
-                Add new
-              </Button>
-            )}
-          />
-        </div>
-      </Grid>
-      <hr />
-      <Grid>
-        <h2>Genera</h2>
-        <p>All filters are case sensitive</p>
-      </Grid>
-      <Grid fluid>
-        <RemotePagination
-          hover
-          striped
-          condensed
-          remote
-          keyField="id"
-          data={formatResult(data, user.role, handleShowModal)}
-          columns={columns}
-          defaultSorted={defaultSorted}
-          filter={filterFactory()}
-          onTableChange={onTableChange}
-          paginationOptions={paginationOptions}
-          cellEdit={cellEditFactory({ mode: 'dbclick' })}
+      <Toolbar>
+        <Can
+          role={user.role}
+          perform="genus:edit"
+          yes={() => (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleShowModal(undefined)}
+              startIcon={<AddIcon />}
+            >
+              Add new
+            </Button>
+          )}
         />
-      </Grid>
+      </Toolbar>
+      <Typography variant="h4" component="h1">
+        Genera
+      </Typography>
+      <RemotePagination
+        hover
+        striped
+        condensed
+        remote
+        keyField="id"
+        data={formatResult(data, user.role, handleShowModal)}
+        columns={columns}
+        defaultSorted={defaultSorted}
+        filter={filterFactory()}
+        onTableChange={onTableChange}
+        paginationOptions={paginationOptions}
+        cellEdit={cellEditFactory({ mode: 'dbclick' })}
+      />
       <GeneraModal
         editId={editId}
         show={showModal}

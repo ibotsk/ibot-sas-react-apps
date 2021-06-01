@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  Grid, Row, Col,
-  Button, Glyphicon,
-} from 'react-bootstrap';
+  Toolbar, Button, Typography,
+} from '@material-ui/core';
+import {
+  Add as AddIcon,
+  Done as DoneIcon,
+  Clear as ClearIcon,
+} from '@material-ui/icons';
 
 import { NotificationContainer } from 'react-notifications';
 
@@ -75,9 +79,9 @@ const columns = (isAuthor) => [
     dataField: 'checkedTimestamp',
     text: 'Checked',
     formatter: (cell) => (cell ? (
-      <Glyphicon glyph="ok" className="green" />
+      <DoneIcon />
     ) : (
-      <Glyphicon glyph="remove" className="red" />
+      <ClearIcon />
     )),
     filter: selectFilter({
       options: checkedTimestampOptions,
@@ -196,12 +200,9 @@ const formatResult = (records, user, handleShowModal) => records.map(({
         userGeneraIds: user.userGenera,
       }}
       yes={() => (
-        // <LinkContainer to={`${EDIT_RECORD}${id}`}>
-        //   <Button bsStyle="warning" bsSize="xsmall">Edit</Button>
-        // </LinkContainer>
         <Button
-          bsSize="xsmall"
-          bsStyle="warning"
+          size="small"
+          color="primary"
           onClick={() => handleShowModal(id)}
         >
           Edit
@@ -323,52 +324,40 @@ const Checklist = () => {
   return (
     <div id="checklist">
       <PageTitle title="Checklist - Slovplantlist" />
-      <Grid id="functions-panel">
-        <div id="functions">
-          <Can
-            role={user.role}
-            perform="checklist:add"
-            yes={() => (
-              <Row>
-                <Col md={2}>
-                  <Button
-                    bsStyle="success"
-                    onClick={() => handleShowModal(undefined)}
-                  >
-                    <Glyphicon glyph="plus" />
-                    {' '}
-                    Add new
-                  </Button>
-                </Col>
-              </Row>
-            )}
-          />
-        </div>
-      </Grid>
-      <hr />
-      <Grid>
-        <h2>Checklist</h2>
-        <p>All filters are case sensitive</p>
-        <div>
-          <small>
-            * A = Accepted, PA = Provisionally accepted, S = Synonym,
-            {' '}
-            DS = Doubtful synonym, U = Unresolved
-          </small>
-        </div>
-      </Grid>
-      <Grid fluid>
-        <hr />
-        <div>
-          <Button
-            bsStyle="primary"
-            onClick={() => setShowModalColumns(true)}
-          >
-            Display columns
-            {' '}
-            <Glyphicon glyph="menu-down" />
-          </Button>
-        </div>
+      <Toolbar>
+        <Can
+          role={user.role}
+          perform="checklist:add"
+          yes={() => (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleShowModal(undefined)}
+              startIcon={<AddIcon />}
+            >
+              Add new
+            </Button>
+          )}
+        />
+      </Toolbar>
+      <Typography variant="h4" component="h1">
+        Checklist
+      </Typography>
+      <Typography variant="body2">
+        <small>
+          * A = Accepted, PA = Provisionally accepted, S = Synonym,
+          {' '}
+          DS = Doubtful synonym, U = Unresolved
+        </small>
+      </Typography>
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setShowModalColumns(true)}
+        >
+          Display columns
+        </Button>
         <ToolkitProvider
           columnToggle
           keyField="id"
@@ -405,7 +394,7 @@ const Checklist = () => {
             </>
           )}
         </ToolkitProvider>
-      </Grid>
+      </div>
       <SpeciesRecordModal
         editId={editId}
         show={showModal}

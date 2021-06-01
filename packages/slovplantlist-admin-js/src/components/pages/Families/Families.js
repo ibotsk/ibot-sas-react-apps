@@ -2,8 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import {
-  Grid, Button, Glyphicon,
-} from 'react-bootstrap';
+  Toolbar, Button, Typography,
+} from '@material-ui/core';
+import {
+  Add as AddIcon,
+  Done as DoneIcon,
+  Clear as ClearIcon,
+} from '@material-ui/icons';
 
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 
@@ -38,9 +43,9 @@ const columns = [
     dataField: 'checkedTimestamp',
     text: 'Checked',
     formatter: (cell) => (cell ? (
-      <Glyphicon glyph="ok" className="green" />
+      <DoneIcon />
     ) : (
-      <Glyphicon glyph="remove" className="red" />
+      <ClearIcon />
     )),
     align: 'center',
   },
@@ -87,8 +92,8 @@ const Families = ({ user, accessToken }) => {
         perform="family:edit"
         yes={() => (
           <Button
-            bsSize="xsmall"
-            bsStyle="warning"
+            size="small"
+            color="primary"
             onClick={() => handleShowModal(d.id)}
           >
             Edit
@@ -122,44 +127,38 @@ const Families = ({ user, accessToken }) => {
   return (
     <div id="families">
       <PageTitle title="Families - Slovplantlist" />
-      <Grid id="functions-panel">
-        <div id="functions">
-          <Can
-            role={user.role}
-            perform="family:edit"
-            yes={() => (
-              <Button
-                bsStyle="success"
-                onClick={() => handleShowModal(undefined)}
-              >
-                <Glyphicon glyph="plus" />
-                {' '}
-                Add new
-              </Button>
-            )}
-          />
-        </div>
-      </Grid>
-      <hr />
-      <Grid>
-        <h2>Families</h2>
-        <p>All filters are case sensitive</p>
-      </Grid>
-      <Grid fluid>
-        <RemotePagination
-          hover
-          striped
-          condensed
-          remote
-          keyField="id"
-          data={formatResult(data)}
-          columns={columns}
-          defaultSorted={defaultSorted}
-          filter={filterFactory()}
-          onTableChange={onTableChange}
-          paginationOptions={paginationOptions}
+      <Toolbar>
+        <Can
+          role={user.role}
+          perform="family:edit"
+          yes={() => (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleShowModal(undefined)}
+              startIcon={<AddIcon />}
+            >
+              Add new
+            </Button>
+          )}
         />
-      </Grid>
+      </Toolbar>
+      <Typography variant="h4" component="h1">
+        Families
+      </Typography>
+      <RemotePagination
+        hover
+        striped
+        condensed
+        remote
+        keyField="id"
+        data={formatResult(data)}
+        columns={columns}
+        defaultSorted={defaultSorted}
+        filter={filterFactory()}
+        onTableChange={onTableChange}
+        paginationOptions={paginationOptions}
+      />
       <FamiliesModal
         id={editId}
         show={showModal}
