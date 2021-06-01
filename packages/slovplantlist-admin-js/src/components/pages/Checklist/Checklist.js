@@ -231,23 +231,14 @@ const formatResult = (records, user, handleShowModal) => records.map(({
     />
   ),
   [listOfSpeciesColumn]: (
-    <span>
-      <Button
-        bsStyle="link"
-        bsSize="xs"
-        onClick={() => handleShowModal(id)}
-      >
-        <LosName key={id} data={nomen} />
-      </Button>
-    </span>
+    <LosName key={id} data={nomen} />
   ),
   acceptedNames: (
     accepted.map(({ parent }, i) => [
       i > 0 && ', ',
       <span key={parent.id}>
         <Button
-          bsStyle="link"
-          bsSize="xs"
+          color="primary"
           onClick={() => handleShowModal(parent.id)}
         >
           <LosName data={parent} />
