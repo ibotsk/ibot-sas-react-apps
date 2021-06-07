@@ -80,6 +80,9 @@ export const lte = (key, value, options = {
   [key]: { lte: resolveEncode(value, options) },
 });
 export const and = (...objs) => {
+  if (objs.length === 0) {
+    return {};
+  }
   if (objs.length === 1) {
     return objs[0];
   }

@@ -2,7 +2,7 @@ import {
   species as speciesUtils,
   misc as miscUtils,
   WhereBuilder,
-  likep, regexp, neq, eq, lt, gt, lte, gte,
+  likep, regexp, neq, eq, lt, gt, lte, gte, like,
   or, and,
 } from '@ibot/utils';
 
@@ -90,7 +90,7 @@ function makeWhere(filters) {
   return wb.add(andItems).build();
 }
 
-function makeOrder(sortFields, sortOrder = 'ASC') {
+function makeOrder(sortFields = 'id', sortOrder = 'ASC') {
   let soUpperCase = sortOrder.toUpperCase();
   if (soUpperCase !== 'ASC' && soUpperCase !== 'DESC') {
     soUpperCase = 'ASC';
@@ -111,11 +111,64 @@ function buildFilterOptionsFromKeys(keys) {
   return obj;
 }
 
+// ------ data grid ------ //
+const dataGridResolveOperator = (operator, key, value) => {
+  switch (operator) {
+    case 'contains':
+      return likep(key, value);
+    case 'startsWith':
+      return like(key, `${value}%`);
+    case 'endsWith':
+      return like(key, `%${value}`);
+    case 'equals':
+    default:
+      return eq(key, value);
+  }
+};
+
+const dataGridResolveConjunction = (operator) => {
+  switch (operator) {
+    case 'or':
+      return or;
+    case 'and':
+    default:
+      return and;
+  }
+};
+
+function dataGridSortModelMapper(
+  defaultOrder = [{ field: 'id', sort: 'asc' }],
+) {
+  return (sortModel) => {
+    let o = defaultOrder;
+    if (sortModel && sortModel.length > 0) {
+      o = sortModel;
+    }
+    return JSON.stringify(o.map(({ field, sort }) => `${field} ${sort}`));
+  };
+}
+
+function dataGridFilterModelToWhere(filterModel) {
+  const { items, linkOperator } = filterModel;
+  const wb = new WhereBuilder();
+
+  const whereItems = items
+    .filter(({ value }) => !!value)
+    .map(({ columnField, operatorValue, value }) => (
+      dataGridResolveOperator(operatorValue, columnField, value)
+    ));
+
+  const conj = dataGridResolveConjunction(linkOperator);
+  return wb.add(conj(...whereItems)).buildString();
+}
+
 export default {
   losToTypeaheadSelected,
   makeWhere,
   makeOrder,
   buildFilterOptionsFromKeys,
+  dataGridSortModelMapper,
+  dataGridFilterModelToWhere,
   // curateSearchFilters,
   // curateSortFields,
 };
