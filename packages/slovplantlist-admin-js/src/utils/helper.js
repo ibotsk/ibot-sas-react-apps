@@ -102,13 +102,10 @@ function makeOrder(sortFields = 'id', sortOrder = 'ASC') {
 }
 
 function buildFilterOptionsFromKeys(keys) {
-  const obj = {};
-  Object.keys(keys).forEach((t) => {
-    const { text, label } = keys[t];
-    obj[t] = text || label;
-    // obj[t] = t;
-  });
-  return obj;
+  return Object.keys(keys).map((k) => ({
+    value: k,
+    label: keys[k].label,
+  }));
 }
 
 // ------ data grid ------ //
