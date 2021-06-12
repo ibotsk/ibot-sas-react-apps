@@ -14,7 +14,7 @@ import { PageTitle, AdminDataGrid } from '@ibot/components';
 import { hooks } from '@ibot/core';
 
 import config from 'config/config';
-import { helperUtils } from 'utils';
+import { helperUtils, whereUtils } from 'utils';
 
 import commonHooks from 'components/segments/hooks';
 
@@ -59,7 +59,7 @@ const FamiliesAPG = () => {
     )
   );
   const handleFilterModelChange = (params) => (
-    handleWhereChange(params, helperUtils.dataGridFilterModelToWhere)
+    handleWhereChange(params, whereUtils.dataGridFilterModelToWhereString)
   );
 
   return (

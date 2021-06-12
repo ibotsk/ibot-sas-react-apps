@@ -2,7 +2,7 @@ import {
   species as speciesUtils,
   misc as miscUtils,
   WhereBuilder,
-  likep, regexp, neq, eq, lt, gt, lte, gte, like,
+  likep, regexp, neq, eq, lt, gt, lte, gte,
   or, and,
 } from '@ibot/utils';
 
@@ -104,34 +104,9 @@ function makeOrder(sortFields = 'id', sortOrder = 'ASC') {
 function buildFilterOptionsFromKeys(keys) {
   return Object.keys(keys).map((k) => ({
     value: k,
-    label: keys[k].label,
+    label: keys[k].label || keys[k].text,
   }));
 }
-
-// ------ data grid ------ //
-const dataGridResolveOperator = (operator, key, value) => {
-  switch (operator) {
-    case 'contains':
-      return likep(key, value);
-    case 'startsWith':
-      return like(key, `${value}%`);
-    case 'endsWith':
-      return like(key, `%${value}`);
-    case 'equals':
-    default:
-      return eq(key, value);
-  }
-};
-
-const dataGridResolveConjunction = (operator) => {
-  switch (operator) {
-    case 'or':
-      return or;
-    case 'and':
-    default:
-      return and;
-  }
-};
 
 function dataGridSortModelMapper(
   defaultOrder = [{ field: 'id', sort: 'asc' }],
@@ -145,27 +120,10 @@ function dataGridSortModelMapper(
   };
 }
 
-function dataGridFilterModelToWhere(filterModel) {
-  const { items, linkOperator } = filterModel;
-  const wb = new WhereBuilder();
-
-  const whereItems = items
-    .filter(({ value }) => !!value)
-    .map(({ columnField, operatorValue, value }) => (
-      dataGridResolveOperator(operatorValue, columnField, value)
-    ));
-
-  const conj = dataGridResolveConjunction(linkOperator);
-  return wb.add(conj(...whereItems)).buildString();
-}
-
 export default {
   losToTypeaheadSelected,
   makeWhere,
   makeOrder,
   buildFilterOptionsFromKeys,
   dataGridSortModelMapper,
-  dataGridFilterModelToWhere,
-  // curateSearchFilters,
-  // curateSortFields,
 };

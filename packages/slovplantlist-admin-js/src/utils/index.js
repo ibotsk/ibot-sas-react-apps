@@ -4,6 +4,7 @@ import helperUtils from './helper';
 import notifications from './notifications';
 import miscUtils from './misc';
 import sorterUtils from './sorters';
+import whereUtils from './where';
 
 export {
   filterUtils,
@@ -12,4 +13,5 @@ export {
   notifications,
   miscUtils,
   sorterUtils,
+  whereUtils,
 };
