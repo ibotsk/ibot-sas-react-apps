@@ -60,6 +60,7 @@ const invalidDesignation = (name, syntype) => {
 
 function listOfSpeciesFormat(nomenclature, options = {}) {
   const opts = {
+    isAuthors: true,
     isPublication: false,
     isTribus: false,
     isAggregates: false,
@@ -89,7 +90,7 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
   const infras = infraTaxa(nomenclature);
 
   if (species === subsp || species === varieta || species === forma) {
-    if (authors) {
+    if (opts.isAuthors && authors) {
       name.push(plain(authors));
     }
     isAuthorLast = false;
@@ -97,7 +98,7 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
 
   name = name.concat(infras);
 
-  if (isAuthorLast && authors) {
+  if (opts.isAuthors && isAuthorLast && authors) {
     name.push(plain(authors));
   }
 
