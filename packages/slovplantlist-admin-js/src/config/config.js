@@ -4,7 +4,7 @@ import uris from './uris';
 export default {
 
   constants: {
-    listOfSpeciesColumn: 'listOfSpecies',
+    listOfSpeciesColumn: 'speciesName',
     ownership: 'ownerIds',
     ownershipRegexp: {
       start: '(\\,|^)',
@@ -28,6 +28,20 @@ export default {
     },
     labelColumnWidth: 3,
     contentColumnWidth: 9,
+    operators: {
+      contains: 'contains',
+      startsWith: 'startsWith',
+      endsWith: 'endsWith',
+      equals: 'equals',
+      notEquals: 'notEquals',
+      regexp: 'regexp',
+      is: 'is',
+      not: 'not',
+      after: 'after',
+      onOrAfter: 'onOrAfter',
+      before: 'before',
+      onOrBefore: 'onOrBefore',
+    },
   },
   nomenclature: {
     filter: {

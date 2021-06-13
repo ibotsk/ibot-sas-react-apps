@@ -3,16 +3,15 @@ import { FilterManager } from '@ibot/core';
 import {
   ownershipFilterHandler,
   defaultFilterHandler,
+  speciesNameFilterHandler,
+  checkedRecordFilterHandler,
 } from './dataGridFilters';
 
 const fm = FilterManager((f) => f.columnField);
 
-// fm.addHandler(constants.listOfSpeciesColumn, listOfSpeciesFilterHandler);
-// fm.addHandler(constants.ownership, ownershipFilterHandler);
-// fm.addHandler('*', dateFilterHandler); // apply dateTime handler to all filters
-// fm.addHandler(constants.checkedTimestampColumn, checkedRecordFilterHandler);
-
 fm.addHandler('ownerIds', ownershipFilterHandler);
+fm.addHandler('speciesName', speciesNameFilterHandler);
+fm.addHandler('checkedTimestamp', checkedRecordFilterHandler);
 fm.addHandler('*', defaultFilterHandler);
 
 export default fm;

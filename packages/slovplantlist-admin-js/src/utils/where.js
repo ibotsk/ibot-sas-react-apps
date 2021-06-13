@@ -1,6 +1,7 @@
 import {
   WhereBuilder, and, or,
-  likep, like, regexp, neq, eq,
+  likep, like, regexp,
+  neq, eq, gt, gte, lt, lte,
 } from '@ibot/utils';
 
 import config from 'config/config';
@@ -17,8 +18,18 @@ const dataGridResolveOperator = (operator, key, value) => {
       return like(key, `%${value}`);
     case operators.regexp:
       return regexp(key, value, { encodeUri: false });
+    case operators.not:
     case operators.notEquals:
       return neq(key, value);
+    case operators.after:
+      return gt(key, value);
+    case operators.onOrAfter:
+      return gte(key, value);
+    case operators.before:
+      return lt(key, value);
+    case operators.onOrBefore:
+      return lte(key, value);
+    case operators.is:
     case operators.equals:
     default:
       return eq(key, value);
@@ -63,6 +74,7 @@ function makeWhereString(whereItems, op) {
 }
 
 export default {
+  dataGridResolveOperator,
   dataGridFilterItemsToWhereWB,
   dataGridFilterModelToWhereString,
   makeWhereString,

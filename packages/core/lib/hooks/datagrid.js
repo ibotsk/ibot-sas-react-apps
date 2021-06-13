@@ -17,12 +17,14 @@ export function useDataGridChange(
   const handlePageSizeChange = ({ pageSize: ps }) => (
     setPageSize(ps)
   );
-  const handleOrderChange = ({ sortModel }, formatter = (x) => x) => (
-    setOrder(formatter(sortModel))
-  );
-  const handleWhereChange = ({ filterModel }, formatter = (x) => x) => (
-    setWhere(formatter(filterModel))
-  );
+  const handleOrderChange = ({ sortModel }, callback = (x) => x) => {
+    const newOrder = callback(sortModel);
+    setOrder(newOrder);
+  };
+  const handleWhereChange = ({ filterModel }, callback = (x) => x) => {
+    const newWhere = callback(filterModel);
+    setWhere(newWhere);
+  };
 
   return {
     page,

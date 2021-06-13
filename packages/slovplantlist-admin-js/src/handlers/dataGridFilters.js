@@ -1,17 +1,23 @@
 import {
   WhereBuilder,
-  regexp, neq, eq, and,
+  regexp, neq, eq, and, or,
 } from '@ibot/utils';
+
 import { whereUtils } from 'utils';
+
 import config from 'config/config';
 
 const {
   constants: {
+    listOfSpeciesColumn,
+    checkedTimestampColumn,
     ownershipRegexp,
+    operators,
   },
   mappings: {
     ownership: ownershipMapping,
   },
+  nomenclature,
 } = config;
 
 const makeOwnershipRegexp = (value) => (
@@ -68,5 +74,55 @@ export function ownershipFilterHandler(filterModel, { ownerId }) {
     wb.add(and(...andArr));
   }
 
+  return wb.build();
+}
+
+export function speciesNameFilterHandler(filterModel) {
+  const { items = [] } = filterModel;
+
+  const wb = new WhereBuilder();
+
+  const speciesNameFilterItemIdx = items
+    .findIndex((item) => item.columnField === listOfSpeciesColumn);
+  if (speciesNameFilterItemIdx > -1) {
+    const speciesNameFilterItem = items[speciesNameFilterItemIdx];
+    const {
+      operatorValue,
+      value,
+    } = speciesNameFilterItem;
+
+    if (value) {
+      const fields = nomenclature.filter.listOfSpecies;
+
+      const orArr = fields.map((field) => (
+        whereUtils.dataGridResolveOperator(operatorValue, field, value)
+      ));
+
+      wb.add(or(...orArr));
+    }
+  }
+  return wb.build();
+}
+
+export function checkedRecordFilterHandler(filterModel) {
+  const { items = [] } = filterModel;
+  const wb = new WhereBuilder();
+
+  const speciesNameFilterItemIdx = items
+    .findIndex((item) => item.columnField === checkedTimestampColumn);
+  if (speciesNameFilterItemIdx > -1) {
+    const speciesNameFilterItem = items[speciesNameFilterItemIdx];
+    const {
+      columnField,
+      operatorValue,
+    } = speciesNameFilterItem;
+
+    if (operatorValue) {
+      const op = operatorValue === operators.is
+        ? neq(columnField, null) : eq(columnField, null);
+
+      wb.add(op);
+    }
+  }
   return wb.build();
 }
