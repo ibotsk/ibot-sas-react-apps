@@ -1,72 +1,56 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
 import {
-  Grid,
-  Tabs, Tab,
-} from 'react-bootstrap';
-
-import LoggedUserType from 'components/propTypes/loggedUser';
+  Tabs, Tab, Typography,
+} from '@material-ui/core';
 
 import Can from 'components/segments/auth/Can';
-import { PageTitle } from '@ibot/components';
+import {
+  PageTitle, TabPanel,
+} from '@ibot/components';
 
 import AllUsers from './Tabs/AllUsers';
 import GeneraUsers from './Tabs/GeneraUsers';
 
-class Users extends React.Component {
-  constructor(props) {
-    super(props);
+const Users = () => {
+  const [activeTab, setActiveTab] = useState(0);
 
-    this.state = {
-      activeTabKey: 1,
-      // showModalUser: false,
-      // editId: undefined,
-    };
-  }
+  const userRole = useSelector((state) => state.user.role);
 
-  render() {
-    const { user } = this.props;
-    const { activeTabKey } = this.state;
-    return (
-      <Can
-        role={user.role}
-        perform="users"
-        yes={() => (
-          <div id="users">
-            <PageTitle title="Users - Slovplantlist" />
-            <Grid id="page-heading">
-              <h2>Manage users</h2>
-            </Grid>
-            <Grid>
-              <Tabs
-                activeKey={activeTabKey}
-                onSelect={(key) => this.setState({ activeTabKey: key })}
-                id="users-tabs"
-              >
-                <Tab eventKey={1} title="All users">
-                  <AllUsers />
-                </Tab>
-                <Tab eventKey={2} title="Users and genera">
-                  <GeneraUsers />
-                </Tab>
-              </Tabs>
-            </Grid>
-          </div>
-        )}
-        no={() => <Redirect to="/" />}
-      />
-    );
-  }
-}
-
-const mapStateToProps = (state) => ({
-  user: state.user,
-});
-
-export default connect(mapStateToProps)(Users);
-
-Users.propTypes = {
-  user: LoggedUserType.type.isRequired,
+  return (
+    <Can
+      role={userRole}
+      perform="users"
+      yes={() => (
+        <>
+          <PageTitle title="Users - Slovplantlist" />
+          <Typography variant="h4" component="h1">
+            Manage users
+          </Typography>
+          <Tabs
+            id="users-tabs"
+            value={activeTab}
+            indicatorColor="secondary"
+            textColor="secondary"
+            onChange={(e, newTab) => setActiveTab(newTab)}
+            aria-label="Users tabs"
+          >
+            <Tab label="All users" />
+            <Tab label="Users and genera" />
+          </Tabs>
+          <TabPanel value={activeTab} index={0}>
+            <AllUsers />
+          </TabPanel>
+          <TabPanel value={activeTab} index={1}>
+            <GeneraUsers />
+          </TabPanel>
+        </>
+      )}
+      no={() => <Redirect to="/" />}
+    />
+  );
 };
+
+export default Users;

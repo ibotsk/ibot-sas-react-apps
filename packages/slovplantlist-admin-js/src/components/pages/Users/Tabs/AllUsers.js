@@ -1,144 +1,111 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import {
-  Button, Glyphicon, Panel,
-} from 'react-bootstrap';
+  Toolbar, Button, Typography,
+} from '@material-ui/core';
+import {
+  Add as AddIcon,
+} from '@material-ui/icons';
 
-import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
+import { AdminDataGrid } from '@ibot/components';
+import { hooks } from '@ibot/core';
 
-import PropTypes from 'prop-types';
+import Can from 'components/segments/auth/Can';
 
 import config from 'config/config';
-import { formatterUtils } from 'utils';
+import { helperUtils, whereUtils } from 'utils';
 
 import commonHooks from 'components/segments/hooks';
 
 import UsersModal from './Modals/UsersModal';
 
+import { columns, defaultSortModel } from './Table/columns-all-users';
+
 const getAllUri = config.uris.usersUri.getAllWOrderUri;
 const getCountUri = config.uris.usersUri.countUri;
 
-const columns = [
-  {
-    dataField: 'id',
-    text: 'ID',
-    sort: true,
-  },
-  {
-    dataField: 'action',
-    text: 'Action',
-  },
-  {
-    dataField: 'username',
-    text: 'User Name',
-    filter: textFilter(),
-    sort: true,
-  },
-  {
-    dataField: 'email',
-    text: 'Email',
-    sort: true,
-  },
-  {
-    dataField: 'roles',
-    text: 'Role',
-  },
-];
+const {
+  pagination: { sizePerPageList },
+} = config;
+const pageSizesList = sizePerPageList.map(({ value }) => value);
 
-const defaultSorted = [{
-  dataField: 'id',
-  order: 'asc',
-}];
+const AllUsers = () => {
+  const accessToken = useSelector((state) => state.authentication.accessToken);
+  const user = useSelector((state) => state.user);
 
-const AllUsers = ({ accessToken }) => {
   const {
     showModal, editId,
     handleShowModal, handleHideModal,
   } = commonHooks.useModal();
 
   const {
-    where, order, setValues,
-  } = commonHooks.useTableChange();
+    page, pageSize, order, where,
+    handlePageChange, handleOrderChange, handlePageSizeChange,
+    handleWhereChange,
+  } = hooks.useDataGridChange(null, 0, pageSizesList[2], { pageBase: 1 });
 
-  const { data } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, 1,
-    undefined, order, showModal,
+  const {
+    data, totalSize, isLoading,
+  } = commonHooks.useTableData(
+    getCountUri, getAllUri, accessToken, where, page,
+    pageSize, order, showModal,
   );
 
-  const formatResult = (records) => records.map((u) => ({
-    id: u.id,
-    action: (
-      <Button
-        bsSize="xsmall"
-        bsStyle="warning"
-        onClick={() => handleShowModal(u.id)}
-      >
-        Edit
-      </Button>
-    ),
-    username: u.username,
-    email: u.email,
-    roles: formatterUtils.userRole(u.roles),
-  }));
-
-  const onTableChange = (type, {
-    filters,
-    sortField,
-    sortOrder,
-  }) => (
-    setValues({
-      filters,
-      sortField,
-      sortOrder,
-    })
+  const handleSortModelChange = (params) => (
+    handleOrderChange(
+      params, helperUtils.dataGridSortModelMapper(defaultSortModel),
+    )
+  );
+  const handleFilterModelChange = (params) => (
+    handleWhereChange(params, whereUtils.dataGridFilterModelToWhereString)
   );
 
   return (
-    <div id="all-users">
-      <Panel id="functions">
-        <Panel.Body>
-          <Button bsStyle="success" onClick={() => handleShowModal(undefined)}>
-            <Glyphicon glyph="plus" />
-            {' '}
-            Add new user
-          </Button>
-        </Panel.Body>
-      </Panel>
-      <div id="info">
-        <ul>
-          <li>ADMIN - has all rights</li>
-          <li>EDITOR - can create and edit species, genera, families</li>
-          <li>AUTHOR - can edit species from genus assigned to him</li>
-        </ul>
+    <>
+      <Toolbar>
+        <Can
+          role={user.role}
+          perform="genus:edit"
+          yes={() => (
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => handleShowModal(undefined)}
+              startIcon={<AddIcon />}
+            >
+              Add new
+            </Button>
+          )}
+        />
+      </Toolbar>
+      <Typography component="ul" variant="body2">
+        <li>ADMIN - has all rights</li>
+        <li>EDITOR - can create and edit species, genera, families</li>
+        <li>AUTHOR - can edit species from genus assigned to him</li>
+      </Typography>
+      <div style={{ height: '70vh', width: '100%' }}>
+        <AdminDataGrid
+          rows={data}
+          columns={columns(handleShowModal)}
+          rowCount={totalSize}
+          pageSize={pageSize}
+          onPageSizeChange={handlePageSizeChange}
+          rowsPerPageOptions={pageSizesList}
+          onPageChange={handlePageChange}
+          loading={isLoading}
+          sortModel={defaultSortModel}
+          onSortModelChange={handleSortModelChange}
+          onFilterModelChange={handleFilterModelChange}
+        />
       </div>
-      <BootstrapTable
-        hover
-        striped
-        condensed
-        keyField="id"
-        data={formatResult(data)}
-        columns={columns}
-        filter={filterFactory()}
-        defaultSorted={defaultSorted}
-        onTableChange={onTableChange}
-      />
       <UsersModal
-        id={editId}
+        editId={editId}
         show={showModal}
         onHide={() => handleHideModal()}
       />
-    </div>
+    </>
   );
 };
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-});
-
-export default connect(mapStateToProps)(AllUsers);
-
-AllUsers.propTypes = {
-  accessToken: PropTypes.string.isRequired,
-};
+export default AllUsers;

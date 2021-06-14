@@ -23,7 +23,7 @@ const CustomToolbar = () => (
 );
 
 const AdminDataGrid = (props) => (
-  <Paper style={{ width: '100%', height: '100%' }}>
+  <Paper style={{ width: '100%', height: '100%' }} elevation={0}>
     <DataGrid
       pagination
       paginationMode="server"
