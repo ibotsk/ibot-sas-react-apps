@@ -72,7 +72,7 @@ export const columns = (isAuthor, user, handleShowModal) => [
     filterable: false,
   },
   {
-    field: 'checkedTimestamp',
+    field: constants.columns.checkedTimestampColumn,
     headerName: 'Checked',
     flex: 0.5,
     renderCell: (p) => (p.value ? (
@@ -93,19 +93,12 @@ export const columns = (isAuthor, user, handleShowModal) => [
             value="checked"
             disabled
           />
-          // <SelectInputFilter
-          //   options={isAuthor
-          //     ? ownershipAuthorOptions
-          //     : ownershipAdminOptions}
-          //   defaultIdx={0}
-          //   {...props}
-          // />
         ),
       })),
     sortable: false,
   },
   {
-    field: 'ownerIds',
+    field: constants.columns.ownership,
     headerName: 'Ownership',
     filterOperators: getGridStringOperators()
       .filter((op) => op.value === constants.operators.equals)
@@ -161,7 +154,7 @@ export const columns = (isAuthor, user, handleShowModal) => [
       })),
   },
   {
-    field: 'speciesName',
+    field: constants.columns.speciesName,
     headerName: 'Name',
     flex: 1,
     renderCell: (p) => (

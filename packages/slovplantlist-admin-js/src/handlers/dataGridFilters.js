@@ -9,10 +9,9 @@ import config from 'config/config';
 
 const {
   constants: {
-    listOfSpeciesColumn,
-    checkedTimestampColumn,
-    ownershipRegexp,
     operators,
+    columns,
+    ownershipRegexp,
   },
   mappings: {
     ownership: ownershipMapping,
@@ -34,7 +33,7 @@ export function ownershipFilterHandler(filterModel, { ownerId }) {
   const wb = new WhereBuilder();
 
   const ownerFilterItemIdx = items
-    .findIndex((item) => item.columnField === 'ownerIds');
+    .findIndex((item) => item.columnField === columns.ownership);
   if (ownerFilterItemIdx > -1) {
     const ownerFilterItem = items[ownerFilterItemIdx];
     const {
@@ -83,7 +82,7 @@ export function speciesNameFilterHandler(filterModel) {
   const wb = new WhereBuilder();
 
   const speciesNameFilterItemIdx = items
-    .findIndex((item) => item.columnField === listOfSpeciesColumn);
+    .findIndex((item) => item.columnField === columns.speciesName);
   if (speciesNameFilterItemIdx > -1) {
     const speciesNameFilterItem = items[speciesNameFilterItemIdx];
     const {
@@ -109,7 +108,7 @@ export function checkedRecordFilterHandler(filterModel) {
   const wb = new WhereBuilder();
 
   const speciesNameFilterItemIdx = items
-    .findIndex((item) => item.columnField === checkedTimestampColumn);
+    .findIndex((item) => item.columnField === columns.checkedTimestampColumn);
   if (speciesNameFilterItemIdx > -1) {
     const speciesNameFilterItem = items[speciesNameFilterItemIdx];
     const {

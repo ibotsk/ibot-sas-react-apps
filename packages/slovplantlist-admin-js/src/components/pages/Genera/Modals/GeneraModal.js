@@ -19,8 +19,6 @@ import {
 } from '@ibot/components';
 import { hooks } from '@ibot/core';
 
-// import AddableList from 'components/segments/AddableList';
-
 import { notifications, sorterUtils } from 'utils';
 import { format, generaUtils } from '@ibot/utils';
 

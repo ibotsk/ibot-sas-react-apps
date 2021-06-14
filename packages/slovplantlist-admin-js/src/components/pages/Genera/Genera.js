@@ -63,7 +63,7 @@ const Genera = () => {
   );
 
   return (
-    <div id="genera">
+    <>
       <PageTitle title="Genera - Slovplantlist" />
       <Toolbar>
         <Can
@@ -104,7 +104,7 @@ const Genera = () => {
         show={showModal}
         onHide={() => handleHideModal()}
       />
-    </div>
+    </>
   );
 };
 

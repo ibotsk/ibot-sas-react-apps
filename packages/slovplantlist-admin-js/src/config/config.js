@@ -4,13 +4,15 @@ import uris from './uris';
 export default {
 
   constants: {
-    listOfSpeciesColumn: 'speciesName',
-    ownership: 'ownerIds',
+    columns: {
+      speciesName: 'speciesName',
+      ownership: 'ownerIds',
+      checkedTimestampColumn: 'checkedTimestamp',
+    },
     ownershipRegexp: {
       start: '(\\,|^)',
       end: '(\\,|$)',
     },
-    checkedTimestampColumn: 'checkedTimestamp',
     checkedTimestampOptions: {
       checked: 'CHECKED',
       notChecked: 'NOT CHECKED',
