@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useCallback, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
-  Col, Row,
-  Button, Modal, ListGroupItem, Glyphicon,
-  Form, FormGroup, ControlLabel,
-} from 'react-bootstrap';
+  Button,
+  DialogTitle, DialogActions, DialogContent,
+} from '@material-ui/core';
+import {
+  AdminEditDialog, AdminAddableList,
+} from '@ibot/components';
 
 import PropTypes from 'prop-types';
 import UserType from 'components/propTypes/user';
-
-import AddableList from 'components/segments/AddableList';
 
 import { notifications } from 'utils';
 
@@ -20,191 +20,114 @@ import {
   usersGeneraFacade,
 } from 'facades';
 
+import UserGenusListItem from './items/UserGenusListItem';
+
 const genusFormat = (g) => ({ id: g.id, label: g.name });
-const genusCompare = (g1, g2) => (
-  g1.label < g2.label ? -1 : g1.label > g2.label
+const genusCompare = (g1, g2) => g1.label.localeCompare(g2.label);
+
+const searchGenusByTerm = (query, accessToken) => (
+  genusFacade.getAllGeneraBySearchTerm(
+    query, accessToken, (g) => ({
+      id: g.id,
+      label: g.name,
+    }),
+  )
 );
 
-const UserGenusListItem = ({ rowId, data: { label }, onRowDelete }) => (
-  <ListGroupItem>
-    {label}
-    <span className="pull-right">
-      <Button
-        bsStyle="danger"
-        bsSize="xsmall"
-        onClick={() => onRowDelete(rowId)}
-        title="Remove from this list"
-      >
-        <Glyphicon glyph="remove" />
-      </Button>
-    </span>
-  </ListGroupItem>
-);
+const UsersGeneraModal = ({ user = {}, show, onHide }) => {
+  const [userGenera, setUserGenera] = useState([]);
 
-class UsersGeneraModal extends Component {
-  constructor(props) {
-    super(props);
+  const accessToken = useSelector((state) => state.authentication.accessToken);
 
-    this.state = {
-      userGenera: [],
-      userGeneraToAdd: [],
-      userGeneraToRemove: [],
-      genera: [],
-    };
-  }
+  const userId = user.id;
 
-  async componentDidMount() {
-    const { accessToken } = this.props;
-    const genera = await genusFacade.getAllGeneraWithFamilies(
-      accessToken, genusFormat,
-    );
-    this.setState({
-      genera,
-    });
-  }
-
-  onEnter = async () => {
-    const { user, accessToken } = this.props;
-
-    if (user) {
-      const userGenera = await usersFacade.getGeneraOfUser(
-        user.id, accessToken, genusFormat,
-      );
-      userGenera.sort(genusCompare);
-      this.setState({
-        userGenera,
-      });
-    }
-  }
-
-  handleAddGenus = (selected) => {
-    const idToAdd = selected.id;
-    this.setState((state) => {
-      const { userGenera, userGeneraToAdd } = state;
-
-      if (!userGenera.find((g) => g.id === idToAdd)) {
-        userGenera.push(selected);
-        userGeneraToAdd.push(idToAdd);
+  const handleEnter = useCallback(() => {
+    const fetch = async () => {
+      if (userId) {
+        const ug = await usersFacade.getGeneraOfUser(
+          userId, accessToken, genusFormat,
+        );
+        ug.sort(genusCompare);
+        setUserGenera(ug);
       }
-      userGenera.sort(genusCompare);
+    };
 
-      return {
-        userGenera,
-        userGeneraToAdd,
-      };
-    });
-  }
+    fetch();
+  }, [userId, accessToken]);
 
-  handleRemoveGenus = (genusId) => (
-    this.setState((state) => {
-      const { userGenera, userGeneraToRemove } = state;
-      const userGeneraWithoutId = userGenera.filter((g) => g.id !== genusId);
+  const handleAddGenus = (selected) => {
+    const newUserGenera = [...userGenera];
+    newUserGenera.push(selected);
+    newUserGenera.sort(genusCompare);
+    setUserGenera(newUserGenera);
+  };
 
-      userGeneraToRemove.push(genusId);
-      return {
-        userGenera: userGeneraWithoutId,
-        userGeneraToRemove,
-      };
-    })
-  );
+  const handleRemoveGenus = (rowId) => {
+    const newGenera = userGenera.filter((_, i) => i !== rowId);
+    setUserGenera(newGenera);
+  };
 
-  handleHide = () => {
-    this.setState({
-      userGenera: [],
-      userGeneraToAdd: [],
-      userGeneraToRemove: [],
-    });
-    const { onHide } = this.props;
+  const handleHide = () => {
+    setUserGenera([]);
     onHide();
-  }
+  };
 
-  handleSave = async () => {
-    const { user, accessToken } = this.props;
-    const {
-      userGeneraToAdd,
-      userGeneraToRemove,
-    } = this.state;
-
+  const handleSave = async () => {
     try {
-      await usersGeneraFacade.saveUserGenera({
-        userId: user.id,
-        generaIdsAdded: userGeneraToAdd,
-        generaRemoved: userGeneraToRemove,
+      await usersGeneraFacade.saveUserGenera(
+        user.id,
+        userGenera,
         accessToken,
-      });
+      );
       notifications.success('Saved');
-      this.handleHide();
+      handleHide();
     } catch (error) {
       notifications.error('Error saving');
       throw error;
     }
-  }
+  };
 
-  render() {
-    const { show, user } = this.props;
-    const { userGenera, genera } = this.state;
-    return (
-      <Modal show={show} onHide={this.handleHide} onEnter={this.onEnter}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            Editing genera of user
-            {' '}
-            {user ? user.username : ''}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form horizontal>
-            <Row>
-              <Col componentClass={ControlLabel} xs={3} className="text-left">
-                Assigned genera
-              </Col>
-            </Row>
-            <FormGroup controlId="user-genera" bsSize="sm">
-              <Col xs={12}>
-                <AddableList
-                  id="user-genera-autocomplete"
-                  data={userGenera}
-                  options={genera}
-                  onAddItemToList={this.handleAddGenus}
-                  onRowDelete={this.handleRemoveGenus}
-                  getRowId={(d) => d.id} // this overrides default rowIndex
-                  itemComponent={UserGenusListItem}
-                />
-              </Col>
-            </FormGroup>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={this.handleHide}>Close</Button>
-          <Button bsStyle="primary" onClick={this.handleSave}>
-            Save changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
-}
+  return (
+    <AdminEditDialog
+      open={show}
+      onEnter={handleEnter}
+      onClose={handleHide}
+      aria-labelledby="users-dialog"
+    >
+      <DialogTitle id="users-dialog-title">
+        Editing genera of user
+        {' '}
+        {user ? user.username : ''}
+      </DialogTitle>
+      <DialogContent dividers>
+        <AdminAddableList
+          data={userGenera}
+          onSearch={searchGenusByTerm}
+          onAddItemToList={handleAddGenus}
+          onRowDelete={handleRemoveGenus}
+          accessToken={accessToken}
+          itemComponent={UserGenusListItem}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleHide}>
+          Close
+        </Button>
+        <Button color="primary" onClick={handleSave}>
+          Save changes
+        </Button>
+      </DialogActions>
+    </AdminEditDialog>
+  );
+};
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-});
-
-export default connect(mapStateToProps)(UsersGeneraModal);
+export default UsersGeneraModal;
 
 UsersGeneraModal.propTypes = {
   show: PropTypes.bool.isRequired,
   user: UserType.type,
-  accessToken: PropTypes.string.isRequired,
   onHide: PropTypes.func.isRequired,
 };
 UsersGeneraModal.defaultProps = {
   user: undefined,
-};
-
-UserGenusListItem.propTypes = {
-  rowId: PropTypes.number.isRequired,
-  onRowDelete: PropTypes.func.isRequired,
-  data: PropTypes.shape({
-    label: PropTypes.string,
-  }).isRequired,
 };

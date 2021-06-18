@@ -96,6 +96,7 @@ export default {
   userGeneraUri: {
     baseUri: `${backendBase}/api/users-generas?access_token=<%accessToken%>`,
     getAllByUserAndGenusUri: `${backendBase}/api/users-generas?filter={"where":{"and":[{"idUser":<%userId%>},{"idGenus":<%genusId%>}]}}&access_token=<%accessToken%>`,
+    getGeneraOfUser: `${backendBase}/api/users-generas?filter={"where":{"idUser":<%userId%>}}&access_token=<%accessToken%>`,
     deleteUri: `${backendBase}/api/users-generas/<%id%>?access_token=<%accessToken%>`,
   },
   rolesUri: {

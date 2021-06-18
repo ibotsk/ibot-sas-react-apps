@@ -1,60 +1,58 @@
 import config from 'config/config';
 
-import { getRequest, putRequest, deleteRequest } from './client';
+import { getRequest, postRequest, deleteRequest } from './client';
 
 const {
   uris: { userGeneraUri },
 } = config;
 
-const getIdsForRemoval = async (userId, generaIdsToRemove, accessToken) => {
-  const idsForRemoval = [];
-
-  const promises = generaIdsToRemove.map(async (genusId) => {
-    const userGenera = await getRequest(
-      userGeneraUri.getAllByUserAndGenusUri, { userId, genusId }, accessToken,
-    );
-    const userGeneraIds = userGenera.map((ug) => ug.id);
-    idsForRemoval.push(...userGeneraIds);
-  });
-
-  await Promise.all(promises);
-
-  return idsForRemoval;
-};
+const getGeneraIdsOfUser = async (userId, accessToken) => (
+  getRequest(userGeneraUri.getGeneraOfUser, { userId }, accessToken)
+);
 
 // ----- PUBLIC ----- //
 
-async function saveUserGenera({
-  userId, generaIdsAdded, generaRemoved, accessToken,
-}) {
+async function saveUserGenera(
+  userId, userGenera, accessToken,
+) {
+  const incomingGeneraIds = [...new Set(userGenera.map(({ id }) => id))];
+
+  const currentGenera = await getGeneraIdsOfUser(userId, accessToken);
+  const currentGeneraIds = currentGenera.map(({ idGenus }) => idGenus);
+
+  // genera ids in current and not in incoming -> delete
+  // result is record ids
+  const recordIdsToDelete = currentGenera
+    .filter(({ idGenus }) => !incomingGeneraIds.includes(idGenus))
+    .map(({ id }) => id);
+
+  // genera ids in incoming and not in current -> create
+  // result is genera ids
+  const recordGeneraIdsToCreate = incomingGeneraIds
+    .filter((idGenus) => !currentGeneraIds.includes(idGenus));
+
   const promises = [];
-
-  if (generaRemoved && generaRemoved.length > 0) {
-    const generaIdsToRemove = [...new Set(generaRemoved)];
-    const idsToRemove = await getIdsForRemoval(
-      userId, generaIdsToRemove, accessToken,
-    );
-
-    const idsToDeletePromises = idsToRemove.map((id) => (
+  if (recordIdsToDelete.length > 0) {
+    const deletePromises = recordIdsToDelete.map((id) => (
       deleteRequest(userGeneraUri.deleteUri, { id }, accessToken)
     ));
-    promises.push(...idsToDeletePromises);
+    promises.push(...deletePromises);
   }
 
-  if (generaIdsAdded && generaIdsAdded.length > 0) {
-    const generaIdsToSavePromises = generaIdsAdded.map(async (genusId) => {
-      const data = {
-        idUser: userId,
-        idGenus: genusId,
-      };
-      return putRequest(
-        userGeneraUri.baseUri, data,
-        undefined, accessToken,
-      );
-    });
-    promises.push(...generaIdsToSavePromises);
+  if (recordGeneraIdsToCreate.length > 0) {
+    const createPromises = recordGeneraIdsToCreate.map((idGenus) => (
+      postRequest(
+        userGeneraUri.baseUri,
+        {
+          idUser: userId,
+          idGenus,
+        },
+        undefined,
+        accessToken,
+      )
+    ));
+    promises.push(...createPromises);
   }
-
   return Promise.all(promises);
 }
 

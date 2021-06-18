@@ -10,7 +10,7 @@ import {
 import {
   Add as AddIcon,
   Done as DoneIcon,
-  RemoveCircleOutline as RemoveIcon,
+  Delete as RemoveIcon,
 } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: 0,
     paddingLeft: theme.spacing(1) + 1,
     paddingRight: theme.spacing(1) + 1,
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   addIcon: {
     color: theme.palette.success.main,
@@ -119,6 +119,7 @@ const AdminAddableList = ({
             renderInput={(params) => (
               <AdminTextField
                 {...params}
+                autoFocus
                 label="Add to list"
                 helperText="Start typing and select a value from the list"
                 InputProps={{
