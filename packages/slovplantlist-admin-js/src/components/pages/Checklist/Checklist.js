@@ -4,8 +4,10 @@ import { useSelector } from 'react-redux';
 import {
   Toolbar, Button, Typography,
 } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
 import {
   Add as AddIcon,
+  Publish as PublishIcon,
 } from '@material-ui/icons';
 
 import { NotificationContainer } from 'react-notifications';
@@ -26,6 +28,7 @@ import commonHooks from 'components/segments/hooks';
 import { filterManager } from 'handlers';
 
 import { columns, defaultSortModel } from './Table/columns';
+import ChecklistImportModal from './Import/ChecklistImportModal';
 
 const {
   mappings,
@@ -37,13 +40,29 @@ const pageSizesList = sizePerPageList.map(({ value }) => value);
 const getAllUri = config.uris.nomenclatureOwnersUri.getAllWFilterUri;
 const getCountUri = config.uris.nomenclatureOwnersUri.countUri;
 
+const useStyles = makeStyles((theme) => ({
+  toolbar: {
+    '& > *': {
+      marginRight: theme.spacing(2),
+    },
+  },
+}));
+
 const Checklist = () => {
+  const classes = useStyles();
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
 
   const {
-    showModal, editId,
-    handleShowModal, handleHideModal,
+    showModal: showEditModal, editId,
+    handleShowModal: handleShowEditModal,
+    handleHideModal: handleHideEditModal,
+  } = commonHooks.useModal();
+
+  const {
+    showModal: showImportModal,
+    handleShowModal: handleShowImportModal,
+    handleHideModal: handleHideImportModal,
   } = commonHooks.useModal();
 
   const ownerId = user ? user.id : undefined;
@@ -56,7 +75,7 @@ const Checklist = () => {
 
   const { data, totalSize, isLoading } = commonHooks.useTableData(
     getCountUri, getAllUri, accessToken, where, page,
-    pageSize, order, showModal,
+    pageSize, order, showEditModal,
   );
 
   const handleSortModelChange = (params) => (
@@ -78,19 +97,31 @@ const Checklist = () => {
   return (
     <div id="checklist">
       <PageTitle title="Checklist - Slovplantlist" />
-      <Toolbar>
+      <Toolbar className={classes.toolbar}>
         <Can
           role={user.role}
           perform="checklist:add"
           yes={() => (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => handleShowModal(undefined)}
-              startIcon={<AddIcon />}
-            >
-              Add new
-            </Button>
+            <>
+              <Button
+                disableElevation
+                variant="contained"
+                color="secondary"
+                onClick={() => handleShowEditModal(undefined)}
+                startIcon={<AddIcon />}
+              >
+                Add new
+              </Button>
+              <Button
+                disableElevation
+                variant="contained"
+                color="default"
+                onClick={() => handleShowImportModal(undefined)}
+                startIcon={<PublishIcon />}
+              >
+                Import
+              </Button>
+            </>
           )}
         />
       </Toolbar>
@@ -110,7 +141,7 @@ const Checklist = () => {
           columns={columns(
             user.role === mappings.userRole.author.name,
             user,
-            handleShowModal,
+            handleShowEditModal,
           )}
           rowCount={totalSize}
           pageSize={pageSize}
@@ -125,8 +156,12 @@ const Checklist = () => {
       </div>
       <SpeciesRecordModal
         editId={editId}
-        show={showModal}
-        onHide={handleHideModal}
+        show={showEditModal}
+        onHide={handleHideEditModal}
+      />
+      <ChecklistImportModal
+        show={showImportModal}
+        onHide={handleHideImportModal}
       />
       <NotificationContainer />
     </div>

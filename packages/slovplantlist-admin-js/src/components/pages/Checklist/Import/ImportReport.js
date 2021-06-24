@@ -1,15 +1,27 @@
 import React, { useState } from 'react';
 
 import {
-  Button, Panel,
-} from 'react-bootstrap';
+  Accordion, AccordionSummary, AccordionDetails,
+  Button, Typography,
+} from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { makeStyles } from '@material-ui/core/styles';
+
+import { LabelValue } from '@ibot/components';
 
 import PropTypes from 'prop-types';
 import SpeciesType from 'components/propTypes/species';
 
 import SpeciesDetailsTableReport from './SpeciesDetailsTableReport';
 
+const useStyles = makeStyles(() => ({
+  details: {
+    flexDirection: 'column',
+  },
+}));
+
 const ImportReport = ({ data }) => {
+  const classes = useStyles();
   const [isDetailTableShowed, setIsDetailTableShowed] = useState(false);
 
   const newRecordsCount = data.filter(({ operation }) => (
@@ -29,52 +41,50 @@ const ImportReport = ({ data }) => {
   ));
 
   return (
-    <>
-      <Panel bsStyle="info">
-        <Panel.Heading>
-          <Panel.Title toggle>View details</Panel.Title>
-        </Panel.Heading>
-        <Panel.Body collapsible>
-          <p>
-            New records:
-            {' '}
-            {newRecordsCount}
-          </p>
-          <p>
-            Records to update:
-            {' '}
-            {updateRecordsCount}
-          </p>
-          <p>
-            Accepted names:
-            {' '}
-            {acceptedNamesCount}
-          </p>
-          <p>
-            Synonyms:
-            {' '}
-            {synonymsCount}
-          </p>
-          {errorsArray.length > 0 && (
-            <p className="text-danger">
-              There are errors, please review them by
-              clicking &lsquo;More details&rsquo; below
-            </p>
-          )}
-          <Button
-            bsStyle="link"
-            bsSize="xsmall"
-            onClick={() => setIsDetailTableShowed(!isDetailTableShowed)}
-          >
-            {isDetailTableShowed ? 'Less details <<<' : 'More details >>>'}
-          </Button>
-          <SpeciesDetailsTableReport
-            show={isDetailTableShowed}
-            data={data}
-          />
-        </Panel.Body>
-      </Panel>
-    </>
+    <Accordion>
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography variant="body1">View details</Typography>
+      </AccordionSummary>
+      <AccordionDetails className={classes.details}>
+        <LabelValue label="New records">
+          {newRecordsCount}
+        </LabelValue>
+        <LabelValue label="Records to update">
+          {updateRecordsCount}
+        </LabelValue>
+        <LabelValue label="Accepted names">
+          {acceptedNamesCount}
+        </LabelValue>
+        <LabelValue label="Synonyms">
+          {synonymsCount}
+        </LabelValue>
+        {errorsArray.length > 0 && (
+          <Typography color="error">
+            There are errors, please review them by clicking
+            &lsquo;More details&rsquo; below
+          </Typography>
+        )}
+        <Button
+          variant="outlined"
+          color="primary"
+          size="small"
+          onClick={() => setIsDetailTableShowed(!isDetailTableShowed)}
+        >
+          {isDetailTableShowed ? 'Less details <<<' : 'More details >>>'}
+        </Button>
+        {
+          isDetailTableShowed && (
+            <SpeciesDetailsTableReport
+              data={data}
+            />
+          )
+        }
+      </AccordionDetails>
+    </Accordion>
   );
 };
 
