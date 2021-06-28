@@ -71,6 +71,7 @@ const FamiliesAPG = () => {
           perform="familyAPG:edit"
           yes={() => (
             <Button
+              disableElevation
               variant="contained"
               color="secondary"
               onClick={() => handleShowModal(undefined)}

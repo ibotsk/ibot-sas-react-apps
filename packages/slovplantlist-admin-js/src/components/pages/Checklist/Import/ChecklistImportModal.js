@@ -103,6 +103,7 @@ const ChecklistImportModal = ({
   };
 
   const handleHide = () => {
+    handleStartOver();
     onHide();
   };
 

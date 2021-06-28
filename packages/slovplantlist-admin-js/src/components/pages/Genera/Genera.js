@@ -71,6 +71,7 @@ const Genera = () => {
           perform="genus:edit"
           yes={() => (
             <Button
+              disableElevation
               variant="contained"
               color="secondary"
               onClick={() => handleShowModal(undefined)}

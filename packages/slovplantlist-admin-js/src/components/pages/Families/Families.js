@@ -71,6 +71,7 @@ const Families = () => {
           perform="family:edit"
           yes={() => (
             <Button
+              disableElevation
               variant="contained"
               color="secondary"
               onClick={() => handleShowModal(undefined)}

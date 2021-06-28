@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useRouteMatch } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 import {
@@ -10,6 +10,8 @@ import {
 const ListItemLink = ({
   className, icon, primary, to,
 }) => {
+  const { isExact = false } = useRouteMatch({ path: to, strict: true }) || {};
+
   const renderLink = React.useMemo(
     () => React.forwardRef((itemProps, ref) => (
       // eslint-disable-next-line react/jsx-props-no-spreading
@@ -20,7 +22,12 @@ const ListItemLink = ({
 
   return (
     <li>
-      <ListItem button component={renderLink} className={className}>
+      <ListItem
+        selected={isExact}
+        button
+        component={renderLink}
+        className={className}
+      >
         {icon ? <ListItemIcon>{icon}</ListItemIcon> : null}
         <ListItemText primary={primary} />
       </ListItem>
