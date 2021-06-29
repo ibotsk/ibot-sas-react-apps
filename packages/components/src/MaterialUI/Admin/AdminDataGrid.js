@@ -1,17 +1,39 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import {
-  DataGrid, GridOverlay,
+  DataGrid, GridOverlay, useGridSlotComponentProps,
   GridToolbarColumnsButton, GridToolbarContainer, GridToolbarFilterButton,
 } from '@material-ui/data-grid';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { Paper } from '@material-ui/core';
+import {
+  Box,
+  FormControl, NativeSelect, Typography,
+  Paper, LinearProgress,
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { Pagination } from '@material-ui/lab';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    minHeight: theme.spacing(8),
+    display: 'flex',
+    alignItems: 'center',
+  },
+  selectForm: {
+    display: 'inline-flex',
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(2),
+    boxSizing: 'content-box',
+  },
+  selectInput: {
+    fontSize: theme.typography.body2.fontSize,
+  },
+}));
 
 const CustomLoadingOverlay = () => (
   <GridOverlay>
-    <div style={{ position: 'absolute', top: 0, width: '100%' }}>
+    <Box position="absolute" top={0} width="100%">
       <LinearProgress />
-    </div>
+    </Box>
   </GridOverlay>
 );
 
@@ -21,6 +43,44 @@ const CustomToolbar = () => (
     <GridToolbarFilterButton />
   </GridToolbarContainer>
 );
+
+const CustomPagination = () => {
+  const classes = useStyles();
+  const { state, apiRef, options } = useGridSlotComponentProps();
+
+  return (
+    <div className={classes.root}>
+      <Typography variant="body2">Page size:</Typography>
+      <FormControl size="small" className={classes.selectForm}>
+        <NativeSelect
+          disableUnderline
+          value={state.pagination.pageSize}
+          onChange={(event) => apiRef.current.setPageSize(event.target.value)}
+          inputProps={{
+            className: classes.selectInput,
+          }}
+        >
+          {options.rowsPerPageOptions.map((o) => (
+            <option key={o} value={o}>{o}</option>
+          ))}
+        </NativeSelect>
+      </FormControl>
+      <Box marginLeft={1} marginRight={2}>
+        <Typography variant="body2">
+          {`Total rows: ${state.pagination.rowCount}`}
+        </Typography>
+      </Box>
+      <Pagination
+        showFirstButton
+        showLastButton
+        color="primary"
+        count={state.pagination.pageCount}
+        page={state.pagination.page + 1}
+        onChange={(event, value) => apiRef.current.setPage(value - 1)}
+      />
+    </div>
+  );
+};
 
 const AdminDataGrid = (props) => (
   <Paper style={{ width: '100%', height: '100%' }} elevation={0}>
@@ -32,6 +92,7 @@ const AdminDataGrid = (props) => (
       components={{
         LoadingOverlay: CustomLoadingOverlay,
         Toolbar: CustomToolbar,
+        Pagination: CustomPagination,
       }}
       {...props}
     />

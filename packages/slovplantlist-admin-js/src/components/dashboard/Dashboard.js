@@ -147,6 +147,7 @@ const Dashboard = ({ routing: Routing }) => {
                 component={RouterLink}
                 color="inherit"
                 to="/users"
+                title="Manage users"
               >
                 <PeopleIcon />
               </IconButton>
@@ -156,6 +157,7 @@ const Dashboard = ({ routing: Routing }) => {
             component={RouterLink}
             color="inherit"
             to="/logout"
+            title="Logout"
           >
             <LogoutIcon />
           </IconButton>
