@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:14-slim as build-stage
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -14,8 +14,12 @@ COPY packages/types ./packages/types
 COPY packages/utils ./packages/utils
 COPY packages/slovplantlist-admin-js ./packages/slovplantlist-admin-js
 
-RUN yarn install
+RUN yarn install --only=production --ignore-engines
 RUN yarn --cwd packages/components run build
+RUN yarn --cwd packages/slovplantlist-admin-js run build
 
-EXPOSE 3000
-CMD [ "yarn", "--cwd", "packages/slovplantlist-admin-js", "start" ]
+FROM nginx:1.12-alpine
+COPY --from=build-stage /usr/src/app/packages/slovplantlist-admin-js/build /usr/share/nginx/html
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
