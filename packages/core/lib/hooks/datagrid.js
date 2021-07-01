@@ -4,7 +4,7 @@ import { useState } from 'react';
 export function useDataGridChange(
   ownerId, pageInit = 0, pageSizeInit = 100, {
     pageBase = 0, // whether page numbering starts at 0 or 1
-  },
+  } = {},
 ) {
   const [page, setPage] = useState(pageInit + pageBase);
   const [pageSize, setPageSize] = useState(pageSizeInit);

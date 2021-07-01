@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { AdminDataGrid } from '@ibot/components';
 import { hooks } from '@ibot/core';
 
+import { tablesFacade } from 'facades';
 import commonHooks from 'components/segments/hooks';
 
 import config from 'config/config';
@@ -15,6 +16,9 @@ import { columns, defaultSortModel } from './Table/columns-genera-users';
 
 const getAllUri = config.uris.usersUri.getAllWGeneraUri;
 const getCountUri = config.uris.usersUri.countUri;
+
+const getTotalCount = tablesFacade.getCountForHook(getCountUri);
+const getAll = tablesFacade.getAllForHook(getAllUri);
 
 const {
   pagination: { sizePerPageList },
@@ -33,13 +37,12 @@ const GeneraUsers = () => {
     page, pageSize, order, where,
     handlePageChange, handleOrderChange, handlePageSizeChange,
     handleWhereChange,
-  } = hooks.useDataGridChange(null, 0, pageSizesList[2], { pageBase: 1 });
+  } = hooks.useDataGridChange(null, 0, pageSizesList[2]);
 
   const {
     data, totalSize, isLoading,
   } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, page,
-    pageSize, order, showModal,
+    getTotalCount, getAll, where, page, pageSize, order, accessToken, showModal,
   );
 
   const handleSortModelChange = (params) => (

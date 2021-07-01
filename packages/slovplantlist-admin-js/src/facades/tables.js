@@ -20,7 +20,21 @@ async function getCount(uri, whereString, accessToken) {
   return count;
 }
 
+function getAllForHook(uri) {
+  return async (limit, offset, whereString, orderString, accessToken) => (
+    getAll(uri, offset, whereString, orderString, limit, accessToken)
+  );
+}
+
+function getCountForHook(uri) {
+  return async (whereString, accessToken) => (
+    getCount(uri, whereString, accessToken)
+  );
+}
+
 export default {
   getAll,
   getCount,
+  getAllForHook,
+  getCountForHook,
 };

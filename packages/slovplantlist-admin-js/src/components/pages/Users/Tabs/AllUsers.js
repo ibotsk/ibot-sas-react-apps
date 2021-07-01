@@ -16,6 +16,7 @@ import Can from 'components/segments/auth/Can';
 import config from 'config/config';
 import { helperUtils, whereUtils } from 'utils';
 
+import { tablesFacade } from 'facades';
 import commonHooks from 'components/segments/hooks';
 
 import UsersModal from './Modals/UsersModal';
@@ -24,6 +25,9 @@ import { columns, defaultSortModel } from './Table/columns-all-users';
 
 const getAllUri = config.uris.usersUri.getAllWOrderUri;
 const getCountUri = config.uris.usersUri.countUri;
+
+const getTotalCount = tablesFacade.getCountForHook(getCountUri);
+const getAll = tablesFacade.getAllForHook(getAllUri);
 
 const {
   pagination: { sizePerPageList },
@@ -43,13 +47,12 @@ const AllUsers = () => {
     page, pageSize, order, where,
     handlePageChange, handleOrderChange, handlePageSizeChange,
     handleWhereChange,
-  } = hooks.useDataGridChange(null, 0, pageSizesList[2], { pageBase: 1 });
+  } = hooks.useDataGridChange(null, 0, pageSizesList[2]);
 
   const {
     data, totalSize, isLoading,
   } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, page,
-    pageSize, order, showModal,
+    getTotalCount, getAll, where, page, pageSize, order, accessToken, showModal,
   );
 
   const handleSortModelChange = (params) => (

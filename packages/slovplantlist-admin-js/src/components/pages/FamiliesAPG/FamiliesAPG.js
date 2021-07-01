@@ -16,6 +16,7 @@ import { hooks } from '@ibot/core';
 import config from 'config/config';
 import { helperUtils, whereUtils } from 'utils';
 
+import { tablesFacade } from 'facades';
 import commonHooks from 'components/segments/hooks';
 
 import FamiliesApgModal from './Modals/FamiliesApgModal';
@@ -23,6 +24,9 @@ import { columns, defaultSortModel } from './Table/columns';
 
 const getAllUri = config.uris.familiesApgUri.getAllWFilterUri;
 const getCountUri = config.uris.familiesApgUri.countUri;
+
+const getTotalCount = tablesFacade.getCountForHook(getCountUri);
+const getAll = tablesFacade.getAllForHook(getAllUri);
 
 const {
   pagination: { sizePerPageList },
@@ -44,13 +48,13 @@ const FamiliesAPG = () => {
     page, pageSize, order, where,
     handlePageChange, handleOrderChange, handlePageSizeChange,
     handleWhereChange,
-  } = hooks.useDataGridChange(ownerId, 0, pageSizesList[2], { pageBase: 1 });
+  } = hooks.useDataGridChange(ownerId, 0, pageSizesList[2]);
 
   const {
     data, totalSize, isLoading,
   } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, page,
-    pageSize, order, showModal,
+    getTotalCount, getAll, where, page, pageSize, order,
+    accessToken, showModal,
   );
 
   const handleSortModelChange = (params) => (

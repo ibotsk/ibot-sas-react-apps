@@ -25,6 +25,7 @@ import config from 'config/config';
 import { helperUtils, whereUtils } from 'utils';
 
 import commonHooks from 'components/segments/hooks';
+import { tablesFacade } from 'facades';
 import { filterManager } from 'handlers';
 
 import { columns, defaultSortModel } from './Table/columns';
@@ -37,8 +38,11 @@ const {
 
 const pageSizesList = sizePerPageList.map(({ value }) => value);
 
-const getAllUri = config.uris.nomenclatureOwnersUri.getAllWFilterUri;
 const getCountUri = config.uris.nomenclatureOwnersUri.countUri;
+const getAllUri = config.uris.nomenclatureOwnersUri.getAllWFilterUri;
+
+const getTotalCount = tablesFacade.getCountForHook(getCountUri);
+const getAll = tablesFacade.getAllForHook(getAllUri);
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -71,11 +75,11 @@ const Checklist = () => {
     page, pageSize, order, where,
     handlePageChange, handleOrderChange, handlePageSizeChange,
     handleWhereChange,
-  } = hooks.useDataGridChange(ownerId, 0, pageSizesList[2], { pageBase: 1 });
+  } = hooks.useDataGridChange(ownerId, 0, pageSizesList[2]);
 
   const { data, totalSize, isLoading } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, page,
-    pageSize, order, showEditModal,
+    getTotalCount, getAll, where, page, pageSize, order,
+    accessToken, showEditModal,
   );
 
   const handleSortModelChange = (params) => (
