@@ -57,13 +57,13 @@ const Checklist = () => {
     showModal: showEditModal, editId,
     handleShowModal: handleShowEditModal,
     handleHideModal: handleHideEditModal,
-  } = commonHooks.useModal();
+  } = hooks.useModal();
 
   const {
     showModal: showImportModal,
     handleShowModal: handleShowImportModal,
     handleHideModal: handleHideImportModal,
-  } = commonHooks.useModal();
+  } = hooks.useModal();
 
   const ownerId = user ? user.id : undefined;
 

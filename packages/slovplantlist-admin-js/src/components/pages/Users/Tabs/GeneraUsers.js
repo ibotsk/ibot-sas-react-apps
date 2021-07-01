@@ -27,7 +27,7 @@ const GeneraUsers = () => {
   const {
     showModal, editId,
     handleShowModal, handleHideModal,
-  } = commonHooks.useModal();
+  } = hooks.useModal();
 
   const {
     page, pageSize, order, where,

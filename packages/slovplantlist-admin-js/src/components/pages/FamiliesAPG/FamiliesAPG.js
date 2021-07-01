@@ -36,7 +36,7 @@ const FamiliesAPG = () => {
   const {
     showModal, editId,
     handleShowModal, handleHideModal,
-  } = commonHooks.useModal();
+  } = hooks.useModal();
 
   const ownerId = user ? user.id : undefined;
 
