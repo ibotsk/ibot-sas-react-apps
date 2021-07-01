@@ -24,7 +24,6 @@ import SpeciesRecordModal
 import config from 'config/config';
 import { helperUtils, whereUtils } from 'utils';
 
-import commonHooks from 'components/segments/hooks';
 import { tablesFacade } from 'facades';
 import { filterManager } from 'handlers';
 
@@ -77,7 +76,7 @@ const Checklist = () => {
     handleWhereChange,
   } = hooks.useDataGridChange(ownerId, 0, pageSizesList[2]);
 
-  const { data, totalSize, isLoading } = commonHooks.useTableData(
+  const { data, totalSize, isLoading } = hooks.useAdminTableData(
     getTotalCount, getAll, where, page, pageSize, order,
     accessToken, showEditModal,
   );

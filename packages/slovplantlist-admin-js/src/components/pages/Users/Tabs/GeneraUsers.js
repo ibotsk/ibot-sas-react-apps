@@ -5,7 +5,6 @@ import { AdminDataGrid } from '@ibot/components';
 import { hooks } from '@ibot/core';
 
 import { tablesFacade } from 'facades';
-import commonHooks from 'components/segments/hooks';
 
 import config from 'config/config';
 import { whereUtils, helperUtils } from 'utils';
@@ -41,7 +40,7 @@ const GeneraUsers = () => {
 
   const {
     data, totalSize, isLoading,
-  } = commonHooks.useTableData(
+  } = hooks.useAdminTableData(
     getTotalCount, getAll, where, page, pageSize, order, accessToken, showModal,
   );
 

@@ -17,7 +17,6 @@ import config from 'config/config';
 import { helperUtils, whereUtils } from 'utils';
 
 import { tablesFacade } from 'facades';
-import commonHooks from 'components/segments/hooks';
 
 import FamiliesModal from './Modals/FamiliesModal';
 import { columns, defaultSortModel } from './Table/columns';
@@ -52,7 +51,7 @@ const Families = () => {
 
   const {
     data, totalSize, isLoading,
-  } = commonHooks.useTableData(
+  } = hooks.useAdminTableData(
     getTotalCount, getAll, where, page, pageSize, order, accessToken, showModal,
   );
 
