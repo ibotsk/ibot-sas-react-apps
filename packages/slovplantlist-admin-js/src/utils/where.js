@@ -49,8 +49,11 @@ const dataGridResolveConjunction = (operator) => {
 // --- PUBLIC --- //
 
 function dataGridFilterItemsToWhereWB(filterModel) {
-  const { items, linkOperator } = filterModel;
   const wb = new WhereBuilder();
+  if (!filterModel) {
+    return wb;
+  }
+  const { items, linkOperator } = filterModel;
 
   const whereItems = items
     .filter(({ value }) => !!value)
@@ -64,7 +67,7 @@ function dataGridFilterItemsToWhereWB(filterModel) {
   return wb.add(conj(...whereItems));
 }
 
-function dataGridFilterModelToWhereString({ filterModel }) {
+function dataGridFilterModelToWhereString(filterModel) {
   const wb = dataGridFilterItemsToWhereWB(filterModel);
   return wb.buildString();
 }
