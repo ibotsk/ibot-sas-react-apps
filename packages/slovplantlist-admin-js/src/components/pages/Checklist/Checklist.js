@@ -31,8 +31,10 @@ import { columns, defaultSortModel } from './Table/columns';
 import ChecklistImportModal from './Import/ChecklistImportModal';
 
 const {
+  constants,
   mappings,
   pagination: { sizePerPageList },
+  nomenclature,
 } = config;
 
 const pageSizesList = sizePerPageList.map(({ value }) => value);
@@ -81,11 +83,18 @@ const Checklist = () => {
     accessToken, showEditModal,
   );
 
-  const handleSortModelChange = (params) => (
-    handleOrderChange(
-      params, helperUtils.dataGridSortModelMapper(defaultSortModel),
-    )
-  );
+  const handleSortModelChange = (params) => {
+    const speciesNameHandler = helperUtils.dataGridSortModelHandler(
+      constants.columns.speciesName, nomenclature.filter.listOfSpecies,
+    );
+    return (
+      handleOrderChange(
+        params, helperUtils.dataGridSortModelMapper(
+          defaultSortModel, speciesNameHandler,
+        ),
+      )
+    );
+  };
   const handleFilterModelChange = async (params) => {
     const whereFromFilter = (fm) => {
       const { linkOperator } = fm;
