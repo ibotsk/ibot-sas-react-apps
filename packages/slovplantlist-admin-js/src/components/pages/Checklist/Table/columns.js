@@ -221,6 +221,8 @@ export const columns = (isAuthor, user, handleShowModal) => [
         width={p.colDef.width}
       />
     ),
+    sortable: false,
+    filterable: false,
   },
   {
     field: 'createdTimestamp',
