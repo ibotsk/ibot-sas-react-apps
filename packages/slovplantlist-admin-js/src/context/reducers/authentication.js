@@ -1,11 +1,12 @@
+/* eslint-disable import/prefer-default-export */
 import {
   SET_AUTHENTICATED,
   UNSET_AUTHENTICATED,
-} from 'actions/action-types';
+} from '../actions/authentication';
 
-const initialState = { accessToken: '', isAuthenticated: false };
+const initialState = {};
 
-const authentication = (state = initialState, action) => {
+export const authentication = (state = initialState, action) => {
   switch (action.type) {
     case SET_AUTHENTICATED:
       return {
@@ -16,10 +17,10 @@ const authentication = (state = initialState, action) => {
         },
       };
     case UNSET_AUTHENTICATED:
-      return {};
+      return {
+        ...initialState,
+      };
     default:
       return state;
   }
 };
-
-export default authentication;

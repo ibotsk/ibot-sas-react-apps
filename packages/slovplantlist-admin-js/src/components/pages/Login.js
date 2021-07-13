@@ -17,7 +17,7 @@ import {
   unsetAuthenticated as unsetAuthenticatedAction,
   setUser as setUserAction,
   unsetUser as unsetUserAction,
-} from 'actions';
+} from 'context/actions';
 
 import { usersFacade } from 'facades';
 import config from 'config/config';

@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 
 import { HelmetProvider } from '@ibot/components';
 
-import store from 'services/store';
+import store from 'context/store';
 
 import App from 'components/pages/App';
 

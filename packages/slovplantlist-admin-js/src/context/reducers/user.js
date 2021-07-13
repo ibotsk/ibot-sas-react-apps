@@ -1,12 +1,9 @@
-import { SET_USER, UNSET_USER } from 'actions/action-types';
-import config from 'config/config';
+/* eslint-disable import/prefer-default-export */
+import { SET_USER, UNSET_USER } from '../actions/user';
 
-const initialState = {
-  role: config.mappings.userRole.author.name,
-  userGenera: [],
-};
+const initialState = {};
 
-const user = (state = initialState, action) => {
+export const user = (state = initialState, action) => {
   switch (action.type) {
     case SET_USER:
       return {
@@ -19,10 +16,10 @@ const user = (state = initialState, action) => {
         },
       };
     case UNSET_USER:
-      return {};
+      return {
+        ...initialState,
+      };
     default:
       return state;
   }
 };
-
-export default user;
