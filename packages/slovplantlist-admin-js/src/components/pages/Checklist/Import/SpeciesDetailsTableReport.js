@@ -1,8 +1,21 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 
-import { Label } from 'react-bootstrap';
-import { BootstrapTable, LosName } from '@ibot/components';
+import {
+  Box, Collapse, IconButton, Paper, Typography,
+  TableContainer, Table, TableHead, TableRow, TableCell, TableBody,
+} from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
+import amber from '@material-ui/core/colors/amber';
+import deepOrange from '@material-ui/core/colors/deepOrange';
+
+import {
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+} from '@material-ui/icons';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+
+import { LosName } from '@ibot/components';
 
 import PropTypes from 'prop-types';
 import SpeciesType from 'components/propTypes/species';
@@ -20,31 +33,46 @@ const {
 const {
   constants: {
     operation: operationConfig,
-    messages: messagesConfig,
+    // messages: messagesConfig,
   },
 } = importConfig;
 
+const styledBy = (property, mapping) => (props) => mapping[props[property]];
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: '100%',
+  },
+  container: {
+    maxHeight: 440,
+  },
+  collapsePaper: {
+    margin: theme.spacing(1),
+    padding: theme.spacing(1),
+  },
+}));
+
 const columns = [
   {
-    dataField: 'rowId',
-    text: 'Row',
+    id: 'rowId',
+    label: 'Row',
   },
   {
-    dataField: 'ntype',
-    text: 'Status',
-    formatter: (cell, row) => {
+    id: 'ntype',
+    label: 'Status',
+    format: (_, row) => {
       const type = losType[row.record.ntype] || {};
       return (
-        <span style={{ color: type.colour || '#000' }}>
+        <Box color={type.color || '#000'}>
           {row.record.ntype}
-        </span>
+        </Box>
       );
     },
   },
   {
-    dataField: 'syntype',
-    text: 'Syn. type',
-    formatter: (cell, row) => {
+    id: 'syntype',
+    label: 'Syn. type',
+    format: (_, row) => {
       const { syntype } = row;
       const key = synonymBySyntype[syntype];
       if (!key) {
@@ -54,93 +82,158 @@ const columns = [
     },
   },
   {
-    dataField: 'record',
-    text: 'Name',
-    formatter: (cell, row, rowIndex) => (
-      <LosName key={rowIndex} data={cell} format="italic" isAggregates />
+    id: 'record',
+    label: 'Name',
+    format: (value) => (
+      <LosName data={value} format="italic" isAggregates />
     ),
   },
   {
-    dataField: 'operation',
-    text: 'Operation',
-    formatter: (cell) => (
-      <Label bsStyle={operationConfig[cell].colour}>
-        {operationConfig[cell].text}
-      </Label>
+    id: 'operation',
+    label: 'Operation',
+    format: (value) => (
+      <Box color={operationConfig[value].color}>
+        {operationConfig[value].text}
+      </Box>
     ),
   },
 ];
 
 const rowClasses = (row) => {
   const { duplicates, errors, save } = row;
-  let classes;
+  let classes = 'default';
 
   if (duplicates && duplicates.length > 0) {
-    classes = messagesConfig.duplicates;
+    classes = 'duplicates';
   }
   if (!save) {
-    classes = messagesConfig.nosave;
+    classes = 'nosave';
   }
   // overrides anything else before
   if (errors && errors.length > 0) {
-    classes = messagesConfig.errors;
+    classes = 'errors';
   }
   return classes;
 };
 
-const expandRow = {
-  renderer: (row) => {
-    const { duplicates = [], errors = [], save } = row;
-
-    return (
-      <div>
-        {!save && (
-          <p>
-            This record is created/updated earlier.
-            Only new accepted name will be assigned.
-          </p>
-        )}
-        {duplicates.length > 0 && (
-          <p>
-            Duplicate of rows:
-            {' '}
-            {duplicates.join(', ')}
-          </p>
-        )}
-        {errors.length > 0 && (
-          <>
-            <p>Errors:</p>
-            <ul>
-              {errors.map((e, i) => <li key={i}>{e.message}</li>)}
-            </ul>
-          </>
-        )}
-      </div>
-    );
+const StyledTableRow = withStyles((theme) => ({
+  root: {
+    backgroundColor: styledBy('color', {
+      default: theme.palette.background.paper,
+      duplicates: blue['100'],
+      nosave: amber['100'],
+      errors: deepOrange['100'],
+    }),
+    '& > *': {
+      borderBottom: 'unset',
+    },
   },
-  showExpandColumn: true,
+}))(TableRow);
+
+const ExpandableRow = ({ row }) => {
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+  const { duplicates = [], errors = [], save } = row;
+
+  const rowColor = rowClasses(row);
+
+  return (
+    <>
+      <StyledTableRow
+        tabIndex={-1}
+        color={rowColor}
+      >
+        <TableCell>
+          {rowColor !== 'default' && (
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          )}
+        </TableCell>
+        {columns.map((column) => {
+          const value = row[column.id];
+          return (
+            <TableCell key={column.id} align={column.align}>
+              {
+                column.format
+                  ? column.format(value, row)
+                  : value
+              }
+            </TableCell>
+          );
+        })}
+      </StyledTableRow>
+      <TableRow>
+        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Paper className={classes.collapsePaper} elevation={0}>
+              {save === false && (
+                <Typography>
+                  This record is created/updated earlier.
+                  Only new accepted name will be assigned.
+                </Typography>
+              )}
+              {duplicates.length > 0 && (
+                <Typography>
+                  Duplicate of rows:
+                  {' '}
+                  {duplicates.join(', ')}
+                </Typography>
+              )}
+              {errors.length > 0 && (
+                <>
+                  <Typography>Errors:</Typography>
+                  <ul>
+                    {errors.map((e, i) => <li key={i}>{e.message}</li>)}
+                  </ul>
+                </>
+              )}
+            </Paper>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </>
+  );
 };
 
-const SpeciesDetailsTableReport = ({ show, data }) => {
-  const isHidden = show ? '' : 'hidden';
+const SpeciesDetailsTableReport = ({ data }) => {
+  const classes = useStyles();
   return (
-    <div className={`scrollable ${isHidden}`}>
-      <BootstrapTable
-        condensed
-        keyField="rowId"
-        columns={columns}
-        data={data}
-        rowClasses={rowClasses}
-        expandRow={expandRow}
-      />
-    </div>
+    <Paper className={classes.root} variant="outlined" elevation={0}>
+      <TableContainer className={classes.container}>
+        <Table stickyHeader aria-label="sticky table">
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              {columns.map((column) => (
+                <TableCell
+                  key={column.id}
+                  align={column.align}
+                  style={{ minWidth: column.minWidth }}
+                >
+                  {column.label}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row) => (
+              <ExpandableRow key={row.rowId} row={row} />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Paper>
   );
 };
 
 export default SpeciesDetailsTableReport;
 
 SpeciesDetailsTableReport.propTypes = {
-  show: PropTypes.bool.isRequired,
   data: PropTypes.arrayOf(PropTypes.shape({
     rowId: PropTypes.number.isRequired,
     operation: PropTypes.string.isRequired,
@@ -150,4 +243,13 @@ SpeciesDetailsTableReport.propTypes = {
       message: PropTypes.string.isRequired,
     })).isRequired,
   })).isRequired,
+};
+ExpandableRow.propTypes = {
+  row: PropTypes.shape({
+    save: PropTypes.bool.isRequired,
+    duplicates: PropTypes.arrayOf(PropTypes.number).isRequired,
+    errors: PropTypes.arrayOf(PropTypes.shape({
+      message: PropTypes.string.isRequired,
+    })).isRequired,
+  }).isRequired,
 };

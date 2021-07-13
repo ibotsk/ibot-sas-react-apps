@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  Col, Row,
-  Button, Modal,
-  Form, FormGroup, FormControl, ControlLabel,
-} from 'react-bootstrap';
-
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+  DialogActions, DialogTitle, DialogContent,
+  Button, MenuItem,
+} from '@material-ui/core';
 
 import PropTypes from 'prop-types';
 
-import { TimestampCheck } from '@ibot/components';
-
-import AddableList from 'components/segments/AddableList';
+import {
+  NameList, DividerSpaced,
+  TitledSection,
+  GenusName,
+  AdminEditDialog,
+  AdminTextField, AdminAutocompleteAsync, AdminTimestampCheck,
+  AdminAddableList,
+} from '@ibot/components';
+import { hooks } from '@ibot/core';
 
 import { notifications, sorterUtils } from 'utils';
 import { format, generaUtils } from '@ibot/utils';
@@ -23,6 +27,13 @@ import config from 'config/config';
 import { genusFacade, familiesFacade } from 'facades';
 
 import GenusSynonymListItem from './items/GenusSynonymListItem';
+
+const {
+  mappings: {
+    genusType: ntypes,
+    synonym: synTypes,
+  },
+} = config;
 
 const {
   getGenusByIdWithRelations,
@@ -49,14 +60,6 @@ const genusIdLabelAcceptedFormat = (g) => {
   };
 };
 
-const VALIDATION_STATE_SUCCESS = 'success';
-const VALIDATION_STATE_ERROR = 'error';
-
-const titleColWidth = 2;
-const mainColWidth = 10;
-
-const ntypes = config.mappings.genusType;
-
 const initialValues = {
   id: undefined,
   ntype: ntypes.A.value,
@@ -70,12 +73,13 @@ const initialValues = {
 const createNewSynonymToList = async (
   selected,
   idParent,
-  type,
   accessToken,
 ) => {
   // when adding synonyms to a new record, idParent is undefined
   const { id: selectedId } = selected;
-  const synonymObj = genusFacade.createSynonym(idParent, selectedId, type);
+  const synonymObj = genusFacade.createSynonym(
+    idParent, selectedId, synTypes.taxonomic.numType,
+  );
   const { genus: genusSyn, accepted } = await getGenusByIdWithRelations(
     selectedId, accessToken,
   );
@@ -93,16 +97,35 @@ const synonymsChanged = (list) => {
   return list.map((item, i) => ({ ...item, rorder: i + 1 }));
 };
 
+const searchFamiliesByQuery = (query, accessToken) => (
+  getAllFamiliesBySearchTerm(
+    query, accessToken, ({ id, name }) => ({
+      id,
+      label: name,
+    }),
+  )
+);
+const searchFamiliesApgByQuery = (query, accessToken) => (
+  getAllFamiliesApgBySearchTerm(
+    query, accessToken, ({ id, name }) => ({
+      id,
+      label: name,
+    }),
+  )
+);
+const searchGeneraByQuery = (query, accessToken) => (
+  getAllGeneraBySearchTermWithAccepted(
+    query, accessToken, genusIdLabelAcceptedFormat,
+  )
+);
+
 const AcceptedNamesList = ({ data }) => (
-  <ul>
-    {
-      data.map(({ parent }) => (
-        <li key={parent.id}>
-          {generaUtils.formatGenus(parent.name)}
-        </li>
-      ))
-    }
-  </ul>
+  <NameList
+    list={data.map(({ parent }) => ({
+      id: parent.id,
+      name: generaUtils.formatGenus(parent.name),
+    }))}
+  />
 );
 
 const GeneraModal = ({
@@ -110,58 +133,104 @@ const GeneraModal = ({
 }) => {
   const [genus, setGenus] = useState(initialValues);
   const [accepted, setAccepted] = useState([]);
-  const [families, setFamilies] = useState([]);
-  const [familiesApg, setFamiliesApg] = useState([]);
-  const [isLoading, setLoading] = useState(false);
-  const [selectedFamily, setSelectedFamily] = useState([]);
-  const [selectedFamilyApg, setSelectedFamilyApg] = useState([]);
+  const [family, setFamily] = useState();
+  const [familyApg, setFamilyApg] = useState();
+
   const [synonyms, setSynonyms] = useState([]);
 
   const accessToken = useSelector((state) => state.authentication.accessToken);
-  const user = useSelector((state) => state.user);
+  const username = useSelector((state) => state.user.username);
 
-  const onEnter = async () => {
-    if (editId) {
-      const {
-        genus: dbGenus,
-        accepted: acceptedNames,
-        family,
-        familyApg,
-        synonyms: syns,
-      } = await getGenusByIdWithRelations(
-        editId, accessToken,
-      );
+  const {
+    selected: familySelected,
+    options: familyOptions,
+    loading: familyLoading,
+    handleFetch: familyHandleFetch,
+    handleChange: familyHandleChange,
+  } = hooks.useAsyncAutocomplete(
+    searchFamiliesByQuery, accessToken, family,
+    {
+      initialMapper: ({ id, name }) => ({ id, label: name }),
+      callbackFunction: (({ id }) => setGenus({ ...genus, idFamily: id })),
+    },
+  );
 
-      setGenus(dbGenus);
-      setAccepted(acceptedNames);
-      setSelectedFamily(family ? [family] : []);
-      setSelectedFamilyApg(familyApg ? [familyApg] : []);
-      setSynonyms(syns);
-    }
-  };
+  const {
+    selected: familyApgSelected,
+    options: familyApgOptions,
+    loading: familyApgLoading,
+    handleFetch: familyApgHandleFetch,
+    handleChange: familyApgHandleChange,
+  } = hooks.useAsyncAutocomplete(
+    searchFamiliesApgByQuery, accessToken, familyApg,
+    {
+      initialMapper: ({ id, name }) => ({ id, label: name }),
+      callbackFunction: (({ id }) => setGenus({ ...genus, idFamilyApg: id })),
+    },
+  );
 
-  const getValidationState = () => {
-    if (genus.name.length > 0 && genus.authors.length > 0) {
-      return VALIDATION_STATE_SUCCESS;
-    }
-    return VALIDATION_STATE_ERROR;
+  const handleEnter = useCallback(() => {
+    const fetchGenus = async () => {
+      if (editId) {
+        const {
+          genus: dbGenus,
+          accepted: acceptedNames,
+          family: f,
+          familyApg: fapg,
+          synonyms: syns,
+        } = await getGenusByIdWithRelations(
+          editId, accessToken,
+        );
+
+        setGenus(dbGenus);
+        setAccepted(acceptedNames);
+        setFamily(f);
+        setFamilyApg(fapg);
+        setSynonyms(syns);
+      }
+    };
+
+    fetchGenus();
+  }, [accessToken, editId]);
+
+  const isGenusInvalid = () => {
+    const is = !genus.name && genus.name.length === 0;
+    return {
+      result: is,
+      props: {
+        error: is,
+        helperText: (is ? 'Must not be empty' : undefined),
+      },
+    };
   };
 
   const handleChangeInput = (e) => {
-    const { id: prop, value } = e.target;
+    const { id, name, value } = e.target;
+    const prop = id || name;
     setGenus({
       ...genus,
       [prop]: value,
     });
   };
 
+  const handleCheck = () => (
+    setGenus({
+      ...genus,
+      checkedTimestamp: format.timestampISO(),
+      checkedBy: username,
+    })
+  );
+
   const handleHide = () => {
     setGenus({ ...initialValues });
+    setSynonyms([]);
+    setFamily({});
+    setFamilyApg({});
     onHide();
   };
 
   const handleSave = async () => {
-    if (getValidationState() === VALIDATION_STATE_SUCCESS) {
+    if (!isGenusInvalid().result) {
       try {
         await saveGenusAndSynonyms(genus, synonyms, accessToken, false);
         notifications.success('Saved');
@@ -175,45 +244,15 @@ const GeneraModal = ({
     }
   };
 
-  const handleSearchFamily = async (query) => {
-    setLoading(true);
-    const results = await getAllFamiliesBySearchTerm(query, accessToken);
-    setLoading(false);
-    setFamilies(results);
-  };
-
-  const handleSearchFamilyApg = async (query) => {
-    setLoading(true);
-    const results = await getAllFamiliesApgBySearchTerm(query, accessToken);
-    setLoading(false);
-    setFamiliesApg(results);
-  };
-
-  const handleOnChangeTypeaheadFamily = (selected) => {
-    setSelectedFamily(selected);
-    setGenus({
-      ...genus,
-      idFamily: selected[0] ? selected[0].id : undefined,
-    });
-  };
-
-  const handleOnChangeTypeaheadFamilyApg = (selected) => {
-    setSelectedFamilyApg(selected);
-    setGenus({
-      ...genus,
-      idFamilyApg: selected[0] ? selected[0].id : undefined,
-    });
-  };
-
-  const handleSynonymAddRow = async (selectedSpecies, type) => {
-    if (selectedSpecies) {
-      if (synonyms.find((s) => s.synonym.id === selectedSpecies.id)) {
+  const handleSynonymAddRow = async (selectedGenus) => {
+    if (selectedGenus && selectedGenus.id) {
+      if (synonyms.find((s) => s.synonym.id === selectedGenus.id)) {
         notifications.warning('The item already exists in the list');
         return;
       }
 
       const newSynonym = await createNewSynonymToList(
-        selectedSpecies, editId, type, accessToken,
+        selectedGenus, editId, accessToken,
       );
       synonyms.push(newSynonym);
       const sorted = synonymsChanged(synonyms);
@@ -228,214 +267,113 @@ const GeneraModal = ({
     setSynonyms(sorted);
   };
 
-  const handleCheck = () => {
-    const { username } = user;
-    setGenus({
-      ...genus,
-      checkedTimestamp: format.timestampISO(),
-      checkedBy: username,
-    });
-  };
-
   const {
     ntype, name, authors, vernacular, checkedTimestamp, checkedBy,
   } = genus;
 
   return (
-    <Modal show={show} onHide={handleHide} onEnter={onEnter}>
-      <Modal.Header closeButton>
-        <Modal.Title>
-          {editId ? 'Edit genus' : 'Create new genus'}
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form horizontal>
-          <FormGroup controlId="ntype" bsSize="sm">
-            <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Type
-            </Col>
-            <Col sm={mainColWidth}>
-              <FormControl
-                componentClass="select"
-                placeholder="select"
-                value={ntype || ''}
-                onChange={handleChangeInput}
-              >
-                {Object.keys(ntypes).map((t) => (
-                  <option value={t} key={t}>{ntypes[t].label}</option>
-                ))}
-              </FormControl>
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="name"
-            bsSize="sm"
-            validationState={getValidationState()}
-          >
-            <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Name
-            </Col>
-            <Col sm={mainColWidth}>
-              <FormControl
-                type="text"
-                value={name || ''}
-                placeholder="Genus name"
-                onChange={handleChangeInput}
+    <AdminEditDialog
+      open={show}
+      onEnter={handleEnter}
+      onClose={handleHide}
+      aria-labelledby="genus-dialog"
+    >
+      <DialogTitle id="genus-dialog-title">
+        {editId
+          ? (
+            <>
+              {`Edit genus - ID ${editId} - `}
+              <GenusName data={genus} isAuthors />
+            </>
+          )
+          : 'Create new genus'}
+      </DialogTitle>
+      <DialogContent dividers>
+        <AdminTextField
+          select
+          id="ntype"
+          name="ntype"
+          label="Genus status"
+          value={ntype || ''}
+          onChange={handleChangeInput}
+        >
+          {Object.keys(ntypes).map((t) => (
+            <MenuItem value={t} key={t}>{ntypes[t].label}</MenuItem>
+          ))}
+        </AdminTextField>
+        <AdminTextField
+          id="name"
+          label="Name"
+          value={name || ''}
+          onChange={handleChangeInput}
+          {...(isGenusInvalid().props)}
+        />
+        <AdminTextField
+          id="authors"
+          label="Authors"
+          value={authors || ''}
+          onChange={handleChangeInput}
+        />
+        <DividerSpaced />
+        <AdminAutocompleteAsync
+          id="family-apg"
+          label="Family APG"
+          options={familyApgOptions}
+          value={familyApgSelected}
+          loading={familyApgLoading}
+          onChange={familyApgHandleChange}
+          onInputChange={familyApgHandleFetch}
+        />
+        <AdminAutocompleteAsync
+          id="family"
+          label="Family"
+          options={familyOptions}
+          value={familySelected}
+          loading={familyLoading}
+          onChange={familyHandleChange}
+          onInputChange={familyHandleFetch}
+        />
+        <DividerSpaced />
+        <AdminTextField
+          id="vernacular"
+          label="Vernacular"
+          value={vernacular || ''}
+          onChange={handleChangeInput}
+        />
+        <TitledSection title="Accepted names">
+          <AcceptedNamesList data={accepted} />
+        </TitledSection>
+        <TitledSection title="Synonyms">
+          <AdminAddableList
+            data={synonyms}
+            onSearch={searchGeneraByQuery}
+            onAddItemToList={handleSynonymAddRow}
+            onRowDelete={handleSynonymRemoveRow}
+            itemComponent={({ data }) => (
+              <GenusSynonymListItem
+                data={data}
+                assignedToName={genus}
               />
-              <FormControl.Feedback />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="authors"
-            bsSize="sm"
-            validationState={getValidationState()}
-          >
-            <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Authors
-            </Col>
-            <Col sm={mainColWidth}>
-              <FormControl
-                type="text"
-                value={authors || ''}
-                placeholder="Authors"
-                onChange={handleChangeInput}
-              />
-              <FormControl.Feedback />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="family-apg"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Family APG
-            </Col>
-            <Col sm={mainColWidth}>
-              <AsyncTypeahead
-                id="family-apg-autocomplete"
-                labelKey="name"
-                isLoading={isLoading}
-                onSearch={handleSearchFamilyApg}
-                options={familiesApg}
-                selected={selectedFamilyApg}
-                onChange={handleOnChangeTypeaheadFamilyApg}
-                placeholder="Start by typing (case sensitive)"
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="family"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Family
-            </Col>
-            <Col sm={mainColWidth}>
-              <AsyncTypeahead
-                id="family-autocomplete"
-                labelKey="name"
-                isLoading={isLoading}
-                onSearch={handleSearchFamily}
-                options={families}
-                selected={selectedFamily}
-                onChange={handleOnChangeTypeaheadFamily}
-                placeholder="Start by typing (case sensitive)"
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="vernacular"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Vernacular
-            </Col>
-            <Col sm={mainColWidth}>
-              <FormControl
-                type="text"
-                value={vernacular || ''}
-                placeholder="Vernacular name"
-                onChange={handleChangeInput}
-              />
-              <FormControl.Feedback />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="accepted"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Accepted names
-            </Col>
-            <Col sm={mainColWidth}>
-              <p className="text-warning">
-                The setting of the accepted names is temporarily disabled.
-                Please go to the desired accepted genus and add a synonym.
-              </p>
-              <AcceptedNamesList data={accepted} />
-            </Col>
-          </FormGroup>
-          <hr />
-          <FormGroup
-            controlId="synonyms"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={titleColWidth}>
-              Synonyms
-            </Col>
-            <Col sm={mainColWidth}>
-              <AddableList
-                id="synonyms-autocomplete"
-                async
-                data={synonyms}
-                onSearch={(query) => getAllGeneraBySearchTermWithAccepted(
-                  query, accessToken, genusIdLabelAcceptedFormat,
-                )}
-                onAddItemToList={(selected) => handleSynonymAddRow(
-                  selected,
-                  config.mappings.synonym.taxonomic.numType,
-                )}
-                onRowDelete={(rowId) => handleSynonymRemoveRow(
-                  rowId,
-                )}
-                itemComponent={({ rowId, data, onRowDelete }) => (
-                  <GenusSynonymListItem
-                    rowId={rowId}
-                    data={data}
-                    onRowDelete={onRowDelete}
-                    assignedToName={genus}
-                  />
-                )}
-                // renderMenu={(results, menuProps) => (
-                //   <GenusSynonymMenu
-                //     results={results}
-                //     menuProps={menuProps}
-                //     assignedToName={genus}
-                //   />
-                // )}
-              />
-            </Col>
-          </FormGroup>
-          <hr />
-          <Row>
-            <Col smOffset={titleColWidth} sm={mainColWidth}>
-              <TimestampCheck
-                isChecked={!!checkedTimestamp}
-                checkedTimestamp={checkedTimestamp}
-                checkedBy={checkedBy}
-                onCheck={handleCheck}
-              />
-            </Col>
-          </Row>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button onClick={handleHide}>Close</Button>
-        <Button bsStyle="primary" onClick={handleSave}>
+            )}
+            accessToken={accessToken}
+          />
+        </TitledSection>
+        <AdminTimestampCheck
+          isChecked={!!checkedTimestamp}
+          checkedTimestamp={checkedTimestamp}
+          checkedBy={checkedBy}
+          onCheck={handleCheck}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleHide}>
+          Close
+        </Button>
+        <Button color="primary" onClick={handleSave}>
           Save changes
         </Button>
-      </Modal.Footer>
-    </Modal>
+      </DialogActions>
+    </AdminEditDialog>
   );
 };
 

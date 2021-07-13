@@ -90,23 +90,18 @@ export default {
       create: {
         key: 'create',
         text: 'create',
-        colour: 'success',
+        color: 'success.main',
       },
       update: {
         key: 'update',
         text: 'update',
-        colour: 'warning',
+        color: 'warning.dark',
       },
       duplicate: {
         key: 'duplicate',
         text: 'duplicate',
-        colour: 'info',
+        color: 'primary.dark',
       },
-    },
-    messages: {
-      duplicates: 'info',
-      errors: 'danger',
-      nosave: 'warning',
     },
     trimChars: ' „“"\'',
     legalSynonyms: ['0', '1', '2', '3', '4'],

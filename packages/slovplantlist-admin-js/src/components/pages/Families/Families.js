@@ -1,182 +1,114 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import {
-  Grid, Button, Glyphicon,
-} from 'react-bootstrap';
-
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-
-import PropTypes from 'prop-types';
-import LoggedUserType from 'components/propTypes/loggedUser';
+  Toolbar, Button, Typography,
+} from '@material-ui/core';
+import {
+  Add as AddIcon,
+} from '@material-ui/icons';
 
 import Can from 'components/segments/auth/Can';
-import RemotePagination from 'components/segments/RemotePagination';
-import { PageTitle } from '@ibot/components';
+
+import { PageTitle, AdminDataGrid } from '@ibot/components';
+import { hooks } from '@ibot/core';
 
 import config from 'config/config';
+import { helperUtils, whereUtils } from 'utils';
 
-import commonHooks from 'components/segments/hooks';
+import { tablesFacade } from 'facades';
 
 import FamiliesModal from './Modals/FamiliesModal';
+import { columns, defaultSortModel } from './Table/columns';
 
 const getAllUri = config.uris.familiesUri.getAllWFilterUri;
 const getCountUri = config.uris.familiesUri.countUri;
 
-const columns = [
-  {
-    dataField: 'id',
-    text: 'ID',
-    filter: textFilter(),
-    sort: true,
-  },
-  {
-    dataField: 'action',
-    text: 'Actions',
-  },
-  {
-    dataField: 'checkedTimestamp',
-    text: 'Checked',
-    formatter: (cell) => (cell ? (
-      <Glyphicon glyph="ok" className="green" />
-    ) : (
-      <Glyphicon glyph="remove" className="red" />
-    )),
-    align: 'center',
-  },
-  {
-    dataField: 'name',
-    text: 'Name',
-    filter: textFilter(),
-    sort: true,
-  },
-  {
-    dataField: 'vernacular',
-    text: 'Vernacular',
-    filter: textFilter(),
-    sort: true,
-  },
-];
+const getTotalCount = tablesFacade.getCountForHook(getCountUri);
+const getAll = tablesFacade.getAllForHook(getAllUri);
 
-const defaultSorted = [{
-  dataField: 'name',
-  order: 'asc',
-}];
+const {
+  pagination: { sizePerPageList },
+} = config;
+const pageSizesList = sizePerPageList.map(({ value }) => value);
 
-const Families = ({ user, accessToken }) => {
+const Families = () => {
+  const accessToken = useSelector((state) => state.authentication.accessToken);
+  const user = useSelector((state) => state.user);
+
   const {
     showModal, editId,
     handleShowModal, handleHideModal,
-  } = commonHooks.useModal();
+  } = hooks.useModal();
 
   const ownerId = user ? user.id : undefined;
+
   const {
-    page, sizePerPage, where, order, setValues,
-  } = commonHooks.useTableChange(ownerId, 1);
+    page, pageSize, order, where,
+    handlePageChange, handleOrderChange, handlePageSizeChange,
+    handleWhereChange,
+  } = hooks.useDataGridChange(ownerId, 0, pageSizesList[2]);
 
-  const { data, totalSize } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, page,
-    sizePerPage, order, showModal,
+  const {
+    data, totalSize, isLoading,
+  } = hooks.useAdminTableData(
+    getTotalCount, getAll, where, page, pageSize, order, accessToken, showModal,
   );
 
-  const formatResult = (records) => records.map((d) => ({
-    id: d.id,
-    action: (
-      <Can
-        role={user.role}
-        perform="family:edit"
-        yes={() => (
-          <Button
-            bsSize="xsmall"
-            bsStyle="warning"
-            onClick={() => handleShowModal(d.id)}
-          >
-            Edit
-          </Button>
-        )}
-      />
-    ),
-    name: d.name,
-    vernacular: d.vernacular,
-    checkedTimestamp: d.checkedTimestamp,
-  }));
-
-  const onTableChange = (type, {
-    page: pageTable,
-    sizePerPage: sizePerPageTable,
-    filters,
-    sortField,
-    sortOrder,
-  }) => (
-    setValues({
-      page: pageTable,
-      sizePerPage: sizePerPageTable,
-      filters,
-      sortField,
-      sortOrder,
-    })
+  const handleSortModelChange = (params) => (
+    handleOrderChange(
+      params, helperUtils.dataGridSortModelMapper(defaultSortModel),
+    )
   );
-
-  const paginationOptions = { page, sizePerPage, totalSize };
+  const handleFilterModelChange = (params) => (
+    handleWhereChange(params, whereUtils.dataGridFilterModelToWhereString)
+  );
 
   return (
-    <div id="families">
+    <>
       <PageTitle title="Families - Slovplantlist" />
-      <Grid id="functions-panel">
-        <div id="functions">
-          <Can
-            role={user.role}
-            perform="family:edit"
-            yes={() => (
-              <Button
-                bsStyle="success"
-                onClick={() => handleShowModal(undefined)}
-              >
-                <Glyphicon glyph="plus" />
-                {' '}
-                Add new
-              </Button>
-            )}
-          />
-        </div>
-      </Grid>
-      <hr />
-      <Grid>
-        <h2>Families</h2>
-        <p>All filters are case sensitive</p>
-      </Grid>
-      <Grid fluid>
-        <RemotePagination
-          hover
-          striped
-          condensed
-          remote
-          keyField="id"
-          data={formatResult(data)}
-          columns={columns}
-          defaultSorted={defaultSorted}
-          filter={filterFactory()}
-          onTableChange={onTableChange}
-          paginationOptions={paginationOptions}
+      <Toolbar>
+        <Can
+          role={user.role}
+          perform="family:edit"
+          yes={() => (
+            <Button
+              disableElevation
+              variant="contained"
+              color="secondary"
+              onClick={() => handleShowModal(undefined)}
+              startIcon={<AddIcon />}
+            >
+              Add new
+            </Button>
+          )}
         />
-      </Grid>
+      </Toolbar>
+      <Typography variant="h4" component="h1">
+        Families
+      </Typography>
+      <div style={{ height: '70vh', width: '100%' }}>
+        <AdminDataGrid
+          rows={data}
+          columns={columns(user.role, handleShowModal)}
+          rowCount={totalSize}
+          pageSize={pageSize}
+          onPageSizeChange={handlePageSizeChange}
+          rowsPerPageOptions={pageSizesList}
+          onPageChange={handlePageChange}
+          loading={isLoading}
+          sortModel={defaultSortModel}
+          onSortModelChange={handleSortModelChange}
+          onFilterModelChange={handleFilterModelChange}
+        />
+      </div>
       <FamiliesModal
         id={editId}
         show={showModal}
         onHide={() => handleHideModal()}
       />
-    </div>
+    </>
   );
 };
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-  user: state.user,
-});
-
-export default connect(mapStateToProps)(Families);
-
-Families.propTypes = {
-  user: LoggedUserType.type.isRequired,
-  accessToken: PropTypes.string.isRequired,
-};
+export default Families;

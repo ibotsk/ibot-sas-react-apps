@@ -1,27 +1,11 @@
 import React from 'react';
 
-import {
-  Col, Panel,
-  FormGroup, ControlLabel,
-} from 'react-bootstrap';
-
 import PropTypes from 'prop-types';
 
-import FormControlEditableOrStatic
-  from 'components/segments/FormControlEditableOrStatic';
-
-import config from 'config/config';
-
-const {
-  constants: {
-    labelColumnWidth,
-    contentColumnWidth,
-  },
-} = config;
+import { AdminTextField } from '@ibot/components';
 
 const SpeciesRecordDetailsCategories = ({
   categoriesRecord = {},
-  isEdit = false,
   onChangeData,
 }) => {
   const {
@@ -35,144 +19,60 @@ const SpeciesRecordDetailsCategories = ({
     protectionPrepared,
   } = categoriesRecord;
 
-  const handleChange = (e) => (
+  const handleChangeInput = (e) => (
     onChangeData({ [e.target.id]: e.target.value })
   );
 
   return (
     <>
-      <Panel>
-        <Panel.Body>
-          <FormGroup
-            controlId="origin"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Origin status
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <FormControlEditableOrStatic
-                editable={isEdit}
-                type="text"
-                value={origin || ''}
-                onChange={handleChange}
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="cultivation"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Cultivation
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <FormControlEditableOrStatic
-                editable={isEdit}
-                type="text"
-                value={cultivation || ''}
-                onChange={handleChange}
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="invasiveness"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Invasion status
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <FormControlEditableOrStatic
-                editable={isEdit}
-                type="text"
-                value={invasiveness || ''}
-                onChange={handleChange}
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="residenceTime"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Residence time status
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <FormControlEditableOrStatic
-                editable={isEdit}
-                type="text"
-                value={residenceTime || ''}
-                onChange={handleChange}
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="endemism"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Endemic status
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <FormControlEditableOrStatic
-                editable={isEdit}
-                type="text"
-                value={endemism || ''}
-                onChange={handleChange}
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="threat"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Status of threat
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <FormControlEditableOrStatic
-                editable={isEdit}
-                type="text"
-                value={threat || ''}
-                onChange={handleChange}
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="protectionCurrent"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Status of legislative protection (current)
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <FormControlEditableOrStatic
-                editable={isEdit}
-                type="text"
-                value={protectionCurrent || ''}
-                onChange={handleChange}
-              />
-            </Col>
-          </FormGroup>
-          <FormGroup
-            controlId="protectionPrepared"
-            bsSize="sm"
-          >
-            <Col componentClass={ControlLabel} sm={labelColumnWidth}>
-              Status of legislative protection (prepared)
-            </Col>
-            <Col xs={contentColumnWidth}>
-              <FormControlEditableOrStatic
-                editable={isEdit}
-                type="text"
-                value={protectionPrepared || ''}
-                onChange={handleChange}
-              />
-            </Col>
-          </FormGroup>
-        </Panel.Body>
-      </Panel>
+      <AdminTextField
+        id="origin"
+        label="Origin status"
+        value={origin || ''}
+        onChange={handleChangeInput}
+      />
+      <AdminTextField
+        id="cultivation"
+        label="Cultivation"
+        value={cultivation || ''}
+        onChange={handleChangeInput}
+      />
+      <AdminTextField
+        id="invasiveness"
+        label="Invasion status"
+        value={invasiveness || ''}
+        onChange={handleChangeInput}
+      />
+      <AdminTextField
+        id="residenceTime"
+        label="Residence time status"
+        value={residenceTime || ''}
+        onChange={handleChangeInput}
+      />
+      <AdminTextField
+        id="endemism"
+        label="Endemic status"
+        value={endemism || ''}
+        onChange={handleChangeInput}
+      />
+      <AdminTextField
+        id="threat"
+        label="Status of threat"
+        value={threat || ''}
+        onChange={handleChangeInput}
+      />
+      <AdminTextField
+        id="protectionCurrent"
+        label="Status of legislative protection (current)"
+        value={protectionCurrent || ''}
+        onChange={handleChangeInput}
+      />
+      <AdminTextField
+        id="protectionPrepared"
+        label="Status of legislative protection (prepared)"
+        value={protectionPrepared || ''}
+        onChange={handleChangeInput}
+      />
     </>
   );
 };
@@ -190,10 +90,8 @@ SpeciesRecordDetailsCategories.propTypes = {
     protectionCurrent: PropTypes.string,
     protectionPrepared: PropTypes.string,
   }),
-  isEdit: PropTypes.bool,
   onChangeData: PropTypes.func.isRequired,
 };
 SpeciesRecordDetailsCategories.defaultProps = {
   categoriesRecord: {},
-  isEdit: false,
 };

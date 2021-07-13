@@ -1,5 +1,5 @@
 import { where as whereUtils } from '@ibot/utils';
-import { helperUtils, sorterUtils } from 'utils';
+import { sorterUtils } from 'utils';
 import config from 'config/config';
 
 import { getRequest, putRequest, patchRequest } from './client';
@@ -22,28 +22,24 @@ async function getRecordById(id, accessToken) {
     nomenclaturesUri.getByIdWFilterUri, { id }, accessToken,
   );
 
-  const { accepted, 'nomen-status': nomenStatus } = speciesRecord;
-
-  const basionym = helperUtils.losToTypeaheadSelected(speciesRecord.basionym);
-  const replaced = helperUtils.losToTypeaheadSelected(speciesRecord.replaced);
-  const nomenNovum = helperUtils.losToTypeaheadSelected(
-    speciesRecord['nomen-novum'],
-  );
-  const parentCombination = helperUtils.losToTypeaheadSelected(
-    speciesRecord['parent-combination'],
-  );
-  const taxonPosition = helperUtils.losToTypeaheadSelected(
-    speciesRecord['taxon-position'],
-  );
+  const {
+    accepted,
+    'nomen-status': nomenStatus,
+    basionym,
+    replaced,
+    'nomen-novum': nomenNovum,
+    'parent-combination': parentCombination,
+    'taxon-position': taxonPosition,
+  } = speciesRecord;
 
   let genus;
   let familyApg;
   let family;
   if (speciesRecord['genus-rel']) {
-    genus = [{
+    genus = {
       id: speciesRecord['genus-rel'].id,
       label: speciesRecord['genus-rel'].name,
-    }];
+    };
     const famAPG = speciesRecord['genus-rel']['family-apg'];
     const fam = speciesRecord['genus-rel'].family;
     if (famAPG) {
@@ -163,7 +159,7 @@ async function getSynonyms(id, accessToken) {
   };
 }
 
-async function getForRelations(id, accessToken) {
+async function getForRelations(id, accessToken, format = (x) => x) {
   const basionymFor = await getRequest(
     nomenclaturesUri.getBasionymForUri, { id }, accessToken,
   );
@@ -180,11 +176,11 @@ async function getForRelations(id, accessToken) {
     nomenclaturesUri.getTaxonPositionForUri, { id }, accessToken,
   );
   return {
-    basionymFor,
-    replacedFor,
-    nomenNovumFor,
-    parentCombinationFor,
-    taxonPositionFor,
+    basionymFor: basionymFor.map(format),
+    replacedFor: replacedFor.map(format),
+    nomenNovumFor: nomenNovumFor.map(format),
+    parentCombinationFor: parentCombinationFor.map(format),
+    taxonPositionFor: taxonPositionFor.map(format),
   };
 }
 

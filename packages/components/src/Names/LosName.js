@@ -9,6 +9,7 @@ import helper from './helpers';
 const LosName = ({
   data = undefined,
   format = 'plain',
+  authors = true,
   isPublication = false,
   isTribus = false,
   isAggregates = false,
@@ -21,6 +22,7 @@ const LosName = ({
     return null;
   }
   const options = {
+    isAuthors: authors,
     isPublication,
     isTribus,
     isAggregates,
@@ -47,6 +49,7 @@ export default LosName;
 LosName.propTypes = {
   data: SpeciesType.type,
   format: PropTypes.string,
+  authors: PropTypes.bool,
   isPublication: PropTypes.bool,
   isTribus: PropTypes.bool,
   isAggregates: PropTypes.bool,
@@ -57,6 +60,7 @@ LosName.propTypes = {
 LosName.defaultProps = {
   data: undefined,
   format: 'plain',
+  authors: true,
   isPublication: false,
   isTribus: false,
   isAggregates: false,

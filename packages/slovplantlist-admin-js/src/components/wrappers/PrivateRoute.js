@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   Route,
   Redirect,
@@ -8,34 +8,38 @@ import {
 
 import PropTypes from 'prop-types';
 
-const PrivateRoute = ({ component: Component, isAuthenticated, ...rest }) => (
-  <Route
-    {...rest}
-    render={(props) => (
-      isAuthenticated === true ? (
-        <Component {...props} />
-      ) : (
-        <Redirect
-          to={{
-            pathname: '/login',
-            state: { from: props.location },
-          }}
-        />
-      )
-    )}
-  />
-);
+const PrivateRoute = ({ component: Component, ...rest }) => {
+  const isAuthenticated = useSelector((state) => (
+    !!state.authentication.isAuthenticated
+  ));
+  return (
+    <Route
+      {...rest}
+      render={(props) => (
+        isAuthenticated === true ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{
+              pathname: '/login',
+              state: { from: props.location },
+            }}
+          />
+        )
+      )}
+    />
+  );
+};
 
-const mapStateToProps = (state) => ({
-  isAuthenticated: !!state.authentication.isAuthenticated,
-});
-
-export default connect(mapStateToProps)(PrivateRoute);
+export default PrivateRoute;
 
 PrivateRoute.propTypes = {
-  component: PropTypes.func.isRequired,
-  isAuthenticated: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  component: PropTypes.oneOfType([PropTypes.func.isRequired, PropTypes.object]),
   location: PropTypes.shape({
-    pathname: PropTypes.string.isRequired,
-  }).isRequired,
+    pathname: PropTypes.string,
+  }),
+};
+PrivateRoute.defaultProps = {
+  location: {},
 };

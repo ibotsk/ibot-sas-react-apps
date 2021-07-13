@@ -3,21 +3,23 @@ import { FilterManager } from '@ibot/core';
 import config from 'config/config';
 
 import {
-  listOfSpeciesFilterHandler,
   ownershipFilterHandler,
-  dateFilterHandler,
+  defaultFilterHandler,
+  speciesNameFilterHandler,
   checkedRecordFilterHandler,
-} from './filters';
+} from './dataGridFilters';
 
 const {
-  constants,
+  constants: {
+    columns,
+  },
 } = config;
 
-const fm = FilterManager();
+const fm = FilterManager((f) => f.columnField);
 
-fm.addHandler(constants.listOfSpeciesColumn, listOfSpeciesFilterHandler);
-fm.addHandler(constants.ownership, ownershipFilterHandler);
-fm.addHandler('*', dateFilterHandler); // apply dateTime handler to all filters
-fm.addHandler(constants.checkedTimestampColumn, checkedRecordFilterHandler);
+fm.addHandler(columns.ownership, ownershipFilterHandler);
+fm.addHandler(columns.speciesName, speciesNameFilterHandler);
+fm.addHandler(columns.checkedTimestampColumn, checkedRecordFilterHandler);
+fm.addHandler('*', defaultFilterHandler);
 
 export default fm;

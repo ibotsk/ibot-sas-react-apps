@@ -1,5 +1,2 @@
-export { default as TimestampCheck } from './TimestampCheck';
-export { default as SelectTableColumnsModal } from
-  './SelectTableColumnsModal/SelectTableColumnsModal';
-
+/* eslint-disable import/prefer-default-export */
 export { default as PageTitle } from './PageTitle';

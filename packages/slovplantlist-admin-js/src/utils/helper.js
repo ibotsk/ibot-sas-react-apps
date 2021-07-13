@@ -1,121 +1,61 @@
-import {
-  species as speciesUtils,
-  misc as miscUtils,
-  WhereBuilder,
-  likep, regexp, neq, eq, lt, gt, lte, gte,
-  or, and,
-} from '@ibot/utils';
+function buildFilterOptionsFromKeys(keys) {
+  return Object.keys(keys).map((k) => ({
+    value: k,
+    label: keys[k].label || keys[k].text,
+  }));
+}
 
 /**
- * For resolving filter comparator. Supports LIKE and EQ.
- * Loopback mysql connector does not support case insensitive.
- * @param {*} comparator
- * @param {*} key
- * @param {*} value
+ *
+ * @param {array} defaultOrder
+ * @param {function} handler handler works on the given sortModel and must return another sortModel
+ * @returns
  */
-const resolveByComparator = (comparator, key, value) => {
-  switch (comparator) {
-    case '':
-      return {};
-    case 'LIKE':
-      return likep(key, value);
-    case 'REGEXP':
-      return regexp(key, value, { encodeUri: false });
-    case 'NEQ':
-    case '!=':
-      return neq(key, value);
-    case '<':
-      return lt(key, value);
-    case '<=':
-      return lte(key, value);
-    case '>':
-      return gt(key, value);
-    case '>=':
-      return gte(key, value);
-    case 'EQ':
-    case '=':
-    default:
-      return eq(key, value);
-  }
-};
+function dataGridSortModelMapper(
+  defaultOrder = [{ field: 'id', sort: 'asc' }],
+  handler = undefined,
+) {
+  return (sortModel) => {
+    let o = defaultOrder;
+    if (sortModel && sortModel.length > 0) {
+      o = sortModel;
+    }
+    if (handler) {
+      o = handler(sortModel);
+    }
+    return JSON.stringify(o.map(({ field, sort }) => `${field} ${sort}`));
+  };
+}
 
-const filterToWhereItem = (filter, key) => {
-  let conjug = or;
-  let { filterVal } = filter;
-  if (filterVal && filterVal.and) {
-    conjug = and;
-    filterVal = filterVal.and;
-  }
-
-  if (Array.isArray(filterVal) && filterVal.length > 1) {
-    const valsOr = [];
-    for (const val of filterVal) {
-      let itemKey = key; let
-        value = val;
-      if (val && typeof val !== 'string') {
-        itemKey = val.field;
-        value = val.value;
+function dataGridSortModelHandler(name, newFields) {
+  return (sortModel) => {
+    if (Array.isArray(sortModel)) {
+      const sortModelC = [...sortModel];
+      const foundIndex = sortModelC.findIndex(({ field }) => field === name);
+      if (foundIndex > -1) {
+        const { sort } = sortModelC[foundIndex];
+        if (!newFields) {
+          sortModelC.splice(foundIndex, 1);
+          return sortModelC;
+        }
+        if (Array.isArray(newFields)) {
+          const newModels = newFields.map((f) => ({
+            field: f,
+            sort,
+          }));
+          sortModelC.splice(foundIndex, 1, ...newModels);
+          return sortModelC;
+        }
+        sortModelC.splice(foundIndex, 1, { field: newFields, sort });
+        return sortModelC;
       }
-      valsOr.push(resolveByComparator(filter.comparator, itemKey, value));
     }
-    return conjug(...valsOr);
-  }
-  return resolveByComparator(filter.comparator, key, filter.filterVal);
-};
-
-function losToTypeaheadSelected(data) {
-  if (!data) {
-    return [];
-  }
-  return [{
-    id: data.id,
-    label: speciesUtils.listOfSpeciesString(data),
-  }];
-}
-
-function makeWhere(filters) {
-  const whereItems = [];
-  const keys = Object.keys(filters).filter((k) => !!filters[k]);
-  // keys of filters are joined with 'and'
-  for (const key of keys) {
-    // array of filterVal are joined by 'or'
-    const item = filterToWhereItem(filters[key], key);
-    if (!miscUtils.isEmpty(item)) {
-      whereItems.push(item);
-    }
-  }
-  const andItems = and(...whereItems);
-
-  const wb = new WhereBuilder();
-  return wb.add(andItems).build();
-}
-
-function makeOrder(sortFields, sortOrder = 'ASC') {
-  let soUpperCase = sortOrder.toUpperCase();
-  if (soUpperCase !== 'ASC' && soUpperCase !== 'DESC') {
-    soUpperCase = 'ASC';
-  }
-  if (Array.isArray(sortFields)) {
-    return sortFields.map((f) => `${f} ${soUpperCase}`);
-  }
-  return [`${sortFields} ${soUpperCase}`];
-}
-
-function buildFilterOptionsFromKeys(keys) {
-  const obj = {};
-  Object.keys(keys).forEach((t) => {
-    const { text, label } = keys[t];
-    obj[t] = text || label;
-    // obj[t] = t;
-  });
-  return obj;
+    return sortModel;
+  };
 }
 
 export default {
-  losToTypeaheadSelected,
-  makeWhere,
-  makeOrder,
   buildFilterOptionsFromKeys,
-  // curateSearchFilters,
-  // curateSortFields,
+  dataGridSortModelMapper,
+  dataGridSortModelHandler,
 };

@@ -1,52 +1,52 @@
 import React from 'react';
 
-import {
-  ControlLabel, FormControl, FormGroup, Col,
-} from 'react-bootstrap';
+import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 
-import { LosName, SynonymListItem } from '@ibot/components';
+import {
+  AdminTextField, LosName, MUISynonymListItem,
+} from '@ibot/components';
 
 import config from 'config/config';
 
-// const CHECKLIST_PAGE = (id) => `/checklist/edit/${id}`;
+const useStyles = makeStyles(() => ({
+  authorInput: {
+    marginTop: 0,
+    '& .MuiInputBase-input': {
+      fontSize: 'small',
+      height: '0.8em',
+    },
+  },
+}));
 
 const MisidentifiedSynonymListItem = ({
   rowId,
   onChangeAuthor,
   data,
-  onRowDelete,
   editable = true,
 }) => {
+  const classes = useStyles();
   const { misidentificationAuthor } = data;
+
   return (
-    <SynonymListItem
+    <MUISynonymListItem
       editable={editable}
-      rowId={rowId}
       data={data}
       nameComponent={(props) => (
         // eslint-disable-next-line react/jsx-props-no-spreading
         <LosName {...props} />
       )}
       prefix={config.mappings.synonym.misidentification.prefix}
-      onRowDelete={onRowDelete}
     >
-      <FormGroup bsSize="sm">
-        <Col componentClass={ControlLabel} sm={2}>
-          Author:
-        </Col>
-        <Col xs={8}>
-          <FormControl
-            type="text"
-            value={misidentificationAuthor || ''}
-            placeholder="Misidentification Author"
-            onChange={(e) => onChangeAuthor(rowId, e.target.value)}
-          />
-        </Col>
-      </FormGroup>
-    </SynonymListItem>
+      <AdminTextField
+        className={classes.authorInput}
+        label="Misidentification Author"
+        value={misidentificationAuthor || ''}
+        onChange={(e) => onChangeAuthor(rowId, e.target.value)}
+      />
+    </MUISynonymListItem>
   );
 };
 
@@ -55,7 +55,6 @@ export default MisidentifiedSynonymListItem;
 MisidentifiedSynonymListItem.propTypes = {
   rowId: PropTypes.number.isRequired,
   data: SynonymType.type.isRequired,
-  onRowDelete: PropTypes.func.isRequired,
   onChangeAuthor: PropTypes.func.isRequired,
   editable: PropTypes.bool,
 };

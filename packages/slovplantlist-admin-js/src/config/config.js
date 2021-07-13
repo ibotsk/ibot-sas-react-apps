@@ -4,13 +4,15 @@ import uris from './uris';
 export default {
 
   constants: {
-    listOfSpeciesColumn: 'listOfSpecies',
-    ownership: 'ownerIds',
+    columns: {
+      speciesName: 'speciesName',
+      ownership: 'ownerIds',
+      checkedTimestampColumn: 'checkedTimestamp',
+    },
     ownershipRegexp: {
       start: '(\\,|^)',
       end: '(\\,|$)',
     },
-    checkedTimestampColumn: 'checkedTimestamp',
     checkedTimestampOptions: {
       checked: 'CHECKED',
       notChecked: 'NOT CHECKED',
@@ -28,6 +30,20 @@ export default {
     },
     labelColumnWidth: 3,
     contentColumnWidth: 9,
+    operators: {
+      contains: 'contains',
+      startsWith: 'startsWith',
+      endsWith: 'endsWith',
+      equals: 'equals',
+      notEquals: 'notEquals',
+      regexp: 'regexp',
+      is: 'is',
+      not: 'not',
+      after: 'after',
+      onOrAfter: 'onOrAfter',
+      before: 'before',
+      onOrBefore: 'onOrBefore',
+    },
   },
   nomenclature: {
     filter: {
@@ -59,37 +75,37 @@ export default {
       A: {
         key: 'A',
         text: 'Accepted name',
-        colour: '#57ab27',
+        color: 'success.main',
       },
       PA: {
         key: 'PA',
         text: 'Provisionally accepted',
-        colour: '#ee7f00',
+        color: 'success.light',
       },
       S: {
         key: 'S',
         text: 'Synonym',
-        colour: '#008fc8',
+        color: 'info.main',
       },
       DS: {
         key: 'DS',
         text: 'Doubtful synonym',
-        colour: '#0089a0',
+        color: 'info.dark',
       },
       U: {
         key: 'U',
         text: 'Unresolved',
-        colour: '#bb9d00',
+        color: 'warning.main',
       },
       PC: {
         key: 'PC',
         text: 'Parent combination',
-        colour: '#999',
+        color: 'text.disabled',
       },
       TP: {
         key: 'TP',
         text: 'Taxon position',
-        colour: '#999',
+        color: 'text.disabled',
       },
     },
     genusType: {

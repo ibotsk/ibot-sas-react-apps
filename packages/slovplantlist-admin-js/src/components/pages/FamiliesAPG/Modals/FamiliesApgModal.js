@@ -1,91 +1,82 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useState, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
-  Button, Modal, Col, Row,
-  Form, FormGroup, FormControl, ControlLabel,
-} from 'react-bootstrap';
+  DialogTitle, DialogContent, DialogActions,
+  Button,
+} from '@material-ui/core';
 
 import PropTypes from 'prop-types';
 
-import { TimestampCheck } from '@ibot/components';
+import {
+  AdminEditDialog,
+  AdminTextField, AdminTimestampCheck, DividerSpaced,
+} from '@ibot/components';
 
 import { notifications } from 'utils';
 import { format } from '@ibot/utils';
 
 import { familiesFacade } from 'facades';
 
-const VALIDATION_STATE_SUCCESS = 'success';
-const VALIDATION_STATE_ERROR = 'error';
+const FamiliesApgModal = ({ id, show, onHide }) => {
+  const [name, setName] = useState('');
+  const [vernacular, setVernacular] = useState('');
+  const [checkedTimestamp, setCheckedTimestamp] = useState('');
+  const [checkedBy, setCheckedBy] = useState('');
 
-const titleColWidth = 2;
-const mainColWidth = 10;
+  const accessToken = useSelector((state) => state.authentication.accessToken);
+  const username = useSelector((state) => state.user.username);
 
-const initialValues = {
-  id: undefined,
-  name: '',
-  vernacular: '',
-  checkedTimestamp: '',
-  checkedBy: '',
-};
-
-class FamiliesApgModal extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      ...initialValues,
+  const handleEnter = useCallback(() => {
+    const fetch = async () => {
+      if (id) {
+        const data = await familiesFacade.getFamilyApgByIdCurated(
+          id, accessToken,
+        );
+        setName(data.name);
+        setVernacular(data.vernacular);
+        setCheckedTimestamp(data.checkedTimestamp);
+        setCheckedBy(data.checkedBy);
+      }
     };
-  }
 
-  onEnter = async () => {
-    const { id, accessToken } = this.props;
-    if (id) {
-      const data = await familiesFacade.getFamilyApgByIdCurated(
-        id, accessToken,
-      );
-      this.setState({ ...data });
-    }
-  }
+    fetch();
+  }, [id, accessToken]);
 
-  getValidationState = () => {
-    const { name } = this.state;
-    if (name.length > 0) {
-      return VALIDATION_STATE_SUCCESS;
-    }
-    return VALIDATION_STATE_ERROR;
-  }
+  const isFamilyApgInvalid = () => {
+    const is = !name && name.length === 0;
+    return {
+      result: is,
+      props: {
+        error: is,
+        helperText: (is ? 'Must not be empty' : undefined),
+      },
+    };
+  };
 
-  handleChange = (e) => {
-    this.setState({
-      [e.target.id]: e.target.value,
-    });
-  }
-
-  handleHide = () => {
-    this.setState({
-      ...initialValues,
-    });
-    const { onHide } = this.props;
+  const handleHide = () => {
+    setName('');
+    setVernacular('');
+    setCheckedBy('');
+    setCheckedTimestamp('');
     onHide();
-  }
+  };
 
-  handleCheck = () => {
-    const { user: { username } } = this.props;
-    this.setState({
-      checkedTimestamp: format.timestampISO(),
-      checkedBy: username,
-    });
-  }
+  const handleCheck = () => {
+    setCheckedTimestamp(format.timestampISO());
+    setCheckedBy(username);
+  };
 
-  handleSave = async () => {
-    if (this.getValidationState() === VALIDATION_STATE_SUCCESS) {
-      const data = this.state;
-      const { accessToken } = this.props;
+  const handleSave = async () => {
+    if (!isFamilyApgInvalid().result) {
       try {
+        const data = {
+          id, name, vernacular, checkedBy, checkedTimestamp,
+        };
         await familiesFacade.saveFamilyApg(data, accessToken);
         notifications.success('Saved');
-        this.handleHide();
+        handleHide();
       } catch (error) {
         notifications.error('Error saving');
         throw error;
@@ -93,95 +84,59 @@ class FamiliesApgModal extends Component {
     } else {
       notifications.error('Family name must not be empty!');
     }
-  }
+  };
 
-  render() {
-    const { show, id } = this.props;
-    const {
-      name, vernacular, checkedTimestamp, checkedBy,
-    } = this.state;
-    return (
-      <Modal show={show} onHide={this.handleHide} onEnter={this.onEnter}>
-        <Modal.Header closeButton>
-          <Modal.Title>
-            {id ? 'Edit family APG' : 'Create new family APG'}
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form horizontal>
-            <FormGroup
-              controlId="name"
-              bsSize="sm"
-              validationState={this.getValidationState()}
-            >
-              <Col componentClass={ControlLabel} sm={titleColWidth}>
-                Name
-              </Col>
-              <Col sm={mainColWidth}>
-                <FormControl
-                  type="text"
-                  value={name}
-                  placeholder="Family name"
-                  onChange={this.handleChange}
-                />
-                <FormControl.Feedback />
-              </Col>
-            </FormGroup>
-            <FormGroup
-              controlId="vernacular"
-              bsSize="sm"
-            >
-              <Col componentClass={ControlLabel} sm={titleColWidth}>
-                Vernacular
-              </Col>
-              <Col sm={mainColWidth}>
-                <FormControl
-                  type="text"
-                  value={vernacular}
-                  placeholder="Vernacular"
-                  onChange={this.handleChange}
-                />
-                <FormControl.Feedback />
-              </Col>
-            </FormGroup>
-            <hr />
-            <Row>
-              <Col smOffset={titleColWidth} sm={mainColWidth}>
-                <TimestampCheck
-                  isChecked={!!checkedTimestamp}
-                  checkedTimestamp={checkedTimestamp}
-                  checkedBy={checkedBy}
-                  onCheck={this.handleCheck}
-                />
-              </Col>
-            </Row>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={this.handleHide}>Close</Button>
-          <Button bsStyle="primary" onClick={this.handleSave}>
-            Save changes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  }
-}
+  return (
+    <AdminEditDialog
+      open={show}
+      onEnter={handleEnter}
+      onClose={handleHide}
+      aria-labelledby="genus-dialog"
+    >
+      <DialogTitle id="family-dialog-title">
+        {id
+          ? `Edit family APG - ID ${id} - ${name}`
+          : 'Create new family APG'}
+      </DialogTitle>
+      <DialogContent dividers>
+        <AdminTextField
+          fullWidth
+          id="name"
+          label="Name"
+          value={name || ''}
+          onChange={(e) => setName(e.target.value)}
+          {...(isFamilyApgInvalid().props)}
+        />
+        <AdminTextField
+          fullWidth
+          id="vernacular"
+          label="Vernacular"
+          value={vernacular || ''}
+          onChange={(e) => setVernacular(e.target.value)}
+        />
+        <DividerSpaced />
+        <AdminTimestampCheck
+          isChecked={!!checkedTimestamp}
+          checkedTimestamp={checkedTimestamp}
+          checkedBy={checkedBy}
+          onCheck={handleCheck}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleHide}>Close</Button>
+        <Button color="primary" onClick={handleSave}>
+          Save changes
+        </Button>
+      </DialogActions>
+    </AdminEditDialog>
+  );
+};
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-  user: state.user,
-});
-
-export default connect(mapStateToProps)(FamiliesApgModal);
+export default FamiliesApgModal;
 
 FamiliesApgModal.propTypes = {
-  show: PropTypes.bool.isRequired,
   id: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-  accessToken: PropTypes.string.isRequired,
-  user: PropTypes.shape({
-    username: PropTypes.string.isRequired,
-  }).isRequired,
+  show: PropTypes.bool.isRequired,
   onHide: PropTypes.func.isRequired,
 };
 

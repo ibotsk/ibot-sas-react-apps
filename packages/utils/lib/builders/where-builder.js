@@ -28,6 +28,17 @@ const resolveEncode = (val, { encodeUri, escapeQuotes }) => {
   return misc.replaceNonBreakingSpaces(encoded);
 };
 
+const makeConjug = (objs, op) => {
+  const notEmpty = objs.filter((o) => !misc.isEmpty(o));
+  if (notEmpty.length === 0) {
+    return {};
+  }
+  if (notEmpty.length === 1) {
+    return notEmpty[0];
+  }
+  return { [op]: [...notEmpty] };
+}
+
 /**
  * 
  * @param {string} key 
@@ -79,11 +90,10 @@ export const lte = (key, value, options = {
 }) => ({
   [key]: { lte: resolveEncode(value, options) },
 });
-export const and = (...objs) => {
-  if (objs.length === 1) {
-    return objs[0];
-  }
-  return { and: [...objs] };
-};
-export const or = (...objs) => ({ or: [...objs] });
+export const and = (...objs) => (
+  makeConjug(objs, 'and')
+);
+export const or = (...objs) => (
+  makeConjug(objs, 'or')
+);
 export const inq = (key, ...vals) => ({ [key]: { inq: [...vals] } });

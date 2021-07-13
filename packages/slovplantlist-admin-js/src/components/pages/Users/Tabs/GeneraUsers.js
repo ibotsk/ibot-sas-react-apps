@@ -1,111 +1,75 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import {
-  Button, Glyphicon,
-} from 'react-bootstrap';
+import { AdminDataGrid } from '@ibot/components';
+import { hooks } from '@ibot/core';
 
-import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-
-import PropTypes from 'prop-types';
-
-import GeneraList from 'components/segments/GeneraList';
+import { tablesFacade } from 'facades';
 
 import config from 'config/config';
-
-import commonHooks from 'components/segments/hooks';
+import { whereUtils, helperUtils } from 'utils';
 
 import UsersGeneraModal from './Modals/UsersGeneraModal';
+
+import { columns, defaultSortModel } from './Table/columns-genera-users';
 
 const getAllUri = config.uris.usersUri.getAllWGeneraUri;
 const getCountUri = config.uris.usersUri.countUri;
 
-const columns = [
-  {
-    dataField: 'id',
-    text: 'ID',
-  },
-  {
-    dataField: 'username',
-    text: 'User Name',
-    filter: textFilter(),
-    sort: true,
-  },
-  {
-    dataField: 'genera',
-    text: 'Assigned Genera',
-  },
-];
+const getTotalCount = tablesFacade.getCountForHook(getCountUri);
+const getAll = tablesFacade.getAllForHook(getAllUri);
 
-const defaultSorted = [{
-  dataField: 'username',
-  order: 'asc',
-}];
+const {
+  pagination: { sizePerPageList },
+} = config;
+const pageSizesList = sizePerPageList.map(({ value }) => value);
 
-const GenusButtonAddEdit = ({ onClick }) => (
-  <Button
-    bsSize="small"
-    onClick={onClick}
-    title="Add or edit"
-  >
-    <Glyphicon glyph="plus" />
-    /
-    <Glyphicon glyph="pencil" />
-  </Button>
-);
+const GeneraUsers = () => {
+  const accessToken = useSelector((state) => state.authentication.accessToken);
 
-const GeneraUsers = ({ accessToken }) => {
   const {
     showModal, editId,
     handleShowModal, handleHideModal,
-  } = commonHooks.useModal();
+  } = hooks.useModal();
 
   const {
-    where, order, setValues,
-  } = commonHooks.useTableChange();
+    page, pageSize, order, where,
+    handlePageChange, handleOrderChange, handlePageSizeChange,
+    handleWhereChange,
+  } = hooks.useDataGridChange(null, 0, pageSizesList[2]);
 
-  const { data } = commonHooks.useTableData(
-    getCountUri, getAllUri, accessToken, where, 1,
-    undefined, order, showModal,
+  const {
+    data, totalSize, isLoading,
+  } = hooks.useAdminTableData(
+    getTotalCount, getAll, where, page, pageSize, order, accessToken, showModal,
   );
 
-  const formatResult = (records) => records.map((u) => ({
-    id: u.id,
-    username: u.username,
-    genera: (
-      <div>
-        <GeneraList key={u.id} data={u.genera} />
-        <GenusButtonAddEdit onClick={() => handleShowModal(u.id)} />
-      </div>
-    ),
-  }));
-
-  const onTableChange = (type, {
-    filters,
-    sortField,
-    sortOrder,
-  }) => (
-    setValues({
-      filters,
-      sortField,
-      sortOrder,
-    })
+  const handleSortModelChange = (params) => (
+    handleOrderChange(
+      params, helperUtils.dataGridSortModelMapper(defaultSortModel),
+    )
+  );
+  const handleFilterModelChange = (params) => (
+    handleWhereChange(params, whereUtils.dataGridFilterModelToWhereString)
   );
 
   return (
     <div>
-      <BootstrapTable
-        hover
-        striped
-        condensed
-        keyField="id"
-        data={formatResult(data)}
-        columns={columns}
-        filter={filterFactory()}
-        defaultSorted={defaultSorted}
-        onTableChange={onTableChange}
-      />
+      <div style={{ height: '70vh', width: '100%' }}>
+        <AdminDataGrid
+          rows={data}
+          columns={columns(handleShowModal)}
+          rowCount={totalSize}
+          pageSize={pageSize}
+          onPageSizeChange={handlePageSizeChange}
+          rowsPerPageOptions={pageSizesList}
+          onPageChange={handlePageChange}
+          loading={isLoading}
+          sortModel={defaultSortModel}
+          onSortModelChange={handleSortModelChange}
+          onFilterModelChange={handleFilterModelChange}
+        />
+      </div>
       <UsersGeneraModal
         user={data.find((u) => u.id === editId)}
         show={showModal}
@@ -115,16 +79,4 @@ const GeneraUsers = ({ accessToken }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  accessToken: state.authentication.accessToken,
-});
-
-export default connect(mapStateToProps)(GeneraUsers);
-
-GenusButtonAddEdit.propTypes = {
-  onClick: PropTypes.func.isRequired,
-};
-
-GeneraUsers.propTypes = {
-  accessToken: PropTypes.string.isRequired,
-};
+export default GeneraUsers;

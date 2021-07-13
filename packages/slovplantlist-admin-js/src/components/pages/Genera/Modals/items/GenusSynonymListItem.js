@@ -1,17 +1,16 @@
 import React from 'react';
 
-import PropTypes from 'prop-types';
 import SynonymType from 'components/propTypes/synonym';
 import GenusType from 'components/propTypes/genus';
 
-import { GenusName, SynonymListItem } from '@ibot/components';
+import {
+  GenusName, MUISynonymListItem,
+} from '@ibot/components';
 
 import config from 'config/config';
 
 const GenusSynonymListItem = ({
-  rowId,
   data,
-  onRowDelete,
   // eslint-disable-next-line no-unused-vars
   assignedToName = undefined,
 }) => (
@@ -22,12 +21,10 @@ const GenusSynonymListItem = ({
   //     newAccepted={assignedToName}
   //   />
   // );
-  <SynonymListItem
-    rowId={rowId}
+  <MUISynonymListItem
     data={data}
     nameComponent={GenusName}
     prefix={config.mappings.synonym.taxonomic.prefix}
-    onRowDelete={onRowDelete}
   // additions={Addition}
   />
 );
@@ -35,9 +32,7 @@ const GenusSynonymListItem = ({
 export default GenusSynonymListItem;
 
 GenusSynonymListItem.propTypes = {
-  rowId: PropTypes.number.isRequired,
   data: SynonymType.type.isRequired,
-  onRowDelete: PropTypes.func.isRequired,
   assignedToName: GenusType.type,
 };
 

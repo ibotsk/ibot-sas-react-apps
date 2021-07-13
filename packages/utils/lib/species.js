@@ -60,6 +60,7 @@ const invalidDesignation = (name, syntype) => {
 
 function listOfSpeciesFormat(nomenclature, options = {}) {
   const opts = {
+    isAuthors: true,
     isPublication: false,
     isTribus: false,
     isAggregates: false,
@@ -89,7 +90,7 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
   const infras = infraTaxa(nomenclature);
 
   if (species === subsp || species === varieta || species === forma) {
-    if (authors) {
+    if (opts.isAuthors && authors) {
       name.push(plain(authors));
     }
     isAuthorLast = false;
@@ -97,7 +98,7 @@ function listOfSpeciesFormat(nomenclature, options = {}) {
 
   name = name.concat(infras);
 
-  if (isAuthorLast && authors) {
+  if (opts.isAuthors && isAuthorLast && authors) {
     name.push(plain(authors));
   }
 
@@ -146,6 +147,16 @@ function listOfSpeciesString(name, options) {
   return nameArr.map(({ string }) => string).join(' ');
 }
 
+function listOfSpeciesIdLabelFormatter(name) {
+  if (!name) {
+    return {};
+  }
+  return {
+    id: name.id,
+    label: listOfSpeciesString(name),
+  };
+}
+
 /**
  * Creates equality 
  * @param {object} a 
@@ -162,5 +173,6 @@ function areEqualSpecies(a, b, properties = undefined) {
 export default {
   listOfSpeciesFormat,
   listOfSpeciesString,
+  listOfSpeciesIdLabelFormatter,
   areEqualSpecies,
 };

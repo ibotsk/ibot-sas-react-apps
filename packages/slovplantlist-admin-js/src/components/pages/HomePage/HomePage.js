@@ -1,40 +1,30 @@
 import React from 'react';
-import { NotificationContainer } from 'react-notifications';
 import { Switch } from 'react-router-dom';
 
 import Users from 'components/pages/Users/Users';
 import Checklist from 'components/pages/Checklist/Checklist';
-import ChecklistImport from 'components/pages/Checklist/Import/ChecklistImport';
 import Genera from 'components/pages/Genera/Genera';
 import FamiliesAPG from 'components/pages/FamiliesAPG/FamiliesAPG';
 import Families from 'components/pages/Families/Families';
 
 import PrivateRoute from 'components/wrappers/PrivateRoute';
+import Dashboard from 'components/dashboard/Dashboard';
 
-import Footer from './Footer';
-import CNavbar from './Navbar/Navbar';
 import Logout from './Logout';
 
 const Routing = () => (
   <Switch>
-    <PrivateRoute exact path="/checklist" component={Checklist} />
-    <PrivateRoute path="/checklist/import" component={ChecklistImport} />
-    <PrivateRoute exact path="/genera" component={Genera} />
-    <PrivateRoute exact path="/families-apg" component={FamiliesAPG} />
-    <PrivateRoute exact path="/families" component={Families} />
-    <PrivateRoute exact path="/users" component={Users} />
-    <PrivateRoute exact path="/logout" component={Logout} />
-
+    <PrivateRoute path="/checklist" component={Checklist} />
+    <PrivateRoute path="/genera" component={Genera} />
+    <PrivateRoute path="/families-apg" component={FamiliesAPG} />
+    <PrivateRoute path="/families" component={Families} />
+    <PrivateRoute path="/users" component={Users} />
+    <PrivateRoute path="/logout" component={Logout} />
   </Switch>
 );
 
 const HomePage = () => (
-  <>
-    <CNavbar />
-    <Routing />
-    <Footer />
-    <NotificationContainer />
-  </>
+  <Dashboard routing={Routing} />
 );
 
 export default HomePage;
