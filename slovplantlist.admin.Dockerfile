@@ -20,6 +20,7 @@ RUN yarn --cwd packages/slovplantlist-admin-js run build
 
 FROM nginx:1.12-alpine
 COPY --from=build-stage /usr/src/app/packages/slovplantlist-admin-js/build /usr/share/nginx/html
+COPY ./nginx-config/default-nossl.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
