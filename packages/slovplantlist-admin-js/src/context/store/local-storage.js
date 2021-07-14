@@ -14,7 +14,6 @@ export function loadState() {
 
 export function saveState(state) {
   try {
-    console.log({ saveState: state });
     const serializedState = JSON.stringify(state);
     localStorage.setItem(KEY_STATE, serializedState);
   } catch {

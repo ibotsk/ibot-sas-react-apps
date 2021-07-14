@@ -55,7 +55,9 @@ const CustomPagination = () => {
         <NativeSelect
           disableUnderline
           value={state.pagination.pageSize}
-          onChange={(event) => apiRef.current.setPageSize(event.target.value)}
+          onChange={(event) => apiRef.current.setPageSize(
+            parseInt(event.target.value, 10),
+          )}
           inputProps={{
             className: classes.selectInput,
           }}

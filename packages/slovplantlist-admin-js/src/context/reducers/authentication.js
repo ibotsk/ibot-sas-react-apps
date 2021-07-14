@@ -11,10 +11,8 @@ export const authentication = (state = initialState, action) => {
     case SET_AUTHENTICATED:
       return {
         ...state,
-        ...{
-          accessToken: action.accessToken,
-          isAuthenticated: action.isAuthenticated,
-        },
+        accessToken: action.accessToken,
+        isAuthenticated: action.isAuthenticated,
       };
     case UNSET_AUTHENTICATED:
       return {

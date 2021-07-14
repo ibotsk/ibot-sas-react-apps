@@ -27,6 +27,10 @@ function dataGridSortModelMapper(
   };
 }
 
+function dataGridSortModelStringify(sm = []) {
+  return JSON.stringify(sm.map(({ field, sort }) => `${field} ${sort}`));
+}
+
 function dataGridSortModelHandler(name, newFields) {
   return (sortModel) => {
     if (Array.isArray(sortModel)) {
@@ -57,5 +61,6 @@ function dataGridSortModelHandler(name, newFields) {
 export default {
   buildFilterOptionsFromKeys,
   dataGridSortModelMapper,
+  dataGridSortModelStringify,
   dataGridSortModelHandler,
 };

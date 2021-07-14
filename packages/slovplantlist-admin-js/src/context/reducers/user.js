@@ -8,12 +8,10 @@ export const user = (state = initialState, action) => {
     case SET_USER:
       return {
         ...state,
-        ...{
-          id: action.id,
-          role: action.role,
-          userGenera: action.userGenera,
-          username: action.username,
-        },
+        id: action.id,
+        role: action.role,
+        userGenera: action.userGenera,
+        username: action.username,
       };
     case UNSET_USER:
       return {
