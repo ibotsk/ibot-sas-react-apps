@@ -8,6 +8,14 @@ import {
 import {
   defaultSortModel as defaultSortModelFamiliesApg,
 } from 'components/pages/FamiliesAPG/Table/columns';
+import {
+  defaultSortModel as defaultSortModelGenera,
+} from 'components/pages/Genera/Table/columns';
+
+const defaultFilterModel = {
+  items: [{ columnField: 'id', operatorValue: 'contains' }],
+  linkOperator: 'and',
+};
 
 const {
   dataGridChangeReducer: familiesReducer,
@@ -15,6 +23,7 @@ const {
 } = reducers
   .createDGActionsAndReducer('families', {
     sortModel: defaultSortModelFamilies,
+    filterModel: defaultFilterModel,
   });
 
 const {
@@ -23,6 +32,16 @@ const {
 } = reducers
   .createDGActionsAndReducer('familiesApg', {
     sortModel: defaultSortModelFamiliesApg,
+    filterModel: defaultFilterModel,
+  });
+
+const {
+  dataGridChangeReducer: generaReducer,
+  ...generaActions
+} = reducers
+  .createDGActionsAndReducer('genera', {
+    sortModel: defaultSortModelGenera,
+    filterModel: defaultFilterModel,
   });
 
 export const {
@@ -37,8 +56,15 @@ export const {
   changeSortModelAction: changeSortModelActionFamiliesApg,
   changeFilterModelAction: changeFilterModelActionFamiliesApg,
 } = familiesApgActions;
+export const {
+  changePageAction: changePageActionGenera,
+  changePageSizeAction: changePageSizeActionGenera,
+  changeSortModelAction: changeSortModelActionGenera,
+  changeFilterModelAction: changeFilterModelActionGenera,
+} = generaActions;
 
 export const datagrid = combineReducers({
   families: familiesReducer,
   familiesApg: familiesApgReducer,
+  genera: generaReducer,
 });
