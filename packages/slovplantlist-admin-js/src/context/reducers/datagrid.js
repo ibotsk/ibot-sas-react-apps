@@ -11,6 +11,9 @@ import {
 import {
   defaultSortModel as defaultSortModelGenera,
 } from 'components/pages/Genera/Table/columns';
+import {
+  defaultSortModel as defaultSortModelChecklist,
+} from 'components/pages/Checklist/Table/columns';
 
 const defaultFilterModel = {
   items: [{ columnField: 'id', operatorValue: 'contains' }],
@@ -20,29 +23,34 @@ const defaultFilterModel = {
 const {
   dataGridChangeReducer: familiesReducer,
   ...familiesActions
-} = reducers
-  .createDGActionsAndReducer('families', {
-    sortModel: defaultSortModelFamilies,
-    filterModel: defaultFilterModel,
-  });
+} = reducers.createDGActionsAndReducer('families', {
+  sortModel: defaultSortModelFamilies,
+  filterModel: defaultFilterModel,
+});
 
 const {
   dataGridChangeReducer: familiesApgReducer,
   ...familiesApgActions
-} = reducers
-  .createDGActionsAndReducer('familiesApg', {
-    sortModel: defaultSortModelFamiliesApg,
-    filterModel: defaultFilterModel,
-  });
+} = reducers.createDGActionsAndReducer('familiesApg', {
+  sortModel: defaultSortModelFamiliesApg,
+  filterModel: defaultFilterModel,
+});
 
 const {
   dataGridChangeReducer: generaReducer,
   ...generaActions
-} = reducers
-  .createDGActionsAndReducer('genera', {
-    sortModel: defaultSortModelGenera,
-    filterModel: defaultFilterModel,
-  });
+} = reducers.createDGActionsAndReducer('genera', {
+  sortModel: defaultSortModelGenera,
+  filterModel: defaultFilterModel,
+});
+
+const {
+  dataGridChangeReducer: checklistReducer,
+  ...checklistActions
+} = reducers.createDGActionsAndReducer('checklist', {
+  sortModel: defaultSortModelChecklist,
+  filterModel: defaultFilterModel,
+});
 
 export const {
   changePageAction: changePageActionFamilies,
@@ -62,9 +70,16 @@ export const {
   changeSortModelAction: changeSortModelActionGenera,
   changeFilterModelAction: changeFilterModelActionGenera,
 } = generaActions;
+export const {
+  changePageAction: changePageActionChecklist,
+  changePageSizeAction: changePageSizeActionChecklist,
+  changeSortModelAction: changeSortModelActionChecklist,
+  changeFilterModelAction: changeFilterModelActionChecklist,
+} = checklistActions;
 
 export const datagrid = combineReducers({
   families: familiesReducer,
   familiesApg: familiesApgReducer,
   genera: generaReducer,
+  checklist: checklistReducer,
 });
