@@ -1,10 +1,29 @@
 /* eslint-disable import/prefer-default-export */
+
+const setColumnVisibility = (columns, field, isVisible) => {
+  const columnsCopy = { ...columns };
+  const column = columnsCopy[field];
+
+  if (column) {
+    columnsCopy[field] = {
+      ...column,
+      hide: !isVisible,
+    };
+  } else {
+    columnsCopy[field] = {
+      hide: !isVisible,
+    };
+  }
+  return columnsCopy;
+};
+
 export function createDGActionsAndReducer(tableName, initialState = {}) {
   const initial = {
     page: 0,
     pageSize: 100,
     sortModel: [],
     filterModel: {},
+    columnsChanges: {},
     ...initialState,
   };
 
@@ -13,6 +32,7 @@ export function createDGActionsAndReducer(tableName, initialState = {}) {
   const CHANGE_PAGE_SIZE = `DG_CHANGE_PAGE_SIZE_${tn}`;
   const CHANGE_SORT_MODEL = `DG_CHANGE_SORT_MODEL_${tn}`;
   const CHANGE_FILTER_MODEL = `DG_CHANGE_FILTER_MODEL_${tn}`;
+  const CHANGE_COLUMN_VISIBILITY = `DG_CHANGE_COLUMN_VISIBILITY_${tn}`;
 
   return {
     changePageAction: (page) => ({
@@ -30,6 +50,11 @@ export function createDGActionsAndReducer(tableName, initialState = {}) {
     changeFilterModelAction: (filterModel) => ({
       type: CHANGE_FILTER_MODEL,
       filterModel: filterModel || initial.filterModel,
+    }),
+    changeColumnVisibilityAction: (field, isVisible) => ({
+      type: CHANGE_COLUMN_VISIBILITY,
+      field,
+      isVisible,
     }),
 
     dataGridChangeReducer: (state = initial, action) => {
@@ -53,6 +78,13 @@ export function createDGActionsAndReducer(tableName, initialState = {}) {
           return {
             ...state,
             filterModel: action.filterModel,
+          };
+        case CHANGE_COLUMN_VISIBILITY:
+          return {
+            ...state,
+            columnsChanges: setColumnVisibility(
+              state.columnChanges, action.field, action.isVisible,
+            ),
           };
         default:
           return state;

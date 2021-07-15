@@ -57,24 +57,28 @@ export const {
   changePageSizeAction: changePageSizeActionFamilies,
   changeSortModelAction: changeSortModelActionFamilies,
   changeFilterModelAction: changeFilterModelActionFamilies,
+  changeColumnVisibilityAction: changeColumnVisibilityActionFamilies,
 } = familiesActions;
 export const {
   changePageAction: changePageActionFamiliesApg,
   changePageSizeAction: changePageSizeActionFamiliesApg,
   changeSortModelAction: changeSortModelActionFamiliesApg,
   changeFilterModelAction: changeFilterModelActionFamiliesApg,
+  changeColumnVisibilityAction: changeColumnVisibilityActionFamiliesApg,
 } = familiesApgActions;
 export const {
   changePageAction: changePageActionGenera,
   changePageSizeAction: changePageSizeActionGenera,
   changeSortModelAction: changeSortModelActionGenera,
   changeFilterModelAction: changeFilterModelActionGenera,
+  changeColumnVisibilityAction: changeColumnVisibilityActionGenera,
 } = generaActions;
 export const {
   changePageAction: changePageActionChecklist,
   changePageSizeAction: changePageSizeActionChecklist,
   changeSortModelAction: changeSortModelActionChecklist,
   changeFilterModelAction: changeFilterModelActionChecklist,
+  changeColumnVisibilityAction: changeColumnVisibilityActionChecklist,
 } = checklistActions;
 
 export const datagrid = combineReducers({

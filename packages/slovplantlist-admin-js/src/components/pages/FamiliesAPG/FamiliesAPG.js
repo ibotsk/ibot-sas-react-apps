@@ -22,6 +22,7 @@ import {
   changePageActionFamiliesApg,
   changePageSizeActionFamiliesApg,
   changeSortModelActionFamiliesApg,
+  changeColumnVisibilityActionFamiliesApg,
 } from 'context/reducers/datagrid';
 
 import FamiliesApgModal from './Modals/FamiliesApgModal';
@@ -42,7 +43,7 @@ const FamiliesAPG = () => {
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
   const {
-    page, pageSize, sortModel, filterModel,
+    page, pageSize, sortModel, filterModel, columnsChanges,
   } = useSelector((state) => state.datagrid.familiesApg);
 
   const dispatch = useDispatch();
@@ -74,6 +75,14 @@ const FamiliesAPG = () => {
   const handleFilterModelChange = ({ filterModel: fm }) => (
     dispatch(changeFilterModelActionFamiliesApg(fm))
   );
+  const handleColumnVisibilityChange = ({ field, isVisible }) => (
+    dispatch(changeColumnVisibilityActionFamiliesApg(field, isVisible))
+  );
+
+  const gridColumns = columns(user.role, handleShowModal).map((c) => ({
+    ...c,
+    ...columnsChanges[c.field],
+  }));
 
   return (
     <div id="families-apg">
@@ -101,7 +110,7 @@ const FamiliesAPG = () => {
       <div style={{ height: '70vh', width: '100%' }}>
         <AdminDataGrid
           rows={data}
-          columns={columns(user.role, handleShowModal)}
+          columns={gridColumns}
           loading={isLoading}
           page={page}
           pageSize={pageSize}
@@ -113,6 +122,7 @@ const FamiliesAPG = () => {
           onPageChange={handlePageChange}
           onSortModelChange={handleSortModelChange}
           onFilterModelChange={handleFilterModelChange}
+          onColumnVisibilityChange={handleColumnVisibilityChange}
         />
       </div>
       <FamiliesApgModal

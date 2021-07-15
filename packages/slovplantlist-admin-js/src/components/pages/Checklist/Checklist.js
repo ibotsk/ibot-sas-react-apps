@@ -31,6 +31,7 @@ import {
   changePageSizeActionChecklist,
   changeSortModelActionChecklist,
   changeFilterModelActionChecklist,
+  changeColumnVisibilityActionChecklist,
 } from 'context/reducers/datagrid';
 
 import { columns } from './Table/columns';
@@ -76,7 +77,7 @@ const Checklist = () => {
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
   const {
-    page, pageSize, sortModel, filterModel,
+    page, pageSize, sortModel, filterModel, columnsChanges,
   } = useSelector((state) => state.datagrid.checklist);
 
   const dispatch = useDispatch();
@@ -113,6 +114,15 @@ const Checklist = () => {
   const handleFilterModelChange = async ({ filterModel: fm }) => (
     dispatch(changeFilterModelActionChecklist(fm))
   );
+  const handleColumnVisibilityChange = ({ field, isVisible }) => (
+    dispatch(changeColumnVisibilityActionChecklist(field, isVisible))
+  );
+
+  const gridColumns = columns(user.role === mappings.userRole.author.name,
+    user, handleShowEditModal).map((c) => ({
+    ...c,
+    ...columnsChanges[c.field],
+  }));
 
   return (
     <div id="checklist">
@@ -158,11 +168,7 @@ const Checklist = () => {
       <div style={{ height: '70vh', width: '100%' }}>
         <AdminDataGrid
           rows={data}
-          columns={columns(
-            user.role === mappings.userRole.author.name,
-            user,
-            handleShowEditModal,
-          )}
+          columns={gridColumns}
           loading={isLoading}
           page={page}
           pageSize={pageSize}
@@ -174,6 +180,7 @@ const Checklist = () => {
           onPageChange={handlePageChange}
           onSortModelChange={handleSortModelChange}
           onFilterModelChange={handleFilterModelChange}
+          onColumnVisibilityChange={handleColumnVisibilityChange}
         />
       </div>
       <SpeciesRecordModal

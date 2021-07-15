@@ -23,6 +23,7 @@ import {
   changePageSizeActionGenera,
   changeSortModelActionGenera,
   changeFilterModelActionGenera,
+  changeColumnVisibilityActionGenera,
 } from 'context/reducers/datagrid';
 
 import GeneraModal from './Modals/GeneraModal';
@@ -43,7 +44,7 @@ const Genera = () => {
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
   const {
-    page, pageSize, sortModel, filterModel,
+    page, pageSize, sortModel, filterModel, columnsChanges,
   } = useSelector((state) => state.datagrid.genera);
 
   const dispatch = useDispatch();
@@ -74,6 +75,14 @@ const Genera = () => {
   const handleFilterModelChange = ({ filterModel: fm }) => (
     dispatch(changeFilterModelActionGenera(fm))
   );
+  const handleColumnVisibilityChange = ({ field, isVisible }) => (
+    dispatch(changeColumnVisibilityActionGenera(field, isVisible))
+  );
+
+  const gridColumns = columns(user.role, handleShowModal).map((c) => ({
+    ...c,
+    ...columnsChanges[c.field],
+  }));
 
   return (
     <>
@@ -101,7 +110,7 @@ const Genera = () => {
       <div style={{ height: '70vh', width: '100%' }}>
         <AdminDataGrid
           rows={data}
-          columns={columns(user.role, handleShowModal)}
+          columns={gridColumns}
           loading={isLoading}
           page={page}
           pageSize={pageSize}
@@ -113,6 +122,7 @@ const Genera = () => {
           onPageChange={handlePageChange}
           onSortModelChange={handleSortModelChange}
           onFilterModelChange={handleFilterModelChange}
+          onColumnVisibilityChange={handleColumnVisibilityChange}
         />
       </div>
       <GeneraModal
