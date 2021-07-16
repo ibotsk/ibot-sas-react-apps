@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import {
   Toolbar, Button, Typography,
@@ -11,16 +11,23 @@ import {
 import Can from 'components/segments/auth/Can';
 
 import { PageTitle, AdminDataGrid } from '@ibot/components';
-import { hooks } from '@ibot/core';
+import { hooks, helpers } from '@ibot/core';
 
 import config from 'config/config';
 
 import { helperUtils, whereUtils } from 'utils';
 
 import { tablesFacade } from 'facades';
+import {
+  changePageActionGenera as changePageAction,
+  changePageSizeActionGenera as changePageSizeAction,
+  changeSortModelActionGenera as changeSortModelAction,
+  changeFilterModelActionGenera as changeFilterModelAction,
+  changeColumnVisibilityActionGenera as changeColumnVisibilityAction,
+} from 'context/reducers/datagrid';
 
 import GeneraModal from './Modals/GeneraModal';
-import { columns, defaultSortModel } from './Table/columns';
+import { columns } from './Table/columns';
 
 const getAllUri = config.uris.generaUri.getAllWFilterUri;
 const getCountUri = config.uris.generaUri.countUri;
@@ -36,33 +43,41 @@ const pageSizesList = sizePerPageList.map(({ value }) => value);
 const Genera = () => {
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
+  const {
+    page, pageSize, sortModel, filterModel, columnsChanges,
+  } = useSelector((state) => state.datagrid.genera);
+
+  const dispatch = useDispatch();
 
   const {
     showModal, editId, handleShowModal, handleHideModal,
   } = hooks.useModal();
 
-  const ownerId = user ? user.id : undefined;
-
-  const {
-    page, pageSize, order, where,
-    handlePageChange, handleOrderChange, handlePageSizeChange,
-    handleWhereChange,
-  } = hooks.useDataGridChange(ownerId, 0, pageSizesList[2]);
-
   const {
     data, totalSize, isLoading,
   } = hooks.useAdminTableData(
-    getTotalCount, getAll, where, page, pageSize, order, accessToken,
+    getTotalCount, getAll,
+    whereUtils.dataGridFilterModelToWhereString(filterModel),
+    page, pageSize,
+    helperUtils.dataGridSortModelStringify(sortModel),
+    accessToken,
   );
 
-  const handleSortModelChange = (params) => (
-    handleOrderChange(
-      params, helperUtils.dataGridSortModelMapper(defaultSortModel),
-    )
-  );
-  const handleFilterModelChange = (params) => (
-    handleWhereChange(params, whereUtils.dataGridFilterModelToWhereString)
-  );
+  const {
+    handlePageChange, handlePageSizeChange, handleSortModelChange,
+    handleFilterModelChange, handleColumnVisibilityChange,
+  } = helpers.dataGridHandlers(dispatch, {
+    changePageAction,
+    changePageSizeAction,
+    changeSortModelAction,
+    changeFilterModelAction,
+    changeColumnVisibilityAction,
+  });
+
+  const gridColumns = columns(user.role, handleShowModal).map((c) => ({
+    ...c,
+    ...columnsChanges[c.field],
+  }));
 
   return (
     <>
@@ -90,16 +105,19 @@ const Genera = () => {
       <div style={{ height: '70vh', width: '100%' }}>
         <AdminDataGrid
           rows={data}
-          columns={columns(user.role, handleShowModal)}
-          rowCount={totalSize}
-          pageSize={pageSize}
-          onPageSizeChange={handlePageSizeChange}
-          rowsPerPageOptions={pageSizesList}
-          onPageChange={handlePageChange}
+          columns={gridColumns}
           loading={isLoading}
-          sortModel={defaultSortModel}
+          page={page}
+          pageSize={pageSize}
+          rowCount={totalSize}
+          rowsPerPageOptions={pageSizesList}
+          sortModel={sortModel}
+          filterModel={filterModel}
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
           onSortModelChange={handleSortModelChange}
           onFilterModelChange={handleFilterModelChange}
+          onColumnVisibilityChange={handleColumnVisibilityChange}
         />
       </div>
       <GeneraModal

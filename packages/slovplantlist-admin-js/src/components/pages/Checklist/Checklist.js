@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import {
   Toolbar, Button, Typography,
@@ -15,7 +15,7 @@ import { NotificationContainer } from 'react-notifications';
 import {
   PageTitle, AdminDataGrid,
 } from '@ibot/components';
-import { hooks } from '@ibot/core';
+import { hooks, helpers } from '@ibot/core';
 
 import Can from 'components/segments/auth/Can';
 import SpeciesRecordModal
@@ -26,8 +26,15 @@ import { helperUtils, whereUtils } from 'utils';
 
 import { tablesFacade } from 'facades';
 import { filterManager } from 'handlers';
+import {
+  changePageActionChecklist as changePageAction,
+  changePageSizeActionChecklist as changePageSizeAction,
+  changeSortModelActionChecklist as changeSortModelAction,
+  changeFilterModelActionChecklist as changeFilterModelAction,
+  changeColumnVisibilityActionChecklist as changeColumnVisibilityAction,
+} from 'context/reducers/datagrid';
 
-import { columns, defaultSortModel } from './Table/columns';
+import { columns } from './Table/columns';
 import ChecklistImportModal from './Import/ChecklistImportModal';
 
 const {
@@ -53,10 +60,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const sortModelStringify = (sm) => {
+  const newSm = helperUtils.dataGridSortModelHandler(
+    constants.columns.speciesName, nomenclature.filter.listOfSpecies,
+  )(sm);
+  return helperUtils.dataGridSortModelStringify(newSm);
+};
+const filterModelToWhere = (fm) => {
+  const { linkOperator } = fm;
+  const whereItems = filterManager.execute(fm);
+  return whereUtils.makeWhereString(whereItems, linkOperator);
+};
+
 const Checklist = () => {
   const classes = useStyles();
   const accessToken = useSelector((state) => state.authentication.accessToken);
   const user = useSelector((state) => state.user);
+  const {
+    page, pageSize, sortModel, filterModel, columnsChanges,
+  } = useSelector((state) => state.datagrid.checklist);
+
+  const dispatch = useDispatch();
 
   const {
     showModal: showEditModal, editId,
@@ -70,41 +94,30 @@ const Checklist = () => {
     handleHideModal: handleHideImportModal,
   } = hooks.useModal();
 
-  const ownerId = user ? user.id : undefined;
-
-  const {
-    page, pageSize, order, where,
-    handlePageChange, handleOrderChange, handlePageSizeChange,
-    handleWhereChange,
-  } = hooks.useDataGridChange(ownerId, 0, pageSizesList[2]);
-
   const { data, totalSize, isLoading } = hooks.useAdminTableData(
-    getTotalCount, getAll, where, page, pageSize, order,
+    getTotalCount, getAll,
+    filterModelToWhere(filterModel),
+    page, pageSize,
+    sortModelStringify(sortModel),
     accessToken, showEditModal,
   );
 
-  const handleSortModelChange = (params) => {
-    const speciesNameHandler = helperUtils.dataGridSortModelHandler(
-      constants.columns.speciesName, nomenclature.filter.listOfSpecies,
-    );
-    return (
-      handleOrderChange(
-        params, helperUtils.dataGridSortModelMapper(
-          defaultSortModel, speciesNameHandler,
-        ),
-      )
-    );
-  };
-  const handleFilterModelChange = async (params) => {
-    const whereFromFilter = (fm) => {
-      const { linkOperator } = fm;
-      const whereItems = filterManager.execute(fm, { ownerId });
-      return whereUtils.makeWhereString(whereItems, linkOperator);
-    };
-    handleWhereChange(
-      params, whereFromFilter,
-    );
-  };
+  const {
+    handlePageChange, handlePageSizeChange, handleSortModelChange,
+    handleFilterModelChange, handleColumnVisibilityChange,
+  } = helpers.dataGridHandlers(dispatch, {
+    changePageAction,
+    changePageSizeAction,
+    changeSortModelAction,
+    changeFilterModelAction,
+    changeColumnVisibilityAction,
+  });
+
+  const gridColumns = columns(user.role === mappings.userRole.author.name,
+    user, handleShowEditModal).map((c) => ({
+    ...c,
+    ...columnsChanges[c.field],
+  }));
 
   return (
     <div id="checklist">
@@ -150,20 +163,19 @@ const Checklist = () => {
       <div style={{ height: '70vh', width: '100%' }}>
         <AdminDataGrid
           rows={data}
-          columns={columns(
-            user.role === mappings.userRole.author.name,
-            user,
-            handleShowEditModal,
-          )}
-          rowCount={totalSize}
-          pageSize={pageSize}
-          onPageSizeChange={handlePageSizeChange}
-          rowsPerPageOptions={pageSizesList}
-          onPageChange={handlePageChange}
+          columns={gridColumns}
           loading={isLoading}
-          sortModel={defaultSortModel}
+          page={page}
+          pageSize={pageSize}
+          rowCount={totalSize}
+          rowsPerPageOptions={pageSizesList}
+          sortModel={sortModel}
+          filterModel={filterModel}
+          onPageSizeChange={handlePageSizeChange}
+          onPageChange={handlePageChange}
           onSortModelChange={handleSortModelChange}
           onFilterModelChange={handleFilterModelChange}
+          onColumnVisibilityChange={handleColumnVisibilityChange}
         />
       </div>
       <SpeciesRecordModal

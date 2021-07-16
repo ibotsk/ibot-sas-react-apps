@@ -55,6 +55,10 @@ function dataGridFilterItemsToWhereWB(filterModel) {
   }
   const { items, linkOperator } = filterModel;
 
+  if (!items || !linkOperator) {
+    return wb;
+  }
+
   const whereItems = items
     .filter(({ value }) => !!value)
     .map(({ columnField, operatorValue, value }) => (

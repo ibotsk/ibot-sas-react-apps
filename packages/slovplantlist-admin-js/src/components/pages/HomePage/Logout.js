@@ -6,8 +6,8 @@ import PropTypes from 'prop-types';
 
 import {
   unsetAuthenticated as unsetAuthenticatedAction,
-} from 'actions/index';
-import { removeState } from 'services/local-storage';
+} from 'context/actions';
+import { removeState } from 'context/store/local-storage';
 import { usersFacade } from 'facades';
 
 const Logout = ({ accessToken, unsetAuthenticated }) => {

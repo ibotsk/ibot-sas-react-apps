@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 
-import rootReducer from 'reducers';
+import rootReducer from '../reducers';
 
 import { loadState, saveState } from './local-storage';
 
@@ -13,8 +13,7 @@ const store = createStore(
 
 store.subscribe(() => {
   saveState({
-    authentication: store.getState().authentication,
-    user: store.getState().user,
+    ...store.getState(),
   });
 });
 
