@@ -14,6 +14,12 @@ import {
 import {
   defaultSortModel as defaultSortModelChecklist,
 } from 'components/pages/Checklist/Table/columns';
+import {
+  defaultSortModel as defaultSortModelAllUsers,
+} from 'components/pages/Users/Tabs/Table/columns-all-users';
+import {
+  defaultSortModel as defaultSortModelGeneraUsers,
+} from 'components/pages/Users/Tabs/Table/columns-genera-users';
 
 const defaultFilterModel = {
   items: [{ columnField: 'id', operatorValue: 'contains' }],
@@ -52,6 +58,22 @@ const {
   filterModel: defaultFilterModel,
 });
 
+const {
+  dataGridChangeReducer: allUsersReducer,
+  ...allUsersActions
+} = reducers.createDGActionsAndReducer('allusers', {
+  sortModel: defaultSortModelAllUsers,
+  filterModel: defaultFilterModel,
+});
+
+const {
+  dataGridChangeReducer: generaUsersReducer,
+  ...generaUsersActions
+} = reducers.createDGActionsAndReducer('generausers', {
+  sortModel: defaultSortModelGeneraUsers,
+  filterModel: defaultFilterModel,
+});
+
 export const {
   changePageAction: changePageActionFamilies,
   changePageSizeAction: changePageSizeActionFamilies,
@@ -80,10 +102,26 @@ export const {
   changeFilterModelAction: changeFilterModelActionChecklist,
   changeColumnVisibilityAction: changeColumnVisibilityActionChecklist,
 } = checklistActions;
+export const {
+  changePageAction: changePageActionAllUsers,
+  changePageSizeAction: changePageSizeActionAllUsers,
+  changeSortModelAction: changeSortModelActionAllUsers,
+  changeFilterModelAction: changeFilterModelActionAllUsers,
+  changeColumnVisibilityAction: changeColumnVisibilityActionAllUsers,
+} = allUsersActions;
+export const {
+  changePageAction: changePageActionGeneraUsers,
+  changePageSizeAction: changePageSizeActionGeneraUsers,
+  changeSortModelAction: changeSortModelActionGeneraUsers,
+  changeFilterModelAction: changeFilterModelActionGeneraUsers,
+  changeColumnVisibilityAction: changeColumnVisibilityActionGeneraUsers,
+} = generaUsersActions;
 
 export const datagrid = combineReducers({
   families: familiesReducer,
   familiesApg: familiesApgReducer,
   genera: generaReducer,
   checklist: checklistReducer,
+  allUsers: allUsersReducer,
+  generaUsers: generaUsersReducer,
 });
