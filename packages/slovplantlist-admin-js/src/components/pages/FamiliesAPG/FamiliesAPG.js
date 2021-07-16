@@ -11,18 +11,18 @@ import {
 import Can from 'components/segments/auth/Can';
 
 import { PageTitle, AdminDataGrid } from '@ibot/components';
-import { hooks } from '@ibot/core';
+import { hooks, helpers } from '@ibot/core';
 
 import config from 'config/config';
 import { helperUtils, whereUtils } from 'utils';
 
 import { tablesFacade } from 'facades';
 import {
-  changeFilterModelActionFamiliesApg,
-  changePageActionFamiliesApg,
-  changePageSizeActionFamiliesApg,
-  changeSortModelActionFamiliesApg,
-  changeColumnVisibilityActionFamiliesApg,
+  changePageActionFamiliesApg as changePageAction,
+  changePageSizeActionFamiliesApg as changePageSizeAction,
+  changeSortModelActionFamiliesApg as changeSortModelAction,
+  changeFilterModelActionFamiliesApg as changeFilterModelAction,
+  changeColumnVisibilityActionFamiliesApg as changeColumnVisibilityAction,
 } from 'context/reducers/datagrid';
 
 import FamiliesApgModal from './Modals/FamiliesApgModal';
@@ -63,21 +63,16 @@ const FamiliesAPG = () => {
     accessToken, showModal,
   );
 
-  const handlePageChange = ({ page: p }) => (
-    dispatch(changePageActionFamiliesApg(p))
-  );
-  const handlePageSizeChange = ({ pageSize: ps }) => (
-    dispatch(changePageSizeActionFamiliesApg(ps))
-  );
-  const handleSortModelChange = ({ sortModel: sm }) => (
-    dispatch(changeSortModelActionFamiliesApg(sm))
-  );
-  const handleFilterModelChange = ({ filterModel: fm }) => (
-    dispatch(changeFilterModelActionFamiliesApg(fm))
-  );
-  const handleColumnVisibilityChange = ({ field, isVisible }) => (
-    dispatch(changeColumnVisibilityActionFamiliesApg(field, isVisible))
-  );
+  const {
+    handlePageChange, handlePageSizeChange, handleSortModelChange,
+    handleFilterModelChange, handleColumnVisibilityChange,
+  } = helpers.dataGridHandlers(dispatch, {
+    changePageAction,
+    changePageSizeAction,
+    changeSortModelAction,
+    changeFilterModelAction,
+    changeColumnVisibilityAction,
+  });
 
   const gridColumns = columns(user.role, handleShowModal).map((c) => ({
     ...c,

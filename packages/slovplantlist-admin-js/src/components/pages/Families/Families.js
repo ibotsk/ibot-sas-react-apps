@@ -11,18 +11,18 @@ import {
 import Can from 'components/segments/auth/Can';
 
 import { PageTitle, AdminDataGrid } from '@ibot/components';
-import { hooks } from '@ibot/core';
+import { hooks, helpers } from '@ibot/core';
 
 import config from 'config/config';
 import { helperUtils, whereUtils } from 'utils';
 
 import { tablesFacade } from 'facades';
 import {
-  changePageActionFamilies,
-  changePageSizeActionFamilies,
-  changeSortModelActionFamilies,
-  changeFilterModelActionFamilies,
-  changeColumnVisibilityActionFamilies,
+  changePageActionFamilies as changePageAction,
+  changePageSizeActionFamilies as changePageSizeAction,
+  changeSortModelActionFamilies as changeSortModelAction,
+  changeFilterModelActionFamilies as changeFilterModelAction,
+  changeColumnVisibilityActionFamilies as changeColumnVisibilityAction,
 } from 'context/reducers/datagrid';
 
 import FamiliesModal from './Modals/FamiliesModal';
@@ -64,21 +64,16 @@ const Families = () => {
     accessToken, showModal,
   );
 
-  const handlePageChange = ({ page: p }) => (
-    dispatch(changePageActionFamilies(p))
-  );
-  const handlePageSizeChange = ({ pageSize: ps }) => (
-    dispatch(changePageSizeActionFamilies(ps))
-  );
-  const handleSortModelChange = ({ sortModel: sm }) => (
-    dispatch(changeSortModelActionFamilies(sm))
-  );
-  const handleFilterModelChange = ({ filterModel: fm }) => (
-    dispatch(changeFilterModelActionFamilies(fm))
-  );
-  const handleColumnVisibilityChange = ({ field, isVisible }) => (
-    dispatch(changeColumnVisibilityActionFamilies(field, isVisible))
-  );
+  const {
+    handlePageChange, handlePageSizeChange, handleSortModelChange,
+    handleFilterModelChange, handleColumnVisibilityChange,
+  } = helpers.dataGridHandlers(dispatch, {
+    changePageAction,
+    changePageSizeAction,
+    changeSortModelAction,
+    changeFilterModelAction,
+    changeColumnVisibilityAction,
+  });
 
   const gridColumns = columns(user.role, handleShowModal).map((c) => ({
     ...c,

@@ -9,7 +9,7 @@ import {
 } from '@material-ui/icons';
 
 import { AdminDataGrid } from '@ibot/components';
-import { hooks } from '@ibot/core';
+import { hooks, helpers } from '@ibot/core';
 
 import Can from 'components/segments/auth/Can';
 
@@ -18,11 +18,11 @@ import { helperUtils, whereUtils } from 'utils';
 
 import { tablesFacade } from 'facades';
 import {
-  changePageActionAllUsers,
-  changePageSizeActionAllUsers,
-  changeSortModelActionAllUsers,
-  changeFilterModelActionAllUsers,
-  changeColumnVisibilityActionAllUsers,
+  changePageActionAllUsers as changePageAction,
+  changePageSizeActionAllUsers as changePageSizeAction,
+  changeSortModelActionAllUsers as changeSortModelAction,
+  changeFilterModelActionAllUsers as changeFilterModelAction,
+  changeColumnVisibilityActionAllUsers as changeColumnVisibilityAction,
 } from 'context/reducers/datagrid';
 
 import UsersModal from './Modals/UsersModal';
@@ -63,21 +63,16 @@ const AllUsers = () => {
   );
 
   const dispatch = useDispatch();
-  const handlePageChange = ({ page: p }) => (
-    dispatch(changePageActionAllUsers(p))
-  );
-  const handlePageSizeChange = ({ pageSize: ps }) => (
-    dispatch(changePageSizeActionAllUsers(ps))
-  );
-  const handleSortModelChange = ({ sortModel: sm }) => (
-    dispatch(changeSortModelActionAllUsers(sm))
-  );
-  const handleFilterModelChange = ({ filterModel: fm }) => (
-    dispatch(changeFilterModelActionAllUsers(fm))
-  );
-  const handleColumnVisibilityChange = ({ field, isVisible }) => (
-    dispatch(changeColumnVisibilityActionAllUsers(field, isVisible))
-  );
+  const {
+    handlePageChange, handlePageSizeChange, handleSortModelChange,
+    handleFilterModelChange, handleColumnVisibilityChange,
+  } = helpers.dataGridHandlers(dispatch, {
+    changePageAction,
+    changePageSizeAction,
+    changeSortModelAction,
+    changeFilterModelAction,
+    changeColumnVisibilityAction,
+  });
 
   const gridColumns = columns(handleShowModal).map((c) => ({
     ...c,

@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { AdminDataGrid } from '@ibot/components';
-import { hooks } from '@ibot/core';
+import { hooks, helpers } from '@ibot/core';
 
 import { tablesFacade } from 'facades';
 
@@ -10,11 +10,11 @@ import config from 'config/config';
 import { whereUtils, helperUtils } from 'utils';
 
 import {
-  changePageActionGeneraUsers,
-  changePageSizeActionGeneraUsers,
-  changeSortModelActionGeneraUsers,
-  changeFilterModelActionGeneraUsers,
-  changeColumnVisibilityActionGeneraUsers,
+  changePageActionGeneraUsers as changePageAction,
+  changePageSizeActionGeneraUsers as changePageSizeAction,
+  changeSortModelActionGeneraUsers as changeSortModelAction,
+  changeFilterModelActionGeneraUsers as changeFilterModelAction,
+  changeColumnVisibilityActionGeneraUsers as changeColumnVisibilityAction,
 } from 'context/reducers/datagrid';
 
 import UsersGeneraModal from './Modals/UsersGeneraModal';
@@ -54,21 +54,16 @@ const GeneraUsers = () => {
   );
 
   const dispatch = useDispatch();
-  const handlePageChange = ({ page: p }) => (
-    dispatch(changePageActionGeneraUsers(p))
-  );
-  const handlePageSizeChange = ({ pageSize: ps }) => (
-    dispatch(changePageSizeActionGeneraUsers(ps))
-  );
-  const handleSortModelChange = ({ sortModel: sm }) => (
-    dispatch(changeSortModelActionGeneraUsers(sm))
-  );
-  const handleFilterModelChange = ({ filterModel: fm }) => (
-    dispatch(changeFilterModelActionGeneraUsers(fm))
-  );
-  const handleColumnVisibilityChange = ({ field, isVisible }) => (
-    dispatch(changeColumnVisibilityActionGeneraUsers(field, isVisible))
-  );
+  const {
+    handlePageChange, handlePageSizeChange, handleSortModelChange,
+    handleFilterModelChange, handleColumnVisibilityChange,
+  } = helpers.dataGridHandlers(dispatch, {
+    changePageAction,
+    changePageSizeAction,
+    changeSortModelAction,
+    changeFilterModelAction,
+    changeColumnVisibilityAction,
+  });
 
   const gridColumns = columns(handleShowModal).map((c) => ({
     ...c,

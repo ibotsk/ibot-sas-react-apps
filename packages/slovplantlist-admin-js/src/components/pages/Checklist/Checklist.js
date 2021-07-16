@@ -15,7 +15,7 @@ import { NotificationContainer } from 'react-notifications';
 import {
   PageTitle, AdminDataGrid,
 } from '@ibot/components';
-import { hooks } from '@ibot/core';
+import { hooks, helpers } from '@ibot/core';
 
 import Can from 'components/segments/auth/Can';
 import SpeciesRecordModal
@@ -27,11 +27,11 @@ import { helperUtils, whereUtils } from 'utils';
 import { tablesFacade } from 'facades';
 import { filterManager } from 'handlers';
 import {
-  changePageActionChecklist,
-  changePageSizeActionChecklist,
-  changeSortModelActionChecklist,
-  changeFilterModelActionChecklist,
-  changeColumnVisibilityActionChecklist,
+  changePageActionChecklist as changePageAction,
+  changePageSizeActionChecklist as changePageSizeAction,
+  changeSortModelActionChecklist as changeSortModelAction,
+  changeFilterModelActionChecklist as changeFilterModelAction,
+  changeColumnVisibilityActionChecklist as changeColumnVisibilityAction,
 } from 'context/reducers/datagrid';
 
 import { columns } from './Table/columns';
@@ -102,21 +102,16 @@ const Checklist = () => {
     accessToken, showEditModal,
   );
 
-  const handlePageChange = ({ page: p }) => (
-    dispatch(changePageActionChecklist(p))
-  );
-  const handlePageSizeChange = ({ pageSize: ps }) => (
-    dispatch(changePageSizeActionChecklist(ps))
-  );
-  const handleSortModelChange = ({ sortModel: sm }) => (
-    dispatch(changeSortModelActionChecklist(sm))
-  );
-  const handleFilterModelChange = async ({ filterModel: fm }) => (
-    dispatch(changeFilterModelActionChecklist(fm))
-  );
-  const handleColumnVisibilityChange = ({ field, isVisible }) => (
-    dispatch(changeColumnVisibilityActionChecklist(field, isVisible))
-  );
+  const {
+    handlePageChange, handlePageSizeChange, handleSortModelChange,
+    handleFilterModelChange, handleColumnVisibilityChange,
+  } = helpers.dataGridHandlers(dispatch, {
+    changePageAction,
+    changePageSizeAction,
+    changeSortModelAction,
+    changeFilterModelAction,
+    changeColumnVisibilityAction,
+  });
 
   const gridColumns = columns(user.role === mappings.userRole.author.name,
     user, handleShowEditModal).map((c) => ({

@@ -11,7 +11,7 @@ import {
 import Can from 'components/segments/auth/Can';
 
 import { PageTitle, AdminDataGrid } from '@ibot/components';
-import { hooks } from '@ibot/core';
+import { hooks, helpers } from '@ibot/core';
 
 import config from 'config/config';
 
@@ -19,11 +19,11 @@ import { helperUtils, whereUtils } from 'utils';
 
 import { tablesFacade } from 'facades';
 import {
-  changePageActionGenera,
-  changePageSizeActionGenera,
-  changeSortModelActionGenera,
-  changeFilterModelActionGenera,
-  changeColumnVisibilityActionGenera,
+  changePageActionGenera as changePageAction,
+  changePageSizeActionGenera as changePageSizeAction,
+  changeSortModelActionGenera as changeSortModelAction,
+  changeFilterModelActionGenera as changeFilterModelAction,
+  changeColumnVisibilityActionGenera as changeColumnVisibilityAction,
 } from 'context/reducers/datagrid';
 
 import GeneraModal from './Modals/GeneraModal';
@@ -63,21 +63,16 @@ const Genera = () => {
     accessToken,
   );
 
-  const handlePageChange = ({ page: p }) => (
-    dispatch(changePageActionGenera(p))
-  );
-  const handlePageSizeChange = ({ pageSize: ps }) => (
-    dispatch(changePageSizeActionGenera(ps))
-  );
-  const handleSortModelChange = ({ sortModel: sm }) => (
-    dispatch(changeSortModelActionGenera(sm))
-  );
-  const handleFilterModelChange = ({ filterModel: fm }) => (
-    dispatch(changeFilterModelActionGenera(fm))
-  );
-  const handleColumnVisibilityChange = ({ field, isVisible }) => (
-    dispatch(changeColumnVisibilityActionGenera(field, isVisible))
-  );
+  const {
+    handlePageChange, handlePageSizeChange, handleSortModelChange,
+    handleFilterModelChange, handleColumnVisibilityChange,
+  } = helpers.dataGridHandlers(dispatch, {
+    changePageAction,
+    changePageSizeAction,
+    changeSortModelAction,
+    changeFilterModelAction,
+    changeColumnVisibilityAction,
+  });
 
   const gridColumns = columns(user.role, handleShowModal).map((c) => ({
     ...c,
