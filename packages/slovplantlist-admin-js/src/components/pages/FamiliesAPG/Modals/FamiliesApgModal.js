@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  DialogTitle, DialogContent, DialogActions,
+  DialogContent, DialogActions,
   Button,
 } from '@material-ui/core';
 
@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 
 import {
   AdminEditDialog,
-  AdminTextField, AdminTimestampCheck, AdminDeleteToolbar, DividerSpaced,
+  AdminTextField, AdminTimestampCheck, AdminDialogTitle, DividerSpaced,
 } from '@ibot/components';
 
 import { notifications } from 'utils';
@@ -104,16 +104,16 @@ const FamiliesApgModal = ({ id, show, onHide }) => {
       onClose={handleHide}
       aria-labelledby="genus-dialog"
     >
-      <DialogTitle id="family-dialog-title">
+      <AdminDialogTitle
+        id="family-dialog-title"
+        onDelete={handleDelete}
+        recordId={id}
+      >
         {id
           ? `Edit family APG - ID ${id} - ${name}`
           : 'Create new family APG'}
-      </DialogTitle>
+      </AdminDialogTitle>
       <DialogContent dividers>
-        <AdminDeleteToolbar
-          recordId={id}
-          onDelete={handleDelete}
-        />
         <AdminTextField
           fullWidth
           id="name"

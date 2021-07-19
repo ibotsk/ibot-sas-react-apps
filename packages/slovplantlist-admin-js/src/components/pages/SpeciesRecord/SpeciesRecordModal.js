@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  DialogTitle, DialogContent, DialogActions,
+  DialogContent, DialogActions,
   Button,
   Tabs, Tab,
 } from '@material-ui/core';
@@ -16,7 +16,7 @@ import SynonymType from 'components/propTypes/synonym';
 
 import {
   LosName, TabPanel,
-  AdminEditDialog, AdminDeleteToolbar,
+  AdminEditDialog, AdminDialogTitle,
 } from '@ibot/components';
 import Can from 'components/segments/auth/Can';
 
@@ -301,7 +301,11 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
       scroll="paper"
       aria-labelledby="species-dialog"
     >
-      <DialogTitle id="genus-dialog-title">
+      <AdminDialogTitle
+        id="genus-dialog-title"
+        recordId={editId}
+        onDelete={handleDelete}
+      >
         {editId
           ? (
             <>
@@ -310,12 +314,8 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
             </>
           )
           : 'Create new species name'}
-      </DialogTitle>
+      </AdminDialogTitle>
       <DialogContent dividers>
-        <AdminDeleteToolbar
-          recordId={editId}
-          onDelete={handleDelete}
-        />
         <Can
           role={user.role}
           perform="genus:edit"

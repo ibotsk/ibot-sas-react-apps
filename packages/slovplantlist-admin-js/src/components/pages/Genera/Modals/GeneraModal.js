@@ -3,7 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 import {
-  DialogActions, DialogTitle, DialogContent,
+  DialogActions, DialogContent,
   Button, MenuItem,
 } from '@material-ui/core';
 
@@ -14,7 +14,7 @@ import {
   TitledSection,
   GenusName,
   AdminEditDialog, AdminTextField, AdminAutocompleteAsync,
-  AdminDeleteToolbar, AdminTimestampCheck, AdminAddableList,
+  AdminDialogTitle, AdminTimestampCheck, AdminAddableList,
 } from '@ibot/components';
 import { hooks } from '@ibot/core';
 
@@ -288,7 +288,11 @@ const GeneraModal = ({
       onClose={handleHide}
       aria-labelledby="genus-dialog"
     >
-      <DialogTitle id="genus-dialog-title">
+      <AdminDialogTitle
+        id="genus-dialog-title"
+        recordId={editId}
+        onDelete={handleDelete}
+      >
         {editId
           ? (
             <>
@@ -297,12 +301,8 @@ const GeneraModal = ({
             </>
           )
           : 'Create new genus'}
-      </DialogTitle>
+      </AdminDialogTitle>
       <DialogContent dividers>
-        <AdminDeleteToolbar
-          recordId={editId}
-          onDelete={handleDelete}
-        />
         <AdminTextField
           select
           id="ntype"
