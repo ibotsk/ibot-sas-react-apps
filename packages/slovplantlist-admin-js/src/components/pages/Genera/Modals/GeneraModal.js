@@ -13,9 +13,8 @@ import {
   NameList, DividerSpaced,
   TitledSection,
   GenusName,
-  AdminEditDialog,
-  AdminTextField, AdminAutocompleteAsync, AdminTimestampCheck,
-  AdminAddableList,
+  AdminEditDialog, AdminTextField, AdminAutocompleteAsync,
+  AdminDeleteToolbar, AdminTimestampCheck, AdminAddableList,
 } from '@ibot/components';
 import { hooks } from '@ibot/core';
 
@@ -244,6 +243,17 @@ const GeneraModal = ({
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await genusFacade.deleteGenus(editId, accessToken);
+      notifications.success('Deleted');
+      handleHide();
+    } catch (error) {
+      notifications.error('Error while deleting');
+      throw error;
+    }
+  };
+
   const handleSynonymAddRow = async (selectedGenus) => {
     if (selectedGenus && selectedGenus.id) {
       if (synonyms.find((s) => s.synonym.id === selectedGenus.id)) {
@@ -289,6 +299,10 @@ const GeneraModal = ({
           : 'Create new genus'}
       </DialogTitle>
       <DialogContent dividers>
+        <AdminDeleteToolbar
+          recordId={editId}
+          onDelete={handleDelete}
+        />
         <AdminTextField
           select
           id="ntype"

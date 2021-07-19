@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 
 import {
   AdminEditDialog,
-  AdminTextField, AdminTimestampCheck, DividerSpaced,
+  AdminTextField, AdminTimestampCheck, AdminDeleteToolbar, DividerSpaced,
 } from '@ibot/components';
 
 import { notifications } from 'utils';
@@ -86,6 +86,17 @@ const FamiliesApgModal = ({ id, show, onHide }) => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await familiesFacade.deleteFamilyApg(id, accessToken);
+      notifications.success('Deleted');
+      handleHide();
+    } catch (error) {
+      notifications.error('Error while deleting');
+      throw error;
+    }
+  };
+
   return (
     <AdminEditDialog
       open={show}
@@ -99,6 +110,10 @@ const FamiliesApgModal = ({ id, show, onHide }) => {
           : 'Create new family APG'}
       </DialogTitle>
       <DialogContent dividers>
+        <AdminDeleteToolbar
+          recordId={id}
+          onDelete={handleDelete}
+        />
         <AdminTextField
           fullWidth
           id="name"

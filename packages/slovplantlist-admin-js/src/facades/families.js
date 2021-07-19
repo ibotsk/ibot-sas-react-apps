@@ -1,6 +1,6 @@
 import config from 'config/config';
 
-import { getRequest, putRequest } from './client';
+import { getRequest, putRequest, deleteRequest } from './client';
 
 const {
   uris: { familiesUri, familiesApgUri },
@@ -74,6 +74,18 @@ async function saveFamilyApg(data, accessToken) {
   );
 }
 
+async function deleteFamily(id, accessToken) {
+  return deleteRequest(
+    familiesUri.getByIdUri, { id }, accessToken,
+  );
+}
+
+async function deleteFamilyApg(id, accessToken) {
+  return deleteRequest(
+    familiesApgUri.getByIdUri, { id }, accessToken,
+  );
+}
+
 export default {
   getFamilyByIdCurated,
   getAllFamilies,
@@ -83,4 +95,6 @@ export default {
   getAllFamiliesApgBySearchTerm,
   saveFamily,
   saveFamilyApg,
+  deleteFamily,
+  deleteFamilyApg,
 };

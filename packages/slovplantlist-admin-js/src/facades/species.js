@@ -2,7 +2,9 @@ import { where as whereUtils } from '@ibot/utils';
 import { sorterUtils } from 'utils';
 import config from 'config/config';
 
-import { getRequest, putRequest, patchRequest } from './client';
+import {
+  getRequest, putRequest, patchRequest, deleteRequest,
+} from './client';
 import common from './common/common';
 
 const {
@@ -247,7 +249,7 @@ async function saveSpeciesAndSynonyms({
   return data.id;
 }
 
-function patchSpecies(id, data, accessToken) {
+async function patchSpecies(id, data, accessToken) {
   return patchRequest(
     nomenclaturesUri.getByIdUri, data, { id }, accessToken,
   );
@@ -259,6 +261,10 @@ function createSynonym(idParent, idSynonym, syntype) {
     idSynonym,
     syntype,
   };
+}
+
+async function deleteSpecies(id, accessToken) {
+  return deleteRequest(nomenclaturesUri.getByIdUri, { id }, accessToken);
 }
 
 export default {
@@ -273,4 +279,5 @@ export default {
   saveSpecies,
   patchSpecies,
   createSynonym,
+  deleteSpecies,
 };

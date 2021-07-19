@@ -60,7 +60,7 @@ const Genera = () => {
     whereUtils.dataGridFilterModelToWhereString(filterModel),
     page, pageSize,
     helperUtils.dataGridSortModelStringify(sortModel),
-    accessToken,
+    accessToken, showModal,
   );
 
   const {

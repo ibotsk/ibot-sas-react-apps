@@ -7,7 +7,7 @@ import {
   Button,
   Tabs, Tab,
 } from '@material-ui/core';
-import { Save as SaveIcon } from '@material-ui/icons';
+import SaveIcon from '@material-ui/icons/Save';
 import { makeStyles } from '@material-ui/core/styles';
 
 import PropTypes from 'prop-types';
@@ -16,7 +16,7 @@ import SynonymType from 'components/propTypes/synonym';
 
 import {
   LosName, TabPanel,
-  AdminEditDialog,
+  AdminEditDialog, AdminDeleteToolbar,
 } from '@ibot/components';
 import Can from 'components/segments/auth/Can';
 
@@ -236,7 +236,7 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
     setSynonyms({ ...synonyms, ...changed })
   );
 
-  const handleSubmit = async (close = false) => {
+  const handleSave = async (close = false) => {
     const {
       speciesRecord,
       nomenStatus,
@@ -277,6 +277,17 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      await speciesFacade.deleteSpecies(editId, accessToken);
+      notifications.success('Deleted');
+      handleHide();
+    } catch (error) {
+      notifications.error('Error while deleting');
+      throw error;
+    }
+  };
+
   const { speciesRecord: { idGenus } = {} } = fullRecord;
 
   return (
@@ -301,6 +312,10 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
           : 'Create new species name'}
       </DialogTitle>
       <DialogContent dividers>
+        <AdminDeleteToolbar
+          recordId={editId}
+          onDelete={handleDelete}
+        />
         <Can
           role={user.role}
           perform="genus:edit"
@@ -335,14 +350,14 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
               <Button onClick={handleHide}>Close</Button>
               <Button
                 color="primary"
-                onClick={() => handleSubmit(false)}
+                onClick={() => handleSave(false)}
                 startIcon={<SaveIcon />}
               >
                 Save
               </Button>
               <Button
                 color="primary"
-                onClick={() => handleSubmit(true)}
+                onClick={() => handleSave(true)}
                 startIcon={<SaveIcon />}
               >
                 Save &amp; Close

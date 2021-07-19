@@ -2,7 +2,9 @@ import config from 'config/config';
 import { sorterUtils } from 'utils';
 
 import common from './common/common';
-import { getRequest, putRequest, patchRequest } from './client';
+import {
+  getRequest, putRequest, patchRequest, deleteRequest,
+} from './client';
 
 const {
   uris: {
@@ -140,6 +142,10 @@ function createSynonym(idParent, idSynonym, syntype) {
   return common.createSynonym(idParent, idSynonym, syntype);
 }
 
+async function deleteGenus(id, accessToken) {
+  return deleteRequest(generaUri.byIdUri, { id }, accessToken);
+}
+
 export default {
   getAllGeneraBySearchTerm,
   getAllGeneraBySearchTermWithAccepted,
@@ -150,4 +156,5 @@ export default {
   saveGenusAndSynonyms,
   patchGenus,
   createSynonym,
+  deleteGenus,
 };
