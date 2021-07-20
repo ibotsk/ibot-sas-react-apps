@@ -5,44 +5,37 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import { DialogTitle, IconButton } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
-import DeleteIcon from '@material-ui/icons/DeleteForever';
+import CloseIcon from '@material-ui/icons/Close';
 
 const styles = (theme) => ({
   root: {
     margin: 0,
     padding: theme.spacing(2),
   },
-  deleteButton: {
+  closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
-    color: theme.palette.error.dark,
+    color: theme.palette.grey[500],
   },
 });
 
 const AdminDialogTitle = withStyles(styles)((props) => {
   const {
-    children, classes, onDelete, recordId, ...other
+    children, classes, onClose, ...other
   } = props;
-
-  const handleClickWithAlert = () => {
-    const result = window.confirm('Delete record?');
-    if (result) {
-      onDelete();
-    }
-  };
 
   return (
     <DialogTitle disableTypography className={classes.root} {...other}>
       <Typography variant="h6">{children}</Typography>
-      {onDelete && recordId ? (
+      {onClose ? (
         <IconButton
-          aria-label="delete"
-          className={classes.deleteButton}
-          title="Delete this record"
-          onClick={handleClickWithAlert}
+          aria-label="close"
+          className={classes.closeButton}
+          title="Close this window"
+          onClick={onClose}
         >
-          <DeleteIcon />
+          <CloseIcon />
         </IconButton>
       ) : null}
     </DialogTitle>

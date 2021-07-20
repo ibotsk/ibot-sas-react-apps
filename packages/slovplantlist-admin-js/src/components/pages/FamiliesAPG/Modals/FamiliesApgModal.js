@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 import {
   AdminEditDialog,
   AdminTextField, AdminTimestampCheck, AdminDialogTitle, DividerSpaced,
+  AdminDeleteButton,
 } from '@ibot/components';
 
 import { notifications } from 'utils';
@@ -104,11 +105,7 @@ const FamiliesApgModal = ({ id, show, onHide }) => {
       onClose={handleHide}
       aria-labelledby="genus-dialog"
     >
-      <AdminDialogTitle
-        id="family-dialog-title"
-        onDelete={handleDelete}
-        recordId={id}
-      >
+      <AdminDialogTitle id="family-dialog-title" onClose={handleHide}>
         {id
           ? `Edit family APG - ID ${id} - ${name}`
           : 'Create new family APG'}
@@ -138,6 +135,7 @@ const FamiliesApgModal = ({ id, show, onHide }) => {
         />
       </DialogContent>
       <DialogActions>
+        <AdminDeleteButton onDelete={handleDelete} recordId={id} />
         <Button onClick={handleHide}>Close</Button>
         <Button color="primary" onClick={handleSave}>
           Save changes

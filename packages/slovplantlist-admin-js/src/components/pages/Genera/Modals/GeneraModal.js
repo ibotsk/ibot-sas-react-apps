@@ -15,6 +15,7 @@ import {
   GenusName,
   AdminEditDialog, AdminTextField, AdminAutocompleteAsync,
   AdminDialogTitle, AdminTimestampCheck, AdminAddableList,
+  AdminDeleteButton,
 } from '@ibot/components';
 import { hooks } from '@ibot/core';
 
@@ -288,11 +289,7 @@ const GeneraModal = ({
       onClose={handleHide}
       aria-labelledby="genus-dialog"
     >
-      <AdminDialogTitle
-        id="genus-dialog-title"
-        recordId={editId}
-        onDelete={handleDelete}
-      >
+      <AdminDialogTitle id="genus-dialog-title" onClose={handleHide}>
         {editId
           ? (
             <>
@@ -380,9 +377,8 @@ const GeneraModal = ({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleHide}>
-          Close
-        </Button>
+        <AdminDeleteButton onDelete={handleDelete} recordId={editId} />
+        <Button onClick={handleHide}>Close</Button>
         <Button color="primary" onClick={handleSave}>
           Save changes
         </Button>

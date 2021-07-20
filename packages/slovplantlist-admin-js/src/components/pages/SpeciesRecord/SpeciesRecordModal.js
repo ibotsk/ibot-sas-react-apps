@@ -16,7 +16,7 @@ import SynonymType from 'components/propTypes/synonym';
 
 import {
   LosName, TabPanel,
-  AdminEditDialog, AdminDialogTitle,
+  AdminEditDialog, AdminDialogTitle, AdminDeleteButton,
 } from '@ibot/components';
 import Can from 'components/segments/auth/Can';
 
@@ -301,11 +301,7 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
       scroll="paper"
       aria-labelledby="species-dialog"
     >
-      <AdminDialogTitle
-        id="genus-dialog-title"
-        recordId={editId}
-        onDelete={handleDelete}
-      >
+      <AdminDialogTitle id="genus-dialog-title" onClose={handleHide}>
         {editId
           ? (
             <>
@@ -347,6 +343,7 @@ const SpeciesRecordModal = ({ editId, show, onHide }) => {
           }}
           yes={() => (
             <>
+              <AdminDeleteButton onDelete={handleDelete} recordId={editId} />
               <Button onClick={handleHide}>Close</Button>
               <Button
                 color="primary"

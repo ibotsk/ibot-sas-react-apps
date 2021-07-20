@@ -5,5 +5,6 @@ export { default as AdminTextField } from './AdminTextField';
 export { default as AdminTimestampCheck } from './AdminTimestampCheck';
 export { default as AdminDataGrid } from './AdminDataGrid';
 export { default as AdminDialogTitle } from './AdminDialogTitle';
+export { default as AdminDeleteButton } from './AdminDeleteButton';
 
 export * from './DataGrid';
